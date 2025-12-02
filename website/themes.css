@@ -1,0 +1,64 @@
+:root {
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --small-font-size: 16px;
+    --medium-font-size: 18px;
+    --X-font-size: 20px;
+    --XL-font-size: 25px;
+
+    /* Theme Variables */
+    --font-color: #fff;
+    --inv-color: #000000;
+
+    --img-invert-value: 0;
+    --containers-bg-color: #151515;
+    --translucent-bg-color: #4b4b4b7a;
+
+    /* - Index.html */
+        /* Navbar Colors */
+        --tit-font-color: #fff;
+        --elm-font-color: #bcbcbc;
+        --elm-hover-bg-color: #252525;
+        --ver-hover-bg-color: #202020;
+
+        /* Header Colors*/
+        --but-hover-bg-color: #404040;
+        --selected-theme-bg-color: #0062ff;
+        --menu-bg-color: #2b2b2b;
+    
+    /* -- Index Elements */
+    --secondary-bg-color: #252525;
+    
+}
+.light {
+    --font-color: #000000;
+    --inv-color: #ffffff;
+
+    --img-invert-value: 1;
+    --containers-bg-color: #ededed;
+    --translucent-bg-color: #c2c2c27a;
+    /* - Index.html */
+        /* Navbar Colors */
+        --tit-font-color: #000000;
+        --elm-font-color: #434343;
+        --elm-hover-bg-color: #fff;
+        --ver-hover-bg-color: #dfdfdf;
+
+        /* Header Colors*/
+        --but-hover-bg-color: #fff;
+        --selected-theme-bg-color: #0088ff;
+        --menu-bg-color: #f7f7f7;
+
+    /* -- Index Elements */
+    --secondary-bg-color: #ffffff;
+}
+
+@media (max-width: 1003px) {
+    :root {
+        --small-font-size: 40px;
+        --medium-font-size: 45px;
+        --big-font-size: 50px;
+
+        --X-font-size: 35px;
+        --XL-font-size: 40px;
+    }
+}

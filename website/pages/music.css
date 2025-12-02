@@ -1,0 +1,285 @@
+@media (max-width: 1003px) { /* Schermo Telefono */
+    .main-container {grid-template-columns: 1fr}
+    .ico-small {width: 37px; height: 37px;}
+    .header .button {height: 75px;width: 350px;}
+    .modal-playlist .card {width: 77.5%;}
+    .items .img-insert {width: 250px; height: 250px;}
+}
+@media (min-width: 1003px) { /* Schermo PC */
+    .main-container.open-song.sel-playlist .main-container {grid-template-columns: 25% 55% 20%} /* Library + Player + Song Info */
+    .main-container:not(.open-song).sel-playlist .main-container {grid-template-columns: 25% 75%} /* Library + Player */
+    .main-container:not(.sel-playlist, .open-song) .main-container {grid-template-columns: 1fr} /* Library */
+
+    .ico-small {width: 18.5px; height: 18.5px;}
+    .header .button {height: 40px;width: 150px;}
+    .modal-playlist .card {width: 37.5%;}
+    .items .img-insert {width: 175px; height: 175px;}
+}
+
+
+* {
+    transition: all 0.25s ease;
+}
+
+body {
+    background-color: #ffffff00;
+}
+body, html {
+    height: 100%;
+    font-family: var(--font-family);
+    color: var(--font-color);
+    margin: 0;
+}
+
+.main-container {
+    row-gap: 7.5%;
+    overflow: auto;
+
+    transition: all 0.25s ease;
+    display: grid;
+    height: 100%;
+    background-color: var(--containers-bg-color);
+    margin: auto;
+}
+html.not-iframe .main-container {
+    width: 100%;
+}
+html:not(.not-iframe) .main-container {
+    width: 95%;
+    border-radius: 25px;
+}
+/* Grid 1 */
+.library-container {
+    background-color: var(--secondary-bg-color);
+    padding: 17.5px;
+    height: min(94.85%, 100%);
+    overflow: auto;
+}
+.library-container::-webkit-scrollbar {
+    display: none;
+}
+
+.library-container .header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 13.5%;
+    align-items: center;
+}
+.header .title {
+    margin-left: 5px;
+    font-size: var(--medium-font-size);
+    font-weight: bold;
+    margin: auto 0;
+}
+.header .title-secondary {
+    margin: 0 0 0 auto;
+    color: var(--elm-font-color);
+    font-size: var(--small-font-size);
+}
+.header .button {
+    transition: all 0.5s ease;
+    color: var(--font-color);
+    font-size: var(--small-font-size);
+    background-color: var(--menu-bg-color);
+    
+    margin: 0 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: center;
+    cursor: pointer;
+    border: 0;
+    border-radius: 50px;
+    font-weight: bold;
+    gap: 5.25px;
+}
+.header .button:hover {
+    background-color: var(--but-hover-bg-color);
+}
+/* Dropdown */
+.header .dropdown {
+    margin-top: .75px;
+    position: relative;
+    width: max-content;
+}
+.dropbtn {
+    transition: all 0.25s ease;
+    background-color: #ffffff00;
+    color: var(--elm-font-color);
+    padding: 5px;
+    font-size: var(--small-font-size);
+    border: none;
+    cursor: pointer;
+}
+.dropdown:hover .dropbtn {
+    color: var(--font-color);
+    font-size: calc(var(--small-font-size) + .75px);
+}
+.dropdown-content {
+    display: none;
+
+    opacity: 0;
+    transition: all 0.5s allow-discrete;
+
+    position: absolute;
+    border-radius: 5px;
+    background-color: var(--menu-bg-color);
+    min-width: max-content;
+}
+.dropdown-content a {
+    transition: all 0.5s allow-discrete;
+    color: var(--font-color);
+    padding: 5px 7px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.dropdown-content a:hover {
+    background-color: var(--ver-hover-bg-color);
+    border-radius: 5px;
+}
+.dropdown:hover .dropdown-content {
+    display: block;
+
+    opacity: 1;
+    @starting-style {
+        opacity: 0;
+    }
+}
+/* --- */
+
+/* Modals */
+.close-button {
+    width: max-content;
+    color: var(--elm-font-color);
+    font-size: var(--small-font-size);
+    margin: 0;
+    cursor: pointer;
+}
+/* Modal Playlist */
+.modal-playlist {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 95%;
+    height: 100%;
+    border-radius: 25px;
+    background-color: var(--translucent-bg-color);
+}
+.modal-playlist .card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--secondary-bg-color);
+    padding: 15px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+}
+.card .title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: var(--medium-font-size);
+    margin-bottom: 15px;
+} .card .title p {margin: 0; font-weight: bold;}
+.card .items {
+    display: grid;
+    grid-template-columns: 0.7fr 1fr;
+    gap: 10px;
+}
+.items .img-insert {
+    border-radius: 15px;
+    cursor: pointer;
+}
+.inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.inputs .input-field {
+    background-color: var(--ver-hover-bg-color);
+    border: none;
+    color: var(--font-color);
+    font-size: calc(var(--small-font-size) - 3.5px);
+    border-radius: 5px;
+    width: 87.5%;
+    padding: 10px;
+}
+.inputs .textarea-field {
+    background-color: var(--ver-hover-bg-color);
+    border: none;
+    color: var(--font-color);
+    font-size: calc(var(--small-font-size) - 3.5px);
+    border-radius: 5px;
+    width: 87.5%;
+    padding: 10px;
+    resize: none;
+    height: 57.5%;
+}
+.card .button {
+    align-self: flex-end;
+    background-color: var(--font-color);
+    border: none;
+    color: var(--inv-color);
+    font-size: var(--small-font-size);
+    padding: 10px 15px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-right: 15px;
+}
+
+
+/* Playlists */
+
+.playlists-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+.playlists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.playlists-details .pl-item {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    cursor: pointer;
+}
+.playlists-grid .pl-item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: max-content;
+    cursor: pointer;
+}
+.pl-item {
+    padding: 7.5px;
+}
+.pl-item:hover {
+    background-color: var(--ver-hover-bg-color);
+    border-radius: 10px;
+}
+.pl-item .pl-img {
+    border-radius: 15px;
+    height: 150px;
+    width: 150px;
+}
+.pl-item .pl-text {
+    margin: 0 0 0 2.5px;
+    font-size: var(--small-font-size);
+}
+
+/* Icons */
+.ico-small {
+    filter: invert(var(--img-invert-value));
+}
