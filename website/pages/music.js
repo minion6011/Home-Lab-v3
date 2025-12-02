@@ -24,8 +24,17 @@ if (window.self === window.top) {
 
 
 /* Playlist Modal */
+let modalState = [0,0]
+
+const plName = document.getElementById("pl-name");
+const plDesc = document.getElementById("pl-desc");
+
+const fileInput = document.getElementById("img-file");
+const imgView = document.getElementById("modal-pl-img");
+
 const playlistModal = document.getElementById("playlist-modal");
 const playlistModalTitle = document.getElementById("modal-pl-title");
+const buttonModal = document.getElementById("pl-btn")
 
 function PlaylistModal(arg, editImg=null) {
     if (arg === "edit") {
@@ -45,10 +54,10 @@ function PlaylistModal(arg, editImg=null) {
     }
 }
 let imgDefault = "";
-const fileInput = document.getElementById("img-file");
-const imgView = document.getElementById("modal-pl-img");
 
 fileInput.addEventListener('change', () => {
+    modalState[0] = 1
+    checkStatus()
     const file = fileInput.files[0];
     if (imgDefault === "") {
         imgDefault = imgView.src;
@@ -60,11 +69,21 @@ fileInput.addEventListener('change', () => {
     reader.readAsDataURL(file);
 });
 
+plName.addEventListener("change", () => {
+    if (plName.value != "") {
+        modalState[1] = 1;
+        checkStatus()
+    }
+});
 
+
+function checkStatus() {
+    if (modalState[0] == 1 && modalState[1] == 1) {
+        buttonModal.removeAttribute('disabled');
+    }
+};
 /* Api */
 
-const pl_name = document.getElementById("pl-name");
-const pl_desc = document.getElementById("pl-desc");
 function CreateEditPlaylist(type, num=null) {
     const formData = new FormData();
     formData.append("type", type);
@@ -72,8 +91,8 @@ function CreateEditPlaylist(type, num=null) {
         formData.append("num", num);
     }
     formData.append("img", fileInput.files[0]);
-    formData.append('name', pl_name.value);
-    formData.append('description', pl_desc.value);
+    formData.append('name', plName.value);
+    formData.append('description', plDesc.value);
     const requestOptions = {
         headers: {
             "Content-Type": fileInput.files[0].contentType,
