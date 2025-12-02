@@ -58,7 +58,7 @@ def playlist():
         playlist["description"] = request.form["description"]
         file = request.files.getlist('img')[0]
         if file:
-            file.save(f"{data_config['music_folder']}\\{num}.webp") # - da rimuovere e fare che prende la cartella ottenendo il path tramite os
+            file.save(f"{os.getcwd()}\\website\\music\\{num}.webp") # - da rimuovere e fare che prende la cartella ottenendo il path tramite os
         playlist["img"] = f"/website/music/{num}.webp"
         with open("music.json", "w") as f:
             json.dump(data_music, f, indent=4)
