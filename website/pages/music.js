@@ -15,15 +15,6 @@ window.addEventListener("storage", (event) => {
     }
 });
 /* --- */
-
-/* Iframe Check */
-if (window.self === window.top) {
-    document.documentElement.classList.add("not-iframe");
-}
-/* --- */
-
-
-/* Playlist Modal */
 let modalState = [0,0]
 
 const plName = document.getElementById("pl-name");
@@ -36,6 +27,17 @@ const playlistModal = document.getElementById("playlist-modal");
 const playlistModalTitle = document.getElementById("modal-pl-title");
 const buttonModal = document.getElementById("pl-btn")
 
+
+
+/* Iframe Check */
+if (window.self === window.top) {
+    document.documentElement.classList.add("not-iframe");
+}
+/* --- */
+
+
+/* Playlist Modal */
+
 function PlaylistModal(arg, editImg=null) {
     if (arg === "edit") {
         playlistModalTitle.innerText = "Edit Playlist";
@@ -46,6 +48,9 @@ function PlaylistModal(arg, editImg=null) {
         if (imgDefault !== "") {
             imgView.src = imgDefault;
         }
+        plName.value = "";
+        plDesc.value = "";
+
         playlistModalTitle.innerText = "Create Playlist";
         playlistModal.style.display = "block";
     }
@@ -108,6 +113,7 @@ function CreateEditPlaylist(type, num=null) {
             CreatePlHTML(data.plSrc, data.plName, data.plNum);
         });
     });
+    PlaylistModal('close')
 }
 
 const playlistsContainer = document.getElementById("playlists-container");
