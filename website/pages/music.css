@@ -10,10 +10,11 @@
     .playlists-grid {grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));}
 }
 @media (min-width: 1003px) { /* Schermo PC */
-    .main-container.open-song.sel-playlist .main-container {grid-template-columns: 25% 55% 20%} /* Library + Player + Song Info */
-    .main-container:not(.open-song).sel-playlist .main-container {grid-template-columns: 25% 75%} /* Library + Player */
-    .main-container:not(.sel-playlist, .open-song) .main-container {grid-template-columns: 1fr} /* Library */
-    
+    .main-container[data-status="2"] {grid-template-columns: 25% 55% 20%} /* Library + Player + Song Info (Brobably will be Discarded)*/ 
+    .main-container[data-status="1"] {grid-template-columns: 35% 65%} /* Library + Player */
+    .main-container[data-status="1"] .library-container {border-radius: 0 25px 25px 0;}
+    .main-container[data-status="0"] {grid-template-columns: 1fr} /* Library */
+
     .ico-small {width: 18.5px; height: 18.5px;}
     .header .button {height: 40px;width: 150px;}
     .modal-playlist .card {width: 37.5%;}
@@ -73,7 +74,8 @@ html:not(.not-iframe) .library-container {
 .library-container .header {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    height: 13.5%;
+    /* height: 13.5%; */
+    height: max-content;
     align-items: center;
 }
 .header .title {
@@ -124,7 +126,7 @@ html:not(.not-iframe) .library-container {
 }
 .dropdown:hover .dropbtn {
     color: var(--font-color);
-    font-size: calc(var(--small-font-size) + .75px);
+    /* font-size: calc(var(--small-font-size) + .75px); */ /* It bugs the header height */
 }
 .dropdown-content {
     display: none;
@@ -171,15 +173,19 @@ html:not(.not-iframe) .library-container {
     cursor: pointer;
 }
 /* Modal Playlist */
+html.not-iframe .modal-playlist {
+    width: 100%;
+}
+html:not(.not-iframe) .modal-playlist {
+    width: 95%; border-radius: 25px;
+}
 .modal-playlist {
     display: none;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 95%;
     height: 100%;
-    border-radius: 25px;
     background-color: var(--translucent-bg-color);
 }
 .modal-playlist .card {

@@ -19,6 +19,7 @@ if (window.self === window.top) {
     document.documentElement.classList.add("not-iframe");
 }
 // --- 
+const mainContainer = document.getElementById("mainContainer");
 // Songs Related
 
 // Modal Related
@@ -51,11 +52,12 @@ function OpenPlaylist(item) {
     let ItemPlImg = item.querySelector(".pl-img");
     let ItemPlName = item.querySelector(".pl-text");
     let ItemPlId = item.querySelector(".pl-id");
+    mainContainer.dataset.status = "1";
 }
 
 function GridChangePlaylist(arg) { // 'playlists-details' or 'playlists-grid'
     if (arg == 'playlists-details' || arg == 'playlists-grid') {
-        playlistsContainer.className = arg
+        playlistsContainer.className = arg;
         localStorage.setItem("pl-grid", arg);
     }
 }
