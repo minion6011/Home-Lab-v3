@@ -1,4 +1,4 @@
-/* Theme Loader */
+// Theme Loader
 if (localStorage.getItem("theme") === "light") {
     document.body.classList.add("light");
 }
@@ -14,11 +14,19 @@ window.addEventListener("storage", (event) => {
         document.body.classList.remove("light");
     }
 });
-/* --- */
-let modalState = [0,0]
+// Iframe Check
+if (window.self === window.top) {
+    document.documentElement.classList.add("not-iframe");
+}
+// --- 
+// Songs Related
 
-const plName = document.getElementById("pl-name");
-const plDesc = document.getElementById("pl-desc");
+// Modal Related
+const playlistsContainer = document.getElementById("playlists-container");
+let modalState = [false,false]
+
+const plNameIn = document.getElementById("pl-name");
+const plDescIn = document.getElementById("pl-desc");
 
 const fileInput = document.getElementById("img-file");
 const imgView = document.getElementById("modal-pl-img");
@@ -27,30 +35,30 @@ const playlistModal = document.getElementById("playlist-modal");
 const playlistModalTitle = document.getElementById("modal-pl-title");
 const buttonModal = document.getElementById("pl-btn")
 
+let imgDefault = "";
 
 
-/* Iframe Check */
-if (window.self === window.top) {
-    document.documentElement.classList.add("not-iframe");
+
+// Playlist
+
+function OpenPlaylist(item) {
+    let ItemPlImg = item.querySelector(".pl-img");
+    let ItemPlName = item.querySelector(".pl-text");
+    let ItemPlId = item.querySelector(".pl-id");
 }
-/* --- */
 
 
-/* Playlist Modal */
-
+// Modal Related 
 function PlaylistModal(arg, editImg=null) {
-    if (arg === "edit") {
+    if (imgDefault != "") imgView.src = imgDefault;
+    if (arg === "edit") { // Needs changes
         playlistModalTitle.innerText = "Edit Playlist";
         imgView.src = editImg;
         playlistModal.style.display = "block";
     }
     else if (arg === "new") {
-        if (imgDefault !== "") {
-            imgView.src = imgDefault;
-        }
-        plName.value = "";
-        plDesc.value = "";
-
+        modalState = [0,0];
+        plNameIn.value = ""; plDescIn.value = ""; buttonModal.disabled = true;
         playlistModalTitle.innerText = "Create Playlist";
         playlistModal.style.display = "block";
     }
@@ -58,37 +66,24 @@ function PlaylistModal(arg, editImg=null) {
         playlistModal.style.display = "none";
     }
 }
-let imgDefault = "";
 
 fileInput.addEventListener('change', () => {
-    modalState[0] = 1
-    checkStatus()
+    modalState[0] = true; checkStatus();
     const file = fileInput.files[0];
-    if (imgDefault === "") {
-        imgDefault = imgView.src;
-    }
+    if (imgDefault === "") imgDefault = imgView.src;
     const reader = new FileReader();
-    reader.onload = (e) => {
-        imgView.src = e.target.result;
-    };
+    reader.onload = (e) => imgView.src = e.target.result;
     reader.readAsDataURL(file);
 });
-
-plName.addEventListener("change", () => {
-    if (plName.value != "") {
-        modalState[1] = 1;
-        checkStatus()
-    }
+plNameIn.addEventListener("change", () => {
+    modalState[1] = (plNameIn.value != ""); checkStatus(); 
 });
 
-
 function checkStatus() {
-    if (modalState[0] == 1 && modalState[1] == 1) {
-        buttonModal.removeAttribute('disabled');
-    }
+    buttonModal.disabled = !(modalState[0] && modalState[1]);
 };
-/* Api */
 
+// Create-Edit Playlist
 function CreateEditPlaylist(type, num=null) {
     const formData = new FormData();
     formData.append("type", type);
@@ -96,8 +91,8 @@ function CreateEditPlaylist(type, num=null) {
         formData.append("num", num);
     }
     formData.append("img", fileInput.files[0]);
-    formData.append('name', plName.value);
-    formData.append('description', plDesc.value);
+    formData.append('name', plNameIn.value);
+    formData.append('description', plDescIn.value);
     const requestOptions = {
         headers: {
             "Content-Type": fileInput.files[0].contentType,
@@ -116,26 +111,24 @@ function CreateEditPlaylist(type, num=null) {
     PlaylistModal('close')
 }
 
-const playlistsContainer = document.getElementById("playlists-container");
 async function CreatePlHTML(imgSrc, plName, plNum) {
     let divMain = document.createElement("div");
     divMain.className = "pl-item";
+    divMain.setAttribute("onClick", "OpenPlaylist(self)");
     // Elementi del divMain
     let img = document.createElement("img");
     img.className = "pl-img";
     img.src = imgSrc;
-    divMain.appendChild(img);
-
+    
     let p = document.createElement("div");
     p.className = "pl-text";
-    p.innerText = plName // Non sono sicuro sia innerText o innerHTML;
-    divMain.appendChild(p);
+    p.innerText = plName
 
     let hiddenInput = document.createElement("input");
     hiddenInput.type = "hidden";
     hiddenInput.value = plNum;
     hiddenInput.className = "pl-id";
-    divMain.appendChild(hiddenInput);
 
+    divMain.append(img, p, hiddenInput);
     playlistsContainer.appendChild(divMain);
 }

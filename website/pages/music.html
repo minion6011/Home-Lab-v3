@@ -33,7 +33,7 @@
 
                 <div class="playlists-grid" id="playlists-container">
                     {% for i in range(data_music["number_tot"]) %}
-                        <div class="pl-item">
+                        <div class="pl-item" onclick="OpenPlaylist(this)">
                             <img src='{{ data_music[(i+1)|string()]["img"] }}' class="pl-img">
                             <p class="pl-text">{{ data_music[(i+1)|string()]["name"] }}</p>
                             <input type="hidden" class="pl-id" value="{{ i+1 }}">

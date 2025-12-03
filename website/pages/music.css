@@ -263,11 +263,11 @@ html:not(.not-iframe) .main-container {
     cursor: pointer;
 }
 .pl-item {
-    padding: 7.5px;
+    padding: 10px;
+    border-radius: 7.5px;
 }
 .pl-item:hover {
     background-color: var(--ver-hover-bg-color);
-    border-radius: 10px;
 }
 .pl-item .pl-img {
     border-radius: 15px;
