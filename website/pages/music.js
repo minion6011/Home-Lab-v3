@@ -57,7 +57,7 @@ function PlaylistModal(arg, editImg=null) {
         playlistModal.style.display = "block";
     }
     else if (arg === "new") {
-        modalState = [0,0];
+        modalState = [false,false];
         plNameIn.value = ""; plDescIn.value = ""; buttonModal.disabled = true;
         playlistModalTitle.innerText = "Create Playlist";
         playlistModal.style.display = "block";
@@ -119,7 +119,7 @@ async function CreatePlHTML(imgSrc, plName, plNum) {
     let img = document.createElement("img");
     img.className = "pl-img";
     img.src = imgSrc;
-    
+
     let p = document.createElement("div");
     p.className = "pl-text";
     p.innerText = plName
