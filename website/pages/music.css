@@ -4,16 +4,24 @@
     .header .button {height: 75px;width: 350px;}
     .modal-playlist .card {width: 77.5%;}
     .items .img-insert {width: 250px; height: 250px;}
+
+    .playlists-grid .pl-item {max-width: 250px;}
+    .pl-item .pl-img {height: 250px; width: 250px;}
+    .playlists-grid {grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));}
 }
 @media (min-width: 1003px) { /* Schermo PC */
     .main-container.open-song.sel-playlist .main-container {grid-template-columns: 25% 55% 20%} /* Library + Player + Song Info */
     .main-container:not(.open-song).sel-playlist .main-container {grid-template-columns: 25% 75%} /* Library + Player */
     .main-container:not(.sel-playlist, .open-song) .main-container {grid-template-columns: 1fr} /* Library */
-
+    
     .ico-small {width: 18.5px; height: 18.5px;}
     .header .button {height: 40px;width: 150px;}
     .modal-playlist .card {width: 37.5%;}
     .items .img-insert {width: 175px; height: 175px;}
+
+    .playlists-grid .pl-item {max-width: 150px;}
+    .pl-item .pl-img {height: 150px; width: 150px;}
+    .playlists-grid {grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));}
 }
 
 
@@ -128,6 +136,7 @@ html:not(.not-iframe) .library-container {
     border-radius: 5px;
     background-color: var(--menu-bg-color);
     min-width: max-content;
+    padding: 3.25px;
 }
 .dropdown-content a {
     transition: all 0.5s allow-discrete;
@@ -137,6 +146,7 @@ html:not(.not-iframe) .library-container {
     display: flex;
     align-items: center;
     gap: 5px;
+    font-size: var(--small-font-size);
 }
 .dropdown-content a:hover {
     background-color: var(--ver-hover-bg-color);
@@ -243,12 +253,11 @@ html:not(.not-iframe) .library-container {
 
 .playlists-details {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 20px;
 }
 .playlists-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 20px;
     padding: 20px;
 }
@@ -275,8 +284,6 @@ html:not(.not-iframe) .library-container {
 }
 .pl-item .pl-img {
     border-radius: 15px;
-    height: 150px;
-    width: 150px;
 }
 .pl-item .pl-text {
     margin: 0 0 0 2.5px;

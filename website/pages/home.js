@@ -12,7 +12,7 @@ window.addEventListener("storage", (event) => {
     if (event.newValue === "light") {
         document.body.classList.add("light");
     }
-    else {
+    else if (event.newValue === "dark"){
         document.body.classList.remove("light");
     }
 });

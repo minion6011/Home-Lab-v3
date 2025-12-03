@@ -6,11 +6,11 @@ else {
     document.body.classList.remove("light");
 }
 
-window.addEventListener("storage", (event) => {
+window.addEventListener("storage", (event) => { // This event is different from the defaults
     if (event.newValue === "light") {
         document.body.classList.add("light");
     }
-    else {
+    else if (event.newValue === "dark") {
         document.body.classList.remove("light");
     }
 });
@@ -41,12 +41,24 @@ let imgDefault = "";
 
 // Playlist
 
+// Playlist Grid Check
+if (localStorage.getItem("pl-grid")) {
+    playlistsContainer.className = localStorage.getItem("pl-grid")
+}
+// ---
+
 function OpenPlaylist(item) {
     let ItemPlImg = item.querySelector(".pl-img");
     let ItemPlName = item.querySelector(".pl-text");
     let ItemPlId = item.querySelector(".pl-id");
 }
 
+function GridChangePlaylist(arg) { // 'playlists-details' or 'playlists-grid'
+    if (arg == 'playlists-details' || arg == 'playlists-grid') {
+        playlistsContainer.className = arg
+        localStorage.setItem("pl-grid", arg);
+    }
+}
 
 // Modal Related 
 function PlaylistModal(arg, editImg=null) {

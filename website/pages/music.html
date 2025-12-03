@@ -23,8 +23,8 @@
                     <div class="dropdown">
                         <button class="dropbtn">Display As &#9662;</button>
                         <div class="dropdown-content">
-                            <a onclick="document.getElementById('playlists-container').className = 'playlists-details'" data-sort="list"><img src="{{ url_for('static',filename='img/details.webp') }}" class="ico-small"> Detailed List</a>
-                            <a onclick="document.getElementById('playlists-container').className = 'playlists-grid'" data-sort="grid"><img src="{{ url_for('static',filename='img/grid.webp') }}" class="ico-small"> Detailed Grid</a>
+                            <a onclick="GridChangePlaylist('playlists-details')" data-sort="list"><img src="{{ url_for('static',filename='img/details.webp') }}" class="ico-small"> Detailed List</a>
+                            <a onclick="GridChangePlaylist('playlists-grid')" data-sort="grid"><img src="{{ url_for('static',filename='img/grid.webp') }}" class="ico-small"> Detailed Grid</a>
                         </div>
                     </div>
 
@@ -50,7 +50,7 @@
                         </div>
                         <div class="items">
                             <div>
-                                <input id="img-file" type="file" style="display: none;" accept="image/png, image/jpeg, image/webm, image/jpg">
+                                <input id="img-file" type="file" style="display: none;" accept="image/png, image/jpeg, image/webm, image/jpg, image/avif">
                                 <img id="modal-pl-img" onclick="document.getElementById('img-file').click()" src="{{ url_for('static',filename='img/plDefault-ico.webp') }}" class="img-insert">
                             </div>
                             <div class="inputs">
