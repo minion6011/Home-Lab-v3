@@ -195,6 +195,7 @@ html:not(.not-iframe) .main-container {
 .items .img-insert {
     border-radius: 15px;
     cursor: pointer;
+    filter: invert(var(--img-invert-value));
 }
 .inputs {
     display: flex;
