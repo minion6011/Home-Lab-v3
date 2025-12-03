@@ -49,10 +49,13 @@ html:not(.not-iframe) .main-container {
     border-radius: 25px;
 }
 /* Grid 1 */
+html:not(.not-iframe) .library-container {
+    height: min(94.85%, 100%);
+}
+
 .library-container {
     background-color: var(--secondary-bg-color);
     padding: 17.5px;
-    height: min(94.85%, 100%);
     overflow: auto;
 }
 .library-container::-webkit-scrollbar {
