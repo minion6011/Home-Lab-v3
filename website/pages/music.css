@@ -10,6 +10,9 @@
     .playlists-grid .pl-item {max-width: 250px;}
     .pl-item .pl-img {height: 250px; width: 250px;}
     .playlists-grid {grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));}
+
+    .song-btn {padding: 15px;}
+    .song-btn img {width: 60px; height: 60px;}
 }
 @media (min-width: 1003px) { /* Schermo PC */
     .main-container[data-status="1"] {grid-template-columns: 35% 65%} /* Library + Player */
@@ -25,6 +28,8 @@
     .playlists-grid {grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));}
 
     .song-container {margin-left: 20px;}
+    .song-btn {padding: 10px;}
+    .song-btn img {width: 30px; height: 30px;}
 }
 
 
@@ -83,14 +88,11 @@ html.not-iframe .song-container {margin: 20px}
 
 .song-btn {
     border-radius: 100%;
-    padding: 10px;
     border: 0;
     background-color: var(--elm-hover-bg-color);
 }
 .song-btn:hover {background-color: var(--ver-hover-bg-color);}
 .song-btn img {
-    width: 35px;
-    height: 35px;
     filter: invert(var(--img-invert-value));
 }
 

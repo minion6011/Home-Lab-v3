@@ -82,11 +82,13 @@ function GridChangePlaylist(arg) { // 'playlists-details' or 'playlists-grid'
 }
 
 // Modal Related 
-function PlaylistModal(arg, editImg=null) {
+function PlaylistModal(arg) {
+    if (imgDefault === "") imgDefault = imgView.src;
     if (imgDefault != "") imgView.src = imgDefault;
     if (arg === "edit") { // Needs changes
         playlistModalTitle.innerText = "Edit Playlist";
-        imgView.src = editImg;
+        fileInput.files[0] = null;
+        imgView.src = plDsImg.src; plNameIn.value = plDsTitle.innerText; plDescIn.value = plDsDesc.innerText.substring(0, plDsDesc.innerText.lastIndexOf("\n\n"));
         playlistModal.style.display = "block";
     }
     else if (arg === "new") {
