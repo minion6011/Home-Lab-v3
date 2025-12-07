@@ -42,8 +42,8 @@ def music():
 
 
 @app.route('/playlist', methods=['POST'])
-def playlist():
-    if request.form:
+def playlist(): # da aggiungere un controllo se i dati richiesti nel form e json esistono nella request
+    if request.form: # create or edit
         if request.form["type"] == "edit":
             num = request.form["num"]
             playlist = data_music[request.form["num"]]
@@ -58,8 +58,11 @@ def playlist():
         playlist["description"] = request.form["description"]
         file = request.files.getlist('img')[0]
         if file:
-            file.save(f"{os.getcwd()}\\website\\music\\{num}.webp") # - da rimuovere e fare che prende la cartella ottenendo il path tramite os
+            file.save(f"{os.getcwd()}\\website\\music\\{num}.webp")
         playlist["img"] = f"/website/music/{num}.webp"
         with open("music.json", "w") as f:
             json.dump(data_music, f, indent=4)
         return {"plName": request.form["name"], "plNum": num, "plSrc": f"/website/music/{num}.webp"}, 200
+    elif request.json: # get
+        if request.json["num"] and request.json["num"] in data_music:
+            return data_music[request.json["num"]]

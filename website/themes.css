@@ -1,5 +1,6 @@
 :root {
     --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --mini-font-size: 15px;
     --small-font-size: 16px;
     --medium-font-size: 18px;
     --X-font-size: 20px;
@@ -54,6 +55,7 @@
 
 @media (max-width: 1003px) {
     :root {
+        --mini-font-size: 30px;
         --small-font-size: 40px;
         --medium-font-size: 45px;
         --big-font-size: 50px;

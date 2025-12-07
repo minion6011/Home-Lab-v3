@@ -21,6 +21,9 @@ if (window.self === window.top) {
 // --- 
 const mainContainer = document.getElementById("mainContainer");
 // Songs Related
+const plDsImg = document.getElementById("plDs-img")
+const plDsTitle = document.getElementById("plDs-title")
+const plDsDesc = document.getElementById("plDs-desc")
 
 // Modal Related
 const playlistsContainer = document.getElementById("playlists-container");
@@ -48,12 +51,28 @@ if (localStorage.getItem("pl-grid")) {
 }
 // ---
 
-function OpenPlaylist(item) {
-    let ItemPlImg = item.querySelector(".pl-img");
-    let ItemPlName = item.querySelector(".pl-text");
+async function OpenPlaylist(item) {
     let ItemPlId = item.querySelector(".pl-id");
+    let data = await GetPlData(ItemPlId.value);
+    if (data == null) throw new Error("Playlist data returned null (Code was not 200)")
+    plDsImg.src = data.img; plDsTitle.innerHTML = data.name; plDsDesc.innerHTML = `${data.description}<br><br><i>Songs - ${data.songs.length}</i>`;
     mainContainer.dataset.status = "1";
 }
+
+
+async function GetPlData(plNum) {
+    let req = await fetch("/playlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({num: plNum}),
+    });
+    if (req.status == 200) {
+        let json = JSON.parse(await req.text())
+        return json
+    }
+    return null
+}
+
 
 function GridChangePlaylist(arg) { // 'playlists-details' or 'playlists-grid'
     if (arg == 'playlists-details' || arg == 'playlists-grid') {

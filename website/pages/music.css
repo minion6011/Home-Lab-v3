@@ -1,4 +1,6 @@
 @media (max-width: 1003px) { /* Schermo Telefono */
+    .main-container[data-status="1"] .library-container {display: none;}
+
     .main-container {grid-template-columns: 1fr}
     .ico-small {width: 37px; height: 37px;}
     .header .button {height: 75px;width: 350px;}
@@ -10,10 +12,8 @@
     .playlists-grid {grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));}
 }
 @media (min-width: 1003px) { /* Schermo PC */
-    .main-container[data-status="2"] {grid-template-columns: 25% 55% 20%} /* Library + Player + Song Info (Brobably will be Discarded)*/ 
     .main-container[data-status="1"] {grid-template-columns: 35% 65%} /* Library + Player */
-    .main-container[data-status="1"] .library-container {border-radius: 0 25px 25px 0;}
-    .main-container[data-status="0"] {grid-template-columns: 1fr} /* Library */
+    .main-container[data-status="0"] {grid-template-columns: 100% 0%} /* Library */
 
     .ico-small {width: 18.5px; height: 18.5px;}
     .header .button {height: 40px;width: 150px;}
@@ -23,6 +23,8 @@
     .playlists-grid .pl-item {max-width: 150px;}
     .pl-item .pl-img {height: 150px; width: 150px;}
     .playlists-grid {grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));}
+
+    .song-container {margin-left: 20px;}
 }
 
 
@@ -40,16 +42,21 @@ body, html {
     margin: 0;
 }
 
+.main-container::-webkit-scrollbar {
+    display: none;
+}
 .main-container {
+    transition: all 0.35s ease;
+    will-change: grid-template-columns;
     row-gap: 7.5%;
     overflow: auto;
 
-    transition: all 0.25s ease;
     display: grid;
     height: 100%;
     background-color: var(--containers-bg-color);
     margin: auto;
 }
+
 html.not-iframe .main-container {
     width: 100%;
 }
@@ -61,10 +68,75 @@ html:not(.not-iframe) .main-container {
 html:not(.not-iframe) .library-container {
     height: min(94.85%, 100%);
 }
+html.not-iframe .main-container[data-status="0"] .library-container {margin: 20px;}
+html.not-iframe .main-container[data-status="1"] .library-container {margin: 20px 0 20px 20px;}
 
+/* Songs Container */
+.main-container[data-status="0"] .song-container {display: none;}
+html.not-iframe .song-container {margin: 20px}
+.song-container {
+    border-radius: 25px;
+    background-color: var(--secondary-bg-color);
+    padding: 17.5px;
+    overflow: auto; 
+}
+
+.song-btn {
+    border-radius: 100%;
+    padding: 10px;
+    border: 0;
+    background-color: var(--elm-hover-bg-color);
+}
+.song-btn:hover {background-color: var(--ver-hover-bg-color);}
+.song-btn img {
+    width: 35px;
+    height: 35px;
+    filter: invert(var(--img-invert-value));
+}
+
+.song-container .playlist-songs {
+    background-color: var(--menu-bg-color);
+    border-radius: 15px;
+    padding: 12.5px;
+}
+.playlist-songs .playlist-info {
+    display: flex;
+    gap: 15px
+}
+.playlist-info .image {
+    width: 175px; /* Size Mobile = Size PC */
+    height: 175px;
+    border-radius: 15px;
+}
+.playlist-info .text #plDs-title {
+    margin: 10px 0 0 0;
+    font-size: var(--X-font-size);
+    font-weight: bold;
+}
+.playlist-info .text #plDs-desc {
+    margin: 2px 0 0 0;
+    font-size: var(--mini-font-size);
+}
+
+.songs-table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: var(--small-font-size);
+}
+.songs-table th {border-bottom: 1px solid var(--menu-bg-color);}
+.songs-table td, th {
+    text-align: left;
+    padding: 8px;
+}
+.songs-table tr:last-child td:first-child {border-bottom-left-radius: 10px;} 
+.songs-table tr:last-child td:last-child {border-bottom-right-radius: 10px;}
+.songs-table .songTcontainer:hover {background-color: var(--menu-bg-color)}
+
+/* Library Container (Playlist) */
 .library-container {
     background-color: var(--secondary-bg-color);
     padding: 17.5px;
+    border-radius: 25px;
     overflow: auto;
 }
 .library-container::-webkit-scrollbar {
@@ -264,10 +336,10 @@ html:not(.not-iframe) .modal-playlist {
 }
 .playlists-grid {
     display: grid;
+    justify-items: center;
     gap: 20px;
     padding: 20px;
 }
-
 .playlists-details .pl-item {
     display: flex;
     flex-direction: row;

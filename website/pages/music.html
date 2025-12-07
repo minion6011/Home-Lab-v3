@@ -17,7 +17,7 @@
                     <p class="title">Your Library</p>
 
                     <button class="button" onclick="PlaylistModal('new')">
-                        <img src="{{ url_for('static',filename='img/add.webp')}}" class="ico-small"> Create Playlist
+                        <img src="{{ url_for('static',filename='img/add-ico.webp')}}" class="ico-small"> Create Playlist
                     </button>
 
                     <div class="dropdown">
@@ -41,32 +41,75 @@
                     {% endfor %}
                 </div>
 
-                <!-- Modals -->
-                <div class="modal-playlist" id="playlist-modal">
-                    <div class="card">
-                        <div class="title">
-                            <p id="modal-pl-title">Create Playlist</p>
-                            <p class="close-button" onclick="PlaylistModal('close')">✕</p>
-                        </div>
-                        <div class="items">
-                            <div>
-                                <input id="img-file" type="file" style="display: none;" accept="image/png, image/jpeg, image/webm, image/jpg, image/avif">
-                                <img id="modal-pl-img" onclick="document.getElementById('img-file').click()" src="{{ url_for('static',filename='img/plDefault-ico.webp') }}" class="img-insert">
-                            </div>
-                            <div class="inputs">
-                                <input id="pl-name" type="text" placeholder="Playlist Name" maxlength="25" class="input-field">
-                                <textarea id="pl-desc" placeholder="Playlist Description" class="textarea-field" maxlength="100"></textarea>
-                            </div>
-                        </div>
-                        <button class="button" disabled onclick="CreateEditPlaylist()" id="pl-btn">Save</button>
-                    </div>
-                </div>
-
-
             </div>
 
-        </div>
 
+            <div class="song-container">
+                <div class="playlist-songs">
+                    <div class="playlist-info">
+                        <img class="image" id="plDs-img" src="{{ url_for('static',filename='img/plDefault-ico.webp') }}">
+                        <div class="text">
+                            <p id="plDs-title">Playlist Name</p>
+                            <p id="plDs-desc">Playlist Description</p>
+                        </div>
+                    </div>
+                    <hr>
+
+                    <button class="song-btn" id="songs-play">
+                        <img src="{{ url_for('static',filename='img/shuffle-ico.webp') }}">
+                    </button>
+                    <button class="song-btn" id="songs-edit">
+                        <img src="{{ url_for('static',filename='img/pencil-ico.webp') }}">
+                    </button>
+                    <button class="song-btn" id="songs-delete">
+                        <img src="{{ url_for('static',filename='img/delete-ico.webp') }}">
+                    </button>
+                    <button class="song-btn" id="songs-add">
+                        <img src="{{ url_for('static',filename='img/mAdd-ico.webp') }}">
+                    </button>
+                    
+                </div>
+
+                <table class="songs-table">
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Added</th>
+                        <th>Duration</th>
+                    </tr>
+                    <tr class="songTcontainer">
+                        <td>1</td>
+                        <td>Titolo</td>
+                        <td>Test</td>
+                        <td>07/12/2025</td>
+                        <td>0:00</td>
+                    </tr>
+                </table>
+            </div>
+
+
+            <!-- Modals -->
+            <div class="modal-playlist" id="playlist-modal">
+                <div class="card">
+                    <div class="title">
+                        <p id="modal-pl-title">Create Playlist</p>
+                        <p class="close-button" onclick="PlaylistModal('close')">✕</p>
+                    </div>
+                    <div class="items">
+                        <div>
+                            <input id="img-file" type="file" style="display: none;" accept="image/png, image/jpeg, image/webm, image/jpg, image/avif">
+                            <img id="modal-pl-img" onclick="document.getElementById('img-file').click()" src="{{ url_for('static',filename='img/plDefault-ico.webp') }}" class="img-insert">
+                        </div>
+                        <div class="inputs">
+                            <input id="pl-name" type="text" placeholder="Playlist Name" maxlength="25" class="input-field">
+                            <textarea id="pl-desc" placeholder="Playlist Description" class="textarea-field" maxlength="100"></textarea>
+                        </div>
+                    </div>
+                    <button class="button" disabled onclick="CreateEditPlaylist()" id="pl-btn">Save</button>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
 
