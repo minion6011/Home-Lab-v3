@@ -24,6 +24,7 @@ const mainContainer = document.getElementById("mainContainer");
 const plDsImg = document.getElementById("plDs-img")
 const plDsTitle = document.getElementById("plDs-title")
 const plDsDesc = document.getElementById("plDs-desc")
+const plDSId = document.getElementById("plDs-id")
 
 // Modal Related
 const playlistsContainer = document.getElementById("playlists-container");
@@ -55,6 +56,7 @@ async function OpenPlaylist(item) {
     let ItemPlId = item.querySelector(".pl-id");
     let data = await GetPlData(ItemPlId.value);
     if (data == null) throw new Error("Playlist data returned null (Code was not 200)")
+    plDSId.value = ItemPlId.value;
     plDsImg.src = data.img; plDsTitle.innerHTML = data.name; plDsDesc.innerHTML = `${data.description}<br><br><i>Songs - ${data.songs.length}</i>`;
     mainContainer.dataset.status = "1";
 }
@@ -86,15 +88,16 @@ function PlaylistModal(arg) {
     if (imgDefault === "") imgDefault = imgView.src;
     if (imgDefault != "") imgView.src = imgDefault;
     if (arg === "edit") { // Needs changes
-        playlistModalTitle.innerText = "Edit Playlist";
+        modalState = [true,true]; buttonModal.disabled = false;
         fileInput.files[0] = null;
         imgView.src = plDsImg.src; plNameIn.value = plDsTitle.innerText; plDescIn.value = plDsDesc.innerText.substring(0, plDsDesc.innerText.lastIndexOf("\n\n"));
+        buttonModal.setAttribute("onClick", `CreateEditPlaylist('edit', ${plDSId.value})`); playlistModalTitle.innerText = "Edit Playlist";
         playlistModal.style.display = "block";
     }
     else if (arg === "new") {
         modalState = [false,false];
         plNameIn.value = ""; plDescIn.value = ""; buttonModal.disabled = true;
-        playlistModalTitle.innerText = "Create Playlist";
+        buttonModal.setAttribute("onClick", "CreateEditPlaylist()"); playlistModalTitle.innerText = "Create Playlist";
         playlistModal.style.display = "block";
     }
     else if (arg === "close") {
@@ -121,6 +124,7 @@ function checkStatus() {
 // Create-Edit Playlist
 function CreateEditPlaylist(type, num=null) {
     const formData = new FormData();
+    let ptype
     formData.append("type", type);
     if (type === "edit") {
         formData.append("num", num);
@@ -128,19 +132,29 @@ function CreateEditPlaylist(type, num=null) {
     formData.append("img", fileInput.files[0]);
     formData.append('name', plNameIn.value);
     formData.append('description', plDescIn.value);
+    if (fileInput.files[0] == null) {ptype = "application/json"} else {ptype = fileInput.files[0].contentType}
     const requestOptions = {
         headers: {
-            "Content-Type": fileInput.files[0].contentType,
+            "Content-Type": ptype,
         },
         mode: "no-cors",
         method: "POST",
         files: fileInput.files[0],
         body: formData,
     };
-
     fetch("/playlist", requestOptions).then((response) => {
         response.json().then((data) => {
-            CreatePlHTML(data.plSrc, data.plName, data.plNum);
+            if (type != "edit") {CreatePlHTML(data.plSrc, data.plName, data.plNum);}
+            else {
+                // Img
+                if (fileInput.files[0] != null) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => plDsImg.src = e.target.result;
+                    reader.readAsDataURL(fileInput.files[0]);
+                }
+                // Title + Desc
+                plDsTitle.innerText = plNameIn.value; plDsDesc.innerHTML = plDescIn.value + plDsDesc.innerHTML.slice(plDsDesc.innerHTML.lastIndexOf("<br><br>")-plDsDesc.innerHTML.length);
+            }
         });
     });
     PlaylistModal('close')

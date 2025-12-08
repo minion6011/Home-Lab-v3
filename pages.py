@@ -56,9 +56,9 @@ def playlist(): # da aggiungere un controllo se i dati richiesti nel form e json
             num = str(data_music["number_tot"])
         playlist["name"] = request.form["name"]
         playlist["description"] = request.form["description"]
-        file = request.files.getlist('img')[0]
+        file = request.files.getlist('img')
         if file:
-            file.save(f"{os.getcwd()}\\website\\music\\{num}.webp")
+            file[0].save(f"{os.getcwd()}\\website\\music\\{num}.webp")
         playlist["img"] = f"/website/music/{num}.webp"
         with open("music.json", "w") as f:
             json.dump(data_music, f, indent=4)
