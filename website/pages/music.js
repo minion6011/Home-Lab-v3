@@ -57,7 +57,7 @@ async function OpenPlaylist(item) {
     let data = await GetPlData(ItemPlId.value);
     if (data == null) throw new Error("Playlist data returned null (Code was not 200)")
     plDSId.value = ItemPlId.value;
-    plDsImg.src = data.img; plDsTitle.innerHTML = data.name; plDsDesc.innerHTML = `${data.description}<br><br><i>Songs - ${data.songs.length}</i>`;
+    plDsImg.src = data.img; plDsTitle.innerHTML = data.name; plDsDesc.innerHTML = `${data.description.replaceAll("\n", "<br>")}<br><br><i>Songs - ${data.songs.length}</i>`;
     mainContainer.dataset.status = "1";
 }
 
@@ -153,7 +153,7 @@ function CreateEditPlaylist(type, num=null) {
                     reader.readAsDataURL(fileInput.files[0]);
                 }
                 // Title + Desc
-                plDsTitle.innerText = plNameIn.value; plDsDesc.innerHTML = plDescIn.value + plDsDesc.innerHTML.slice(plDsDesc.innerHTML.lastIndexOf("<br><br>")-plDsDesc.innerHTML.length);
+                plDsTitle.innerText = plNameIn.value; plDsDesc.innerHTML = plDescIn.value.replaceAll("\n","<br>") + plDsDesc.innerHTML.slice(plDsDesc.innerHTML.lastIndexOf("<br><br>")-plDsDesc.innerHTML.length);
             }
         });
     });

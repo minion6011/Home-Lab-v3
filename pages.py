@@ -55,7 +55,7 @@ def playlist(): # da aggiungere un controllo se i dati richiesti nel form e json
             playlist["songs"] = []
             num = str(data_music["number_tot"])
         playlist["name"] = request.form["name"]
-        playlist["description"] = request.form["description"]
+        playlist["description"] = request.form["description"].replace("\r","")
         file = request.files.getlist('img')
         if file:
             file[0].save(f"{os.getcwd()}\\website\\music\\{num}.webp")
