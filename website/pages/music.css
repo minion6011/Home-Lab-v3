@@ -129,6 +129,7 @@ html.not-iframe .song-container {margin: 20px}
 .text .close {
     margin: 0;
     cursor: pointer;
+    font-size: var(--small-font-size);
 }
 .text #plDs-desc {
     margin: 2px 0 0 0;

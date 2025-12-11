@@ -69,6 +69,7 @@ def playlist(): # da aggiungere un controllo se i dati richiesti nel form e json
                 return data_music[request.json["num"]], 200
             elif request.json["type"] == "delete" and request.json["num"] and request.json["num"] in data_music:
                 del data_music[request.json["num"]]
+                data_music["number_tot"] -= 1
                 with open("music.json", "w") as f:
                     json.dump(data_music, f, indent=4)
                 return {}, 200

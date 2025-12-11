@@ -41,7 +41,7 @@ const imgView = document.getElementById("modal-pl-img");
 
 const playlistModal = document.getElementById("playlist-modal");
 const playlistModalTitle = document.getElementById("modal-pl-title");
-const buttonModal = document.getElementById("pl-btn")
+const buttonModal = document.getElementById("pl-btn");
 
 let imgDefault = "";
 
@@ -51,11 +51,13 @@ async function deletePl() {
     let req = await fetch("/playlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({num: plNum, type: "delete"}),
+        body: JSON.stringify({num: plDSId.value, type: "delete"}),
     });
-    if (req.status != 200) {
-        throw new Error("Deleting a playlist returns a non-200 status code")
+    if (req.status == 200) {
+        EditPlsHTML(plDSId.value, null, null, "delete");
+        mainContainer.dataset.status = "0";
     }
+    else throw new Error("Deleting a playlist returns a non-200 status code");
 }
 
 
@@ -171,21 +173,38 @@ function CreateEditPlaylist(type, num=null) {
                 // Img
                 if (fileInput.files[0] != null) {
                     const reader = new FileReader();
-                    reader.onload = (e) => plDsImg.src = e.target.result;
+                    reader.onload = (e) => {
+                        plDsImg.src = e.target.result
+                        EditPlsHTML(num, e.target.result, null)
+                    };
                     reader.readAsDataURL(fileInput.files[0]);
                 }
                 // Title + Desc
                 plDsTitle.innerText = plNameIn.value; plDsDesc.innerHTML = plDescIn.value.replaceAll("\n","<br>") + plDsDesc.innerHTML.slice(plDsDesc.innerHTML.lastIndexOf("<br><br>")-plDsDesc.innerHTML.length);
+                EditPlsHTML(num, null, plNameIn.value)
             }
         });
     });
     PlaylistModal('close')
 }
 
+function EditPlsHTML(id, srcNew, titleNew, type=null) {
+    playlistsLs = playlistsContainer.getElementsByClassName("pl-item");
+    for (let i = 0; i < playlistsLs.length; i++) {
+        element = playlistsLs[i];
+        if (element.querySelector(".pl-id").value == id) {
+            if (type == null) {
+                if (srcNew != null) element.querySelector(".pl-img").src = srcNew;
+                if (titleNew != null) element.querySelector(".pl-text").src = titleNew;
+            } else if (type == "delete") playlistsContainer.removeChild(element);
+        }
+    };
+}
+
 async function CreatePlHTML(imgSrc, plName, plNum) {
     let divMain = document.createElement("div");
     divMain.className = "pl-item";
-    divMain.setAttribute("onClick", "OpenPlaylist(self)");
+    divMain.setAttribute("onClick", "OpenPlaylist(this)");
     // Elementi del divMain
     let img = document.createElement("img");
     img.className = "pl-img";
