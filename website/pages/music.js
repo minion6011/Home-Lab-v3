@@ -21,6 +21,9 @@ if (window.self === window.top) {
 // --- 
 const mainContainer = document.getElementById("mainContainer");
 // Songs Related
+let shuffleState = false;
+const shuffleButton = document.getElementById("songs-shuffle")
+
 const plDsImg = document.getElementById("plDs-img")
 const plDsTitle = document.getElementById("plDs-title")
 const plDsDesc = document.getElementById("plDs-desc")
@@ -42,10 +45,29 @@ const buttonModal = document.getElementById("pl-btn")
 
 let imgDefault = "";
 
+// Songs
+// Delete button
+async function deletePl() {
+    let req = await fetch("/playlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({num: plNum, type: "delete"}),
+    });
+    if (req.status != 200) {
+        throw new Error("Deleting a playlist returns a non-200 status code")
+    }
+}
+
+
+// Shuffle Button
+function TurnShuffle() {
+    shuffleState = !shuffleState
+    if (shuffleState) {shuffleButton.classList.add("on")}
+    else {shuffleButton.classList.remove("on")}
+}
 
 
 // Playlist
-
 // Playlist Grid Check
 if (localStorage.getItem("pl-grid")) {
     playlistsContainer.className = localStorage.getItem("pl-grid")
@@ -66,7 +88,7 @@ async function GetPlData(plNum) {
     let req = await fetch("/playlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({num: plNum}),
+        body: JSON.stringify({num: plNum, type: "get"}),
     });
     if (req.status == 200) {
         let json = JSON.parse(await req.text())

@@ -50,22 +50,25 @@
                         <input type="hidden" id="plDs-id" value="">
                         <img class="image" id="plDs-img" src="{{ url_for('static',filename='img/plDefault-ico.webp') }}">
                         <div class="text">
-                            <p id="plDs-title">Playlist Name</p>
+                            <div class="title-sep"> 
+                                <p id="plDs-title">Playlist Name</p>
+                                <p class="close" onclick="mainContainer.dataset.status = '0'">&#x2715;</p>
+                            </div>
                             <p id="plDs-desc">Playlist Description</p>
                         </div>
                     </div>
                     <hr>
 
-                    <button class="song-btn" id="songs-play">
+                    <button class="song-btn" id="songs-shuffle" onclick="TurnShuffle()">
                         <img src="{{ url_for('static',filename='img/shuffle-ico.webp') }}">
                     </button>
-                    <button class="song-btn" id="songs-edit" onclick="PlaylistModal('edit')">
+                    <button class="song-btn" onclick="PlaylistModal('edit')">
                         <img src="{{ url_for('static',filename='img/pencil-ico.webp') }}">
                     </button>
-                    <button class="song-btn" id="songs-delete">
+                    <button class="song-btn">
                         <img src="{{ url_for('static',filename='img/delete-ico.webp') }}">
                     </button>
-                    <button class="song-btn" id="songs-add">
+                    <button class="song-btn">
                         <img src="{{ url_for('static',filename='img/mAdd-ico.webp') }}">
                     </button>
                     

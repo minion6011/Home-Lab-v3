@@ -90,6 +90,10 @@ html.not-iframe .song-container {margin: 20px}
     border-radius: 100%;
     border: 0;
     background-color: var(--elm-hover-bg-color);
+    cursor: pointer;
+}
+.song-btn.on {
+    background-color: var(--ver-hover-bg-color);
 }
 .song-btn:hover {background-color: var(--ver-hover-bg-color);}
 .song-btn img {
@@ -110,12 +114,23 @@ html.not-iframe .song-container {margin: 20px}
     height: 175px;
     border-radius: 15px;
 }
-.playlist-info .text #plDs-title {
+.playlist-info .text {
+    width: 100%;
+}
+.playlist-info .text .title-sep {
+    display: flex;
+    justify-content: space-between;
+}
+.text .title-sep #plDs-title {
     margin: 10px 0 0 0;
     font-size: var(--X-font-size);
     font-weight: bold;
 }
-.playlist-info .text #plDs-desc {
+.text .close {
+    margin: 0;
+    cursor: pointer;
+}
+.text #plDs-desc {
     margin: 2px 0 0 0;
     font-size: var(--mini-font-size);
 }

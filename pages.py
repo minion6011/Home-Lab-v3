@@ -63,6 +63,13 @@ def playlist(): # da aggiungere un controllo se i dati richiesti nel form e json
         with open("music.json", "w") as f:
             json.dump(data_music, f, indent=4)
         return {"plName": request.form["name"], "plNum": num, "plSrc": f"/website/music/{num}.webp"}, 200
-    elif request.json: # get
-        if request.json["num"] and request.json["num"] in data_music:
-            return data_music[request.json["num"]]
+    elif request.json and "type" in request.json: # get
+        if request.json["type"]:
+            if request.json["type"] == "get" and request.json["num"] and request.json["num"] in data_music:
+                return data_music[request.json["num"]], 200
+            elif request.json["type"] == "delete" and request.json["num"] and request.json["num"] in data_music:
+                del data_music[request.json["num"]]
+                with open("music.json", "w") as f:
+                    json.dump(data_music, f, indent=4)
+                return {}, 200
+    return {}, 404
