@@ -1,6 +1,5 @@
 from __main__ import config
 
-import pytubefix
 from pytubefix.cli import on_progress
 from pytubefix import YouTube, Playlist, Search
 

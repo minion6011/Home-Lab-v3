@@ -60,7 +60,7 @@ def playlist():
 		playlist["description"] = request.form["description"].replace("\r","")
 		file = request.files.getlist('img')
 		if file:
-			file[0].save(f"{os.getcwd()}\\website\\music\\{num}.webp")
+			file[0].save(os.path.join(os.path.dirname(__file__), f"website\\music\\{num}.webp"))
 		playlist["img"] = f"/website/music/{num}.webp"
 		with open("music.json", "w") as f:
 			json.dump(data_music, f, indent=4)
@@ -70,6 +70,10 @@ def playlist():
 			if request.json["type"] == "get" and request.json["num"] and request.json["num"] in data_music:
 				return data_music[request.json["num"]], 200
 			elif request.json["type"] == "delete" and (request.json["num"] and request.json["num"] in data_music):
+				try:
+					for song in data_music[request.json["num"]]["songs"]:
+						os.remove(os.path.join(os.path.dirname(__file__), song["url_path"].lstrip("/")))
+				except: pass
 				del data_music[request.json["num"]]
 				data_music["number_tot"] -= 1
 				with open("music.json", "w") as f:
