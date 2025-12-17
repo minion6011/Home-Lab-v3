@@ -1,5 +1,8 @@
 {
     "username": "User",
     "password": "1234",
-    "login_duration_minutes": 60
+    "login_duration_minutes": 60,
+
+    "spotify_CL-ID": "",
+    "spotify-CL-SECRET": ""
 }
