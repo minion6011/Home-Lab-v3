@@ -58,20 +58,22 @@
                         </div>
                     </div>
                     <hr>
+                    <div class="containerDs-butttons">
+                        <button class="song-btn" id="songs-shuffle" onclick="TurnShuffle()">
+                            <img src="{{ url_for('static',filename='img/shuffle-ico.webp') }}">
+                        </button>
+                        <button class="song-btn" onclick="PlaylistModal('edit')">
+                            <img src="{{ url_for('static',filename='img/pencil-ico.webp') }}">
+                        </button>
+                        <button class="song-btn" onclick="deletePl()">
+                            <img src="{{ url_for('static',filename='img/delete-ico.webp') }}">
+                        </button>
+                        <button class="song-btn" onclick="SongAddInput()">
+                            <img src="{{ url_for('static',filename='img/mAdd-ico.webp') }}">
+                        </button>
 
-                    <button class="song-btn" id="songs-shuffle" onclick="TurnShuffle()">
-                        <img src="{{ url_for('static',filename='img/shuffle-ico.webp') }}">
-                    </button>
-                    <button class="song-btn" onclick="PlaylistModal('edit')">
-                        <img src="{{ url_for('static',filename='img/pencil-ico.webp') }}">
-                    </button>
-                    <button class="song-btn" onclick="deletePl()">
-                        <img src="{{ url_for('static',filename='img/delete-ico.webp') }}">
-                    </button>
-                    <button class="song-btn">
-                        <img src="{{ url_for('static',filename='img/mAdd-ico.webp') }}">
-                    </button>
-                    
+                        <input id="songs-input" class="songs-input" onkeydown="if (event.key === 'Enter') {AddSong()}" placeholder="YT name/link..." style="display: none;">
+                    </div>
                 </div>
 
                 <table class="songs-table">
@@ -93,7 +95,7 @@
             </div>
 
 
-            <!-- Modals -->
+            <!-- Modal Playlist -->
             <div class="modal-playlist" id="playlist-modal">
                 <div class="card">
                     <div class="title">
@@ -116,4 +118,3 @@
         </div>
     </body>
 </html>
-

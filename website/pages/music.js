@@ -22,16 +22,17 @@ if (window.self === window.top) {
 const mainContainer = document.getElementById("mainContainer");
 // Songs Related
 let shuffleState = false;
-const shuffleButton = document.getElementById("songs-shuffle")
+const shuffleButton = document.getElementById("songs-shuffle");
 
-const plDsImg = document.getElementById("plDs-img")
-const plDsTitle = document.getElementById("plDs-title")
-const plDsDesc = document.getElementById("plDs-desc")
-const plDSId = document.getElementById("plDs-id")
+const plDsImg = document.getElementById("plDs-img");
+const plDsTitle = document.getElementById("plDs-title");
+const plDsDesc = document.getElementById("plDs-desc");
+const plDSId = document.getElementById("plDs-id");
 
 // Modal Related
+// - Playlist
 const playlistsContainer = document.getElementById("playlists-container");
-let modalState = [false,false]
+let modalState = [false,false];
 
 const plNameIn = document.getElementById("pl-name");
 const plDescIn = document.getElementById("pl-desc");
@@ -45,8 +46,42 @@ const buttonModal = document.getElementById("pl-btn");
 
 let imgDefault = "";
 
+// - Add Song
+const addsongInput = document.getElementById("songs-input");
+
 // Songs
-// Delete button
+// Add-Song Button
+function SongAddInput() {
+    if (addsongInput.style.display == "block") { // Fade Out
+        addsongInput.classList.add("animate", "out");
+        addsongInput.addEventListener("animationend", () => {
+            addsongInput.classList.remove("animate", "out");
+            addsongInput.style.display = "none";
+        }, { once: true });
+
+    } else if (addsongInput.style.display == "none" && !addsongInput.classList.contains("animate")) { // Fade In
+        addsongInput.style.display = "block";
+        addsongInput.classList.add("animate");
+    }
+}
+
+async function AddSong() {
+    let songName = addsongInput.value; addsongInput.value = ""; addsongInput.placeholder = "Downloading..."
+    addsongInput.disabled = true;
+    let req = await fetch("/songs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({num: plDSId.value, type: "add", sname: songName}),
+    });
+    addsongInput.disabled = false; addsongInput.placeholder = "YT name/link...";
+    if (req.status == 200) {
+        let json = JSON.parse(await req.text());
+        console.log(json);
+    }
+    else throw new Error("Adding a song returns a non-200 status code");
+}
+
+// Delete Button
 async function deletePl() {
     let req = await fetch("/playlist", {
         method: "POST",
@@ -59,7 +94,6 @@ async function deletePl() {
     }
     else throw new Error("Deleting a playlist returns a non-200 status code");
 }
-
 
 // Shuffle Button
 function TurnShuffle() {
@@ -93,8 +127,7 @@ async function GetPlData(plNum) {
         body: JSON.stringify({num: plNum, type: "get"}),
     });
     if (req.status == 200) {
-        let json = JSON.parse(await req.text())
-        return json
+        return JSON.parse(await req.text())
     }
     return null
 }
