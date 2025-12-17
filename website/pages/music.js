@@ -18,11 +18,14 @@ window.addEventListener("storage", (event) => { // This event is different from 
 if (window.self === window.top) {
     document.documentElement.classList.add("not-iframe");
 }
-// --- 
+// --- Variables
 const mainContainer = document.getElementById("mainContainer");
 // Songs Related
+const songTableSongs = document.getElementById("songs-table");
+
 let shuffleState = false;
 const shuffleButton = document.getElementById("songs-shuffle");
+const addsongInput = document.getElementById("songs-input");
 
 const plDsImg = document.getElementById("plDs-img");
 const plDsTitle = document.getElementById("plDs-title");
@@ -45,12 +48,44 @@ const playlistModalTitle = document.getElementById("modal-pl-title");
 const buttonModal = document.getElementById("pl-btn");
 
 let imgDefault = "";
-
-// - Add Song
-const addsongInput = document.getElementById("songs-input");
+// --- Functions
 
 // Songs
+function CreateSongHTML(index, values) { // da aggiungere il link nel onclick ------
+    console.log(index); console.log(values);
+    let trElement = document.createElement("tr"); trElement.className = "songTcontainer";
+    songName = values.name.substring(0,32); if (values.name.length>32) {songName+="..."}
+    trElement.innerHTML = `
+    <td>${index + 1}</td>
+    <td class="titleSong-column">
+        <img src="${values.img}">
+        <p>${songName}</p>
+    </td>
+    <td>${values.artist}</td>
+    <td>${values.added}</td>
+    <td>${values.duration}</td>
+    `;
+    songTableSongs.appendChild(trElement);
+}
+
 // Add-Song Button
+async function AddSong() {
+    let songName = addsongInput.value; addsongInput.value = ""; addsongInput.placeholder = "Downloading..."
+    addsongInput.disabled = true;
+    let req = await fetch("/songs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({num: plDSId.value, type: "add", sname: songName}),
+    });
+    addsongInput.disabled = false; addsongInput.placeholder = "YT name/link...";
+    if (req.status == 200) {
+        let json = JSON.parse(await req.text());
+        json.nwSongs.forEach((song, index) => {
+            CreateSongHTML(json.indexStart+index+1, song)
+        });
+    }
+    else throw new Error("Adding a song returns a non-200 status code");
+}
 function SongAddInput() {
     if (addsongInput.style.display == "block") { // Fade Out
         addsongInput.classList.add("animate", "out");
@@ -63,22 +98,6 @@ function SongAddInput() {
         addsongInput.style.display = "block";
         addsongInput.classList.add("animate");
     }
-}
-
-async function AddSong() {
-    let songName = addsongInput.value; addsongInput.value = ""; addsongInput.placeholder = "Downloading..."
-    addsongInput.disabled = true;
-    let req = await fetch("/songs", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({num: plDSId.value, type: "add", sname: songName}),
-    });
-    addsongInput.disabled = false; addsongInput.placeholder = "YT name/link...";
-    if (req.status == 200) {
-        let json = JSON.parse(await req.text());
-        console.log(json);
-    }
-    else throw new Error("Adding a song returns a non-200 status code");
 }
 
 // Delete Button
@@ -117,6 +136,10 @@ async function OpenPlaylist(item) {
     plDSId.value = ItemPlId.value;
     plDsImg.src = data.img; plDsTitle.innerHTML = data.name; plDsDesc.innerHTML = `${data.description.replaceAll("\n", "<br>")}<br><br><i>Songs - ${data.songs.length}</i>`;
     mainContainer.dataset.status = "1";
+    songTableSongs.innerHTML = songTableSongs.children[0].children[0].innerHTML; // reset list
+    data.songs.forEach((song, index) => {
+        CreateSongHTML(index, song);
+    });
 }
 
 

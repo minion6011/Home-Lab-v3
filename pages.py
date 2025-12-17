@@ -87,7 +87,8 @@ def songs():
 	if request.json and "type" in request.json:
 		if request.json["type"] == "add" and (request.json["num"] and request.json["num"] in data_music) and request.json["sname"]:
 			nwSongs = downloadSong(request.json["sname"])
+			iStart = len(data_music[request.json["num"]]["songs"])
 			data_music[request.json["num"]]["songs"].extend(nwSongs)
 			with open("music.json", "w") as f:
 				json.dump(data_music, f, indent=4)
-			return {"nwSongs": nwSongs}, 200
+			return {"nwSongs": nwSongs, "indexStart": iStart}, 200
