@@ -63,6 +63,11 @@ function CreateSongHTML(index, values) { // da aggiungere il link nel onclick --
     <td data-visible="0">${values.artist}</td>
     <td data-visible="0">${values.added}</td>
     <td data-visible="0">${values.duration}</td>
+    <td>
+        <button class="songTable-delete">
+            <img src="/website/img/delete-ico.webp">
+        </button>
+    </td>
     `;
     songTableSongs.appendChild(trElement);
 }

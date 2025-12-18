@@ -14,7 +14,8 @@
     .song-btn {padding: 15px;}
     .song-btn img {width: 60px; height: 60px;}
     .titleSong-column img {width: 82.5px; height: 82.5px; border-radius: 15px;}
-
+    th[data-visible="0"] {display: none;}
+    td[data-visible="0"] {display: none;}
 }
 @media (min-width: 1003px) { /* Schermo PC */
     .main-container[data-status="1"] {grid-template-columns: 35% 65%} /* Library + Player */
@@ -149,12 +150,6 @@ html.not-iframe .song-container {margin: 20px}
     text-align: left;
     padding: 8px;
 }
-th[data-visible="0"] {
-    display: none;
-}
-td[data-visible="0"] {
-    display: none;
-}
 
 .songs-table tr:last-child td:first-child {border-bottom-left-radius: 10px;} 
 .songs-table tr:last-child td:last-child {border-bottom-right-radius: 10px;}
@@ -169,8 +164,17 @@ td[data-visible="0"] {
 .titleSong-column p {
     margin: 0;
     overflow: hidden;
+    font-size: var(--small-font-size);
 }
-
+.songTable-delete {
+    background-color: var(--elm-hover-bg-color);
+    border-radius: 100%;
+}
+.songTable-delete img {
+    width: 32px;
+    height: 32px;
+    filter: invert(var(--img-invert-value));
+}
 /* Library Container (Playlist) */
 .library-container {
     background-color: var(--secondary-bg-color);
