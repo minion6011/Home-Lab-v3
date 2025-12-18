@@ -52,18 +52,17 @@ let imgDefault = "";
 
 // Songs
 function CreateSongHTML(index, values) { // da aggiungere il link nel onclick ------
-    console.log(index); console.log(values);
     let trElement = document.createElement("tr"); trElement.className = "songTcontainer";
     songName = values.name.substring(0,32); if (values.name.length>32) {songName+="..."}
     trElement.innerHTML = `
-    <td>${index + 1}</td>
+    <td data-visible="0">${index + 1}</td>
     <td class="titleSong-column">
         <img src="${values.img}">
         <p>${songName}</p>
     </td>
-    <td>${values.artist}</td>
-    <td>${values.added}</td>
-    <td>${values.duration}</td>
+    <td data-visible="0">${values.artist}</td>
+    <td data-visible="0">${values.added}</td>
+    <td data-visible="0">${values.duration}</td>
     `;
     songTableSongs.appendChild(trElement);
 }
@@ -81,8 +80,11 @@ async function AddSong() {
     if (req.status == 200) {
         let json = JSON.parse(await req.text());
         json.nwSongs.forEach((song, index) => {
-            CreateSongHTML(json.indexStart+index+1, song)
+            CreateSongHTML(json.indexStart+index, song)
         });
+        console.log(Number(json.indexStart));
+        console.log(Number(json.nwSongs.length));
+        plDsDesc.innerHTML = plDsDesc.innerHTML.replace(/( - )(.*?)(<\/i>)/, "$1" + (Number(json.indexStart)+Number(json.nwSongs.length)) + "$3");
     }
     else throw new Error("Adding a song returns a non-200 status code");
 }

@@ -13,6 +13,8 @@
 
     .song-btn {padding: 15px;}
     .song-btn img {width: 60px; height: 60px;}
+    .titleSong-column img {width: 82.5px; height: 82.5px; border-radius: 15px;}
+
 }
 @media (min-width: 1003px) { /* Schermo PC */
     .main-container[data-status="1"] {grid-template-columns: 35% 65%} /* Library + Player */
@@ -30,6 +32,7 @@
     .song-container {margin-left: 20px;}
     .song-btn {padding: 10px;}
     .song-btn img {width: 30px; height: 30px;}
+    .titleSong-column img {width: 40px; height: 40px; border-radius: 7.5px;}
 }
 
 
@@ -71,7 +74,7 @@ html:not(.not-iframe) .main-container {
 }
 /* Grid 1 */
 html:not(.not-iframe) .library-container {
-    height: min(94.85%, 100%);
+    height: min(93.85%, 100%);
 }
 html.not-iframe .main-container[data-status="0"] .library-container {margin: 20px;}
 html.not-iframe .main-container[data-status="1"] .library-container {margin: 20px 0 20px 20px;}
@@ -146,6 +149,13 @@ html.not-iframe .song-container {margin: 20px}
     text-align: left;
     padding: 8px;
 }
+th[data-visible="0"] {
+    display: none;
+}
+td[data-visible="0"] {
+    display: none;
+}
+
 .songs-table tr:last-child td:first-child {border-bottom-left-radius: 10px;} 
 .songs-table tr:last-child td:last-child {border-bottom-right-radius: 10px;}
 .songs-table .songTcontainer:hover {background-color: var(--menu-bg-color)}
@@ -155,11 +165,6 @@ html.not-iframe .song-container {margin: 20px}
     width: 90%;
     gap: 10px;
     align-items: center;
-}
-.titleSong-column img {
-    width: 40px;
-    height: 40px;
-    border-radius: 7.5px;
 }
 .titleSong-column p {
     margin: 0;
@@ -396,8 +401,13 @@ html:not(.not-iframe) .modal-playlist {
 /* Playlists */
 .playlists-details {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 20px;
+}
+.main-container[data-status="0"] .playlists-details {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+}
+.main-container[data-status="1"] .playlists-details {
+    grid-template-columns: repeat(auto-fit, minmax(100%, 1fr));
 }
 .playlists-grid {
     display: grid;

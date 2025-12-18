@@ -78,11 +78,11 @@
 
                 <table class="songs-table" id="songs-table">
                     <tr>
-                        <th>#</th>
-                        <th>Title</th>
-                        <th>Author</th>
-                        <th>Added</th>
-                        <th>Duration</th>
+                        <th data-visible="0">#</th>
+                        <th data-visible="0">Title</th>
+                        <th data-visible="0">Author</th>
+                        <th data-visible="0">Added</th>
+                        <th data-visible="0">Duration</th>
                     </tr>
                 </table>
             </div>
@@ -96,7 +96,7 @@
                         <p class="close-button" onclick="PlaylistModal('close')">✕</p>
                     </div>
                     <div class="items">
-                        <div>
+                        <div style="display: flex; justify-content: center;">
                             <input id="img-file" type="file" style="display: none;" accept="image/png, image/jpeg, image/webm, image/jpg, image/avif">
                             <img id="modal-pl-img" onclick="document.getElementById('img-file').click()" src="{{ url_for('static',filename='img/plDefault-ico.webp') }}" class="img-insert">
                         </div>
