@@ -53,8 +53,7 @@ const buttonModal = document.getElementById("pl-btn");
 
 let imgDefault = "";
 // --- Functions
-
-// Songs
+// Songs Player
 async function NextSong() {
     if (preloadData[0] == audioControll.src) {
         await PreloadSong(preloadData[4])
@@ -129,7 +128,7 @@ async function PreloadSong(id) {
     }
     else throw new Error("Getting a song (preload funct) returns a non-200 status code");
 }
-
+// Song Html
 function CreateSongHTML(index, values) { // da aggiungere il link nel onclick ------
     let trElement = document.createElement("tr"); trElement.className = "songTcontainer";
     trElement.setAttribute("onclick", `FetchSong(${index})`);
