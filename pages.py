@@ -92,3 +92,7 @@ def songs():
 			with open("music.json", "w") as f:
 				json.dump(data_music, f, indent=4)
 			return {"nwSongs": nwSongs, "indexStart": iStart}, 200
+		elif request.json["type"] == "get" and (request.json["num"] and request.json["num"] in data_music):
+			if request.json["index"] != None and int(request.json["index"]) < len(data_music[request.json["num"]]["songs"]):
+				return {"song": data_music[request.json["num"]]["songs"][int(request.json["index"])]}, 200
+	return {}, 404

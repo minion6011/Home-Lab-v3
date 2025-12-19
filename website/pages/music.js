@@ -21,6 +21,10 @@ if (window.self === window.top) {
 // --- Variables
 const mainContainer = document.getElementById("mainContainer");
 // Songs Related
+let oldSong = [];
+let preloadData = ["", "", "", "", 0] // struct ["url", "name", "artist", "img", 0]
+const audioControll = document.getElementById("AudioControll");
+
 const songTableSongs = document.getElementById("songs-table");
 
 let shuffleState = false;
@@ -51,8 +55,84 @@ let imgDefault = "";
 // --- Functions
 
 // Songs
+async function NextSong() {
+    if (preloadData[0] == audioControll.src) {
+        await PreloadSong(preloadData[4])
+    }
+    PlaySong(preloadData[0], preloadData[1], preloadData[2], preloadData[3], preloadData[4])
+}
+
+async function setPWA(title, artist, img) {
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({ 
+            title: title,
+            artist: artist,
+            album: plDsTitle.innerText,
+            artwork: [
+                { src: img, sizes: "512x512", type: "image/png" }
+            ],
+        });
+        navigator.mediaSession.setActionHandler('play', () => {audioControll.play()});  
+        navigator.mediaSession.setActionHandler('pause', () => {audioControll.pause()});
+        navigator.mediaSession.setActionHandler('nexttrack', async () => {await NextSong()});
+        navigator.mediaSession.setActionHandler('previoustrack', async () => {FetchSong(oldSong[0]); oldSong.splice(1, 1)})
+    }
+}
+
+async function FetchSong(sgId) {
+    let req = await fetch("/songs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({num: plDSId.value, type: "get", index: sgId}),
+    });
+    if (req.status == 200) {
+        let json = JSON.parse(await req.text());
+        PlaySong(json.song.url_path,json.song.name,json.song.artist, json.song.img, sgId)
+    }
+    else throw new Error("Getting a song returns a non-200 status code");
+}
+
+async function PlaySong(url, name, artist, img, index) {
+    oldSong.push(index);
+    if (oldSong.length >= 3) {
+        oldSong.splice(0, 1)
+    }
+    console.log(oldSong)
+    audioControll.src = url;
+    await audioControll.play(); PreloadSong(index); // Play and preload next song
+    setPWA(name,artist,img)
+}
+
+audioControll.addEventListener('ended', () => {
+    PlaySong(preloadData[0], preloadData[4]);
+    PreloadSong(preloadData[4]);
+});
+
+async function PreloadSong(id) {
+    let i = id+1;
+    let length = document.getElementsByClassName("songTcontainer").length-1;
+    if (shuffleState && length >= 1) {i = Math.floor(Math.random() * length)}
+    if (i == id) { if (i+1>length) {i--} else {i++};} // Evita che appaia lo stesso numero
+    if (i > length) {i = 0}; // Ricomincia
+    let req = await fetch("/songs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            num: plDSId.value,
+            type: "get",
+            index: i,
+        }),
+    })
+    if (req.status == 200) {
+        let json = JSON.parse(await req.text());
+        preloadData = [json.song.url_path, json.song.name, json.song.artist, json.song.img, i]
+    }
+    else throw new Error("Getting a song (preload funct) returns a non-200 status code");
+}
+
 function CreateSongHTML(index, values) { // da aggiungere il link nel onclick ------
     let trElement = document.createElement("tr"); trElement.className = "songTcontainer";
+    trElement.setAttribute("onclick", `FetchSong(${index})`);
     songName = values.name.substring(0,32); if (values.name.length>32) {songName+="..."}
     trElement.innerHTML = `
     <td data-visible="0">${index + 1}</td>
@@ -63,7 +143,7 @@ function CreateSongHTML(index, values) { // da aggiungere il link nel onclick --
     <td data-visible="0">${values.artist}</td>
     <td data-visible="0">${values.added}</td>
     <td data-visible="0">${values.duration}</td>
-    <td>
+    <td style="text-align: center;">
         <button class="songTable-delete">
             <img src="/website/img/delete-ico.webp">
         </button>
@@ -87,8 +167,6 @@ async function AddSong() {
         json.nwSongs.forEach((song, index) => {
             CreateSongHTML(json.indexStart+index, song)
         });
-        console.log(Number(json.indexStart));
-        console.log(Number(json.nwSongs.length));
         plDsDesc.innerHTML = plDsDesc.innerHTML.replace(/( - )(.*?)(<\/i>)/, "$1" + (Number(json.indexStart)+Number(json.nwSongs.length)) + "$3");
     }
     else throw new Error("Adding a song returns a non-200 status code");
