@@ -6,11 +6,8 @@ from music import downloadSong
 import psutil, os, json
 
 
-with open("music.json") as f:
+with open("website/music.json") as f:
 	data_music = json.load(f)
-
-with open("config.json") as f:
-	data_config = json.load(f)
 
 # - Home
 def get_stats():
