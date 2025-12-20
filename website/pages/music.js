@@ -182,12 +182,25 @@ async function PlaySong(url, name, artist, img, index) {
     
 }
 
+ 
+if (window.isSecureContext) { // Only Works in HTTPS
+    audioControll.addEventListener("play", updatePositionState);
+    audioControll.addEventListener("loadedmetadata", updatePositionState);
+    function updatePositionState() {
+        if (!navigator.mediaSession || !audioControll.duration) return;
+        navigator.mediaSession.setPositionState({
+            duration: audioControll.duration,
+            playbackRate: audioControll.playbackRate,
+            position: audioControll.currentTime
+        });
+    }
+}
+
 audioControll.addEventListener('timeupdate', () => {
   if (audioControll.duration) {
     playerRange.value = audioControll.currentTime;
     currentDuration.innerHTML = formatTime(audioControll.currentTime)
     playerRange.style.setProperty('--range-progress-width', `${(playerRange.value - playerRange.min) / (playerRange.max - playerRange.min) * 100}%`);
-    //updatePositionState()
   }
 });
 
