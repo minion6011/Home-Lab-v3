@@ -95,4 +95,12 @@ def songs():
 		elif request.json["type"] == "get" and (request.json["num"] and request.json["num"] in data_music):
 			if request.json["index"] != None and int(request.json["index"]) < len(data_music[request.json["num"]]["songs"]):
 				return {"song": data_music[request.json["num"]]["songs"][int(request.json["index"])]}, 200
+		elif request.json["type"] == "delete" and (request.json["num"] and request.json["num"] in data_music):
+			if request.json["index"] != None and int(request.json["index"]) < len(data_music[request.json["num"]]["songs"]):
+				song = data_music[request.json["num"]]["songs"][int(request.json["index"])]
+				os.remove(os.path.join(os.path.dirname(__file__), song["url_path"].lstrip("/")))
+				data_music[request.json["num"]]["songs"].remove(song)
+				with open("music.json", "w") as f:
+					json.dump(data_music, f, indent=4)
+				return {}, 200
 	return {}, 404

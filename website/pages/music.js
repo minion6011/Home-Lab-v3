@@ -19,16 +19,34 @@ if (window.self === window.top) {
     document.documentElement.classList.add("not-iframe");
 }
 // --- Variables
+// - Main
 const mainContainer = document.getElementById("mainContainer");
+
+// - Song
+// Player Related
+const playerStateImg = document.getElementById("play-stop-img");
+const playerLoopBtn = document.getElementById("loop-btn");
+const playerShuffleBtn = document.getElementById("shuffle-btn");
+const muteImg = document.getElementById("mute-img");
+const volumeRange = document.getElementById("volumeRange");
+
+const currentDuration = document.getElementById("cur-duration");
+const maxDuration = document.getElementById("max-duration");
+
+const playerRange = document.getElementById("playerRange");
+const playerSongImg = document.getElementById("playerImg");
+const playerSongTitle = document.getElementById("playerTitle");
+
 // Songs Related
 let oldSong = [];
+let oldVolume = 1;
+let currentPl = [null, null]; //plId (str), plIdLenght (str)
 let preloadData = ["", "", "", "", 0] // struct ["url", "name", "artist", "img", 0]
 const audioControll = document.getElementById("AudioControll");
 
 const songTableSongs = document.getElementById("songs-table");
 
 let shuffleState = false;
-const shuffleButton = document.getElementById("songs-shuffle");
 const addsongInput = document.getElementById("songs-input");
 
 const plDsImg = document.getElementById("plDs-img");
@@ -36,8 +54,8 @@ const plDsTitle = document.getElementById("plDs-title");
 const plDsDesc = document.getElementById("plDs-desc");
 const plDSId = document.getElementById("plDs-id");
 
-// Modal Related
-// - Playlist
+// - Modal Related
+// Playlist
 const playlistsContainer = document.getElementById("playlists-container");
 let modalState = [false,false];
 
@@ -54,6 +72,60 @@ const buttonModal = document.getElementById("pl-btn");
 let imgDefault = "";
 // --- Functions
 // Songs Player
+async function DeleteSong(value) {
+    let id = value.parentElement.parentElement.children[0].innerText;
+    let req = await fetch("/songs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({num: plDSId.value, type: "delete", index: id-1}),
+    });
+    if (req.status == 200) {
+        if (plDSId.value == currentPl[0]) currentPl[1] -= 1;
+        if (preloadData[4]+1 == id) PreloadSong(id);
+        value.parentElement.parentElement.parentElement.removeChild(value.parentElement.parentElement);
+        let ls = songTableSongs.getElementsByClassName("songTcontainer")
+        for (let i = 0; i < ls.length; i++) {
+            if (Number(ls[i].children[0].innerText)>Number(id)) {
+                ls[i].children[0].innerText = (Number(ls[i].children[0].innerText) - 1).toString()
+                ls[i].setAttribute("onclick", `FetchSong(${Number(ls[i].children[0].innerText) - 1});`);
+            }
+        };
+    }
+    else throw new Error("Getting a song returns a non-200 status code");
+}
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
+}
+function StartStopAudio() {
+    if (audioControll.paused) {
+        audioControll.play();
+        playerStateImg.src = "/website/img/stop-ico.webp"
+    }
+    else {
+        audioControll.pause();
+        playerStateImg.src = "/website/img/play-ico.webp"
+    };
+}
+function ChangeVolume(mute, value) {
+    if (volumeRange.value == 0) {
+        if (mute) {
+            if (oldVolume == 0) {value = oldVolume = 0.5}
+            else {value = oldVolume};
+        }
+        if (!mute) oldVolume = 0;
+    }
+    else if (value != 0 && !mute) oldVolume = value;
+    volumeRange.value = audioControll.volume = value;
+    if (value == 0) muteImg.src = "/website/img/mute-ico.webp"
+    else muteImg.src = "/website/img/volume-ico.webp";
+}
+function LoopToogle() {
+    audioControll.loop = !audioControll.loop;
+    playerLoopBtn.classList.toggle("on", audioControll.loop);
+}
+
 async function NextSong() {
     if (preloadData[0] == audioControll.src) {
         await PreloadSong(preloadData[4])
@@ -71,18 +143,20 @@ async function setPWA(title, artist, img) {
                 { src: img, sizes: "512x512", type: "image/png" }
             ],
         });
-        navigator.mediaSession.setActionHandler('play', () => {audioControll.play()});  
-        navigator.mediaSession.setActionHandler('pause', () => {audioControll.pause()});
+        navigator.mediaSession.setActionHandler('play', () => {StartStopAudio()});  
+        navigator.mediaSession.setActionHandler('pause', () => {StartStopAudio()});
         navigator.mediaSession.setActionHandler('nexttrack', async () => {await NextSong()});
         navigator.mediaSession.setActionHandler('previoustrack', async () => {FetchSong(oldSong[0]); oldSong.splice(1, 1)})
     }
 }
 
 async function FetchSong(sgId) {
+    currentPl[0] = plDSId.value;
+    currentPl[1] = document.getElementsByClassName("songTcontainer").length-1;
     let req = await fetch("/songs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({num: plDSId.value, type: "get", index: sgId}),
+        body: JSON.stringify({num: currentPl[0], type: "get", index: sgId}),
     });
     if (req.status == 200) {
         let json = JSON.parse(await req.text());
@@ -92,24 +166,39 @@ async function FetchSong(sgId) {
 }
 
 async function PlaySong(url, name, artist, img, index) {
+    if (mainContainer.dataset.play == "0") {
+        mainContainer.dataset.play = "1"
+    }
     oldSong.push(index);
     if (oldSong.length >= 3) {
         oldSong.splice(0, 1)
     }
-    console.log(oldSong)
-    audioControll.src = url;
-    await audioControll.play(); PreloadSong(index); // Play and preload next song
-    setPWA(name,artist,img)
+    audioControll.src = url; await audioControll.play(); playerStateImg.src = "/website/img/stop-ico.webp"; PreloadSong(index); // Play and preload next song
+    playerRange.value = 0; playerRange.max = audioControll.duration; maxDuration.innerHTML = formatTime(audioControll.duration);
+    setPWA(name, artist, img);
+    // Player Setup
+    let SongReduc = name.substring(0,40); if (name.length>40) {SongReduc+="..."}
+    playerSongImg.src = img; playerSongTitle.innerText = SongReduc;
+    
 }
 
+audioControll.addEventListener('timeupdate', () => {
+  if (audioControll.duration) {
+    playerRange.value = audioControll.currentTime;
+    currentDuration.innerHTML = formatTime(audioControll.currentTime)
+    playerRange.style.setProperty('--range-progress-width', `${(playerRange.value - playerRange.min) / (playerRange.max - playerRange.min) * 100}%`);
+    //updatePositionState()
+  }
+});
+
 audioControll.addEventListener('ended', () => {
-    PlaySong(preloadData[0], preloadData[4]);
+    PlaySong(preloadData[0], preloadData[1], preloadData[2], preloadData[3], preloadData[4])
     PreloadSong(preloadData[4]);
 });
 
 async function PreloadSong(id) {
     let i = id+1;
-    let length = document.getElementsByClassName("songTcontainer").length-1;
+    let length = currentPl[1];
     if (shuffleState && length >= 1) {i = Math.floor(Math.random() * length)}
     if (i == id) { if (i+1>length) {i--} else {i++};} // Evita che appaia lo stesso numero
     if (i > length) {i = 0}; // Ricomincia
@@ -117,7 +206,7 @@ async function PreloadSong(id) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            num: plDSId.value,
+            num: currentPl[0],
             type: "get",
             index: i,
         }),
@@ -131,19 +220,19 @@ async function PreloadSong(id) {
 // Song Html
 function CreateSongHTML(index, values) { // da aggiungere il link nel onclick ------
     let trElement = document.createElement("tr"); trElement.className = "songTcontainer";
-    trElement.setAttribute("onclick", `FetchSong(${index})`);
+    trElement.setAttribute("onclick", `FetchSong(${index});`);
     songName = values.name.substring(0,32); if (values.name.length>32) {songName+="..."}
     trElement.innerHTML = `
     <td data-visible="0">${index + 1}</td>
     <td class="titleSong-column">
-        <img src="${values.img}">
+        <img loading="lazy" src="${values.img}">
         <p>${songName}</p>
     </td>
     <td data-visible="0">${values.artist}</td>
     <td data-visible="0">${values.added}</td>
     <td data-visible="0">${values.duration}</td>
     <td style="text-align: center;">
-        <button class="songTable-delete">
+        <button onclick="event.stopPropagation(); DeleteSong(this)" class="songTable-delete">
             <img src="/website/img/delete-ico.webp">
         </button>
     </td>
@@ -162,6 +251,7 @@ async function AddSong() {
     });
     addsongInput.disabled = false; addsongInput.placeholder = "YT name/link...";
     if (req.status == 200) {
+        if (plDSId.value == currentPl[0]) currentPl[1] += 1
         let json = JSON.parse(await req.text());
         json.nwSongs.forEach((song, index) => {
             CreateSongHTML(json.indexStart+index, song)
@@ -200,9 +290,8 @@ async function deletePl() {
 
 // Shuffle Button
 function TurnShuffle() {
-    shuffleState = !shuffleState
-    if (shuffleState) {shuffleButton.classList.add("on")}
-    else {shuffleButton.classList.remove("on")}
+    shuffleState = !shuffleState;
+    playerShuffleBtn.classList.toggle("on", shuffleState);
 }
 
 

@@ -45,7 +45,6 @@
 
             </div>
 
-
             <div class="song-container">
                 <div class="playlist-songs">
                     <div class="playlist-info">
@@ -61,9 +60,6 @@
                     </div>
                     <hr>
                     <div class="containerDs-butttons">
-                        <button class="song-btn" id="songs-shuffle" onclick="TurnShuffle()">
-                            <img src="{{ url_for('static',filename='img/shuffle-ico.webp') }}">
-                        </button>
                         <button class="song-btn" onclick="PlaylistModal('edit')">
                             <img src="{{ url_for('static',filename='img/pencil-ico.webp') }}">
                         </button>
@@ -81,7 +77,7 @@
                 <table class="songs-table" id="songs-table">
                     <tr>
                         <th data-visible="0">#</th>
-                        <th data-visible="0">Title</th>
+                        <th>Title</th>
                         <th data-visible="0">Author</th>
                         <th data-visible="0">Added</th>
                         <th data-visible="0">Duration</th>
@@ -89,6 +85,43 @@
                 </table>
             </div>
 
+            <div class="player-container">
+                <div class="up">
+                    <div class="song-details">
+                        <img id="playerImg">
+                        <p id="playerTitle">Song Name</p>
+                    </div>
+
+                    <div class="music-buttons">
+                        <button id="shuffle-btn" onclick="TurnShuffle()">
+                            <img src="{{ url_for('static',filename='img/shuffle-ico.webp') }}">
+                        </button>
+                        <button onclick="FetchSong(oldSong[0]); oldSong.splice(1, 1)">
+                            <img src="{{ url_for('static',filename='img/prev-ico.webp') }}">
+                        </button>
+                        <button onclick="StartStopAudio();">
+                            <img id="play-stop-img" src="{{ url_for('static',filename='img/stop-ico.webp') }}">
+                        </button>
+                        <button onclick="NextSong()">
+                            <img src="{{ url_for('static',filename='img/next-ico.webp') }}">
+                        </button>
+                        <button id="loop-btn" onclick="LoopToogle()">
+                            <img src="{{ url_for('static',filename='img/loop-ico.webp') }}">
+                        </button>
+                    </div>
+
+                    <div class="volume-slider">
+                        <img id="mute-img" onclick="ChangeVolume(true, 0)" data-muted=0 src="{{ url_for('static',filename='img/volume-ico.webp') }}">
+                        <input id="volumeRange" oninput="ChangeVolume(false, this.value)" type="range" max="1" step="0.1" value="1">
+                    </div>
+                </div>
+
+                <div class="down">
+                    <p id="cur-duration">0:00</p>
+                    <input id="playerRange" oninput="audioControll.currentTime = this.value" type="range">
+                    <p id="max-duration">0:00</p>
+                </div>
+            </div>
 
             <!-- Modal Playlist -->
             <div class="modal-playlist" id="playlist-modal">

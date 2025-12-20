@@ -3,6 +3,7 @@
     .main-container {
         grid-template-columns: 100%;
         grid-template-rows: 0.875fr max-content;
+        /* grid-template-rows: 1fr max-content; */
     }
     .title-container {display: none;} .navbar-container {display: none;} .header-container {display: none;}
     .iframe-container {text-align: center; margin-top: 40px}

@@ -38,7 +38,7 @@ def downloadSong(name:str):
 					"artist": video.author,
 					"img": video.thumbnail_url,
 					"added": time.strftime("%d/%m/%Y", time.localtime()),
-					"duration": f"{int(min)}:{int(sec)}",
+					"duration": str(min) + ":" + str(sec).rjust(2, "0"),
 					"url_path": f"/website/music/{fileName}.mp3"
 				})
 				video.streams.get_audio_only().download(output_path="./website/music", filename=fileName+".mp3")
@@ -53,7 +53,7 @@ def downloadSong(name:str):
 						"artist": video.author,
 						"img": video.thumbnail_url,
 						"added": time.strftime("%d/%m/%Y", time.localtime()),
-						"duration": f"{int(min)}:{int(sec)}",
+						"duration": str(min) + ":" + str(sec).rjust(2, "0"),
 						"url_path": f"/website/music/{fileName}.mp3"
 					})
 					video.streams.get_audio_only().download(output_path="./website/music", filename=fileName+".mp3")
@@ -67,7 +67,7 @@ def downloadSong(name:str):
 					"artist": video.author,
 					"img": video.thumbnail_url,
 					"added": time.strftime("%d/%m/%Y", time.localtime()),
-					"duration": f"{int(min)}:{int(sec)}",
+					"duration": str(min) + ":" + str(sec).rjust(2, "0"),
 					"url_path": f"/website/music/{fileName}.mp3"
 				})
 				video.streams.get_audio_only().download(output_path="./website/music", filename=fileName+".mp3")
@@ -80,7 +80,7 @@ def downloadSong(name:str):
 			"artist": video.author, 
 			"img": video.thumbnail_url, 
 			"added": time.strftime("%d/%m/%Y", time.localtime()),
-			"duration": str(min) + ":" + str(sec).ljust(2, "0"),
+			"duration": str(min) + ":" + str(sec).rjust(2, "0"),
 			"url_path": f"/website/music/{fileName}.mp3"
 		})
 		video.streams.get_audio_only().download(output_path="./website/music", filename=fileName+".mp3")
