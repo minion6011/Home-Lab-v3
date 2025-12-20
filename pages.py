@@ -5,7 +5,6 @@ from login import logged_users
 from music import downloadSong
 import psutil, os, json
 
-
 with open("website/music.json") as f:
 	data_music = json.load(f)
 
@@ -59,7 +58,7 @@ def playlist():
 		if file:
 			file[0].save(os.path.join(os.path.dirname(__file__), f"website\\music\\{num}.webp"))
 		playlist["img"] = f"/website/music/{num}.webp"
-		with open("music.json", "w") as f:
+		with open("website/music.json", "w") as f:
 			json.dump(data_music, f, indent=4)
 		return {"plName": request.form["name"], "plNum": num, "plSrc": f"/website/music/{num}.webp"}, 200
 	elif request.json and "type" in request.json: # get
@@ -73,7 +72,7 @@ def playlist():
 				except: pass
 				del data_music[request.json["num"]]
 				data_music["number_tot"] -= 1
-				with open("music.json", "w") as f:
+				with open("website/music.json", "w") as f:
 					json.dump(data_music, f, indent=4)
 				return {}, 200
 	return {}, 404
@@ -86,7 +85,7 @@ def songs():
 			nwSongs = downloadSong(request.json["sname"])
 			iStart = len(data_music[request.json["num"]]["songs"])
 			data_music[request.json["num"]]["songs"].extend(nwSongs)
-			with open("music.json", "w") as f:
+			with open("website/music.json", "w") as f:
 				json.dump(data_music, f, indent=4)
 			return {"nwSongs": nwSongs, "indexStart": iStart}, 200
 		elif request.json["type"] == "get" and (request.json["num"] and request.json["num"] in data_music):
@@ -97,7 +96,12 @@ def songs():
 				song = data_music[request.json["num"]]["songs"][int(request.json["index"])]
 				os.remove(os.path.join(os.path.dirname(__file__), song["url_path"].lstrip("/")))
 				data_music[request.json["num"]]["songs"].remove(song)
-				with open("music.json", "w") as f:
+				with open("website/music.json", "w") as f:
 					json.dump(data_music, f, indent=4)
 				return {}, 200
 	return {}, 404
+
+# - Accounting
+@app.route('/accounting', methods=['GET'])
+def accounting():
+	return render_template("/pages/accounting.html")
