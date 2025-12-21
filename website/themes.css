@@ -4,7 +4,13 @@
     --small-font-size: 16px;
     --medium-font-size: 18px;
     --X-font-size: 20px;
+    --XM-font-size: 20px;
     --XL-font-size: 25px;
+
+
+    --balance-color: #2962FF;
+    --profit-color: #00C853;
+    --loss-color: #D32F2F;
 
     /* Theme Variables */
     --font-color: #fff;
@@ -61,6 +67,7 @@
         --big-font-size: 50px;
 
         --X-font-size: 35px;
+        --XM-font-size: 40px;
         --XL-font-size: 40px;
     }
 }

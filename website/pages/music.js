@@ -176,6 +176,7 @@ async function PlaySong(url, name, artist, img, index) {
     audioControll.src = url; await audioControll.play(); playerStateImg.src = "/website/img/stop-ico.webp"; PreloadSong(index); // Play and preload next song
     playerRange.value = 0; playerRange.max = audioControll.duration; maxDuration.innerHTML = formatTime(audioControll.duration);
     setPWA(name, artist, img);
+    if (playerRange.disabled) playerRange.disabled = false;
     // Player Setup
     let SongReduc = name.substring(0,40); if (name.length>40) {SongReduc+="..."}
     playerSongImg.src = img; playerSongTitle.innerText = SongReduc;
