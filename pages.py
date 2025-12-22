@@ -112,18 +112,18 @@ def accounting():
 @app.route('/payments', methods=['POST'])
 def payments():
 	if request.json and "type" in request.json:
-		print(request.json)
 		if request.json["type"] == "add" and all(key in request.json for key in ["profit", "loss", "description"]):
+			timeList = time.strftime("%d/%m/%Y", time.localtime())
 			adapted_list = [ # struct date(0), profit(1), loss(2), description(3)
-				time.strftime("%d/%m/%Y", time.localtime()),
+				timeList,
 				request.json["profit"],
 				request.json["loss"],
 				request.json["description"]
 			]
 			data_accounting["losses"] += request.json["loss"]
-			data_accounting["profits"] += request.json["profits"]
+			data_accounting["profits"] += request.json["profit"]
 			data_accounting["table"].insert(0, adapted_list)
 			with open("website/accounting.json", "w") as f:
 				json.dump(data_accounting, f, indent=4)
-			return {}, 200
+			return {"date": timeList}, 200
 	return {}, 404
