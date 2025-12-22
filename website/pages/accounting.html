@@ -62,7 +62,7 @@
 
             <div class="table-container">
 
-                <table class="payments-table" id="payments-table">
+                <table class="payments-table" id="payments-table" onclick="FunctionCell(event)">
                     <tr>
                         <th><b>Date</b></th>
                         <th><b>Profit</b></th>
@@ -70,8 +70,8 @@
                         <th mobile="0"><b>Description</b></th>
                     </tr>
                     {% for el in data_accounting["table"] %}
-                    <tr>
-                        <p></p>
+                    <tr class="payment-tr">
+                        <input id="index" type="hidden" value="{{ loop.index0 }}">
                         <th><code>{{ el[0] }}</code></th>
                         <th class="profit">+{{ el[1] }}</th>
                         <th class="loss">-{{ el[2] }}</th>

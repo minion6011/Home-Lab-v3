@@ -42,10 +42,12 @@ function OpenCloseCsSelect() {
     customSelect.classList.toggle("hidden", !customSelect.classList.contains("hidden"));
 }
 function SelectOption(event) {
-    optionsSelect[1] = true; CheckAddPayment();
     let e = event || window.event;
     let target = e.target || e.srcElement;
-    if (target.matches("li")) selectedOption.innerHTML = target.innerHTML.slice(2);
+    if (target.matches("li")) {
+        selectedOption.innerHTML = target.innerHTML.slice(2);
+        optionsSelect[1] = true; CheckAddPayment();
+    }
 }
 
 function CheckAddPayment() {
@@ -72,20 +74,54 @@ async function AddPayment() {
 }
 function AddPaymentHTML(profit, loss, description, date) {
     // Update Financial Report
-    balanceTot.innerText = parseFloat(balanceTot.innerText) + (profit - loss); 
+    balanceTot.innerText = Math.round((Number(balanceTot.innerText) + (profit - loss)) * 100) / 100; 
     lossTot.innerText = "-" + (Number(lossTot.innerText.slice(1)) + loss);
     profitTot.innerText = "+" + (Number(profitTot.innerText.slice(1)) + profit);
     // Add Table element
-    trElement = document.createElement("tr");
+    trElement = document.createElement("tr"); trElement.className = "payment-tr";
     trElement.innerHTML = `
+    <input id="index" type="hidden" value="0">
     <th><code>${date}</code></th>
     <th class="profit">+${profit}</th>
     <th class="loss">-${loss}</th>
     <th mobile="0">${description}</th>
     `;
     paymentsTable.children[0].insertBefore(trElement, paymentsTable.children[0].children[1]);
+    // x+1 on other index
+    let ls = paymentsTable.children[0].children;
+    for (let i = 2; i < ls.length; i++) {
+        ls[i].children[0].value = Number(ls[i].children[0].value) + 1
+    };
     // Resets Values
     selectedOption.innerText = "Select Operation Type";
     selectedNumber.value = "";
     selectedDesc.value = "";
+}
+
+async function FunctionCell(event) {
+    let e = event || window.event;
+    let target = e.target.parentNode || e.srcElement.parentNode;
+    if (target.matches("tr") && target.className == "payment-tr") {
+        let ls = paymentsTable.children[0].children;
+        let index = Number(target.children[0].value)
+        // Request
+        let req = await fetch("/payments", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({"type": "remove", "index": index}),
+        });
+        if (req.status == 200) {
+            // Update Financial Report
+            let loss = target.children[3].innerText.slice(1);
+            let profit = target.children[2].innerText.slice(1);
+            lossTot.innerText = "-" + (Number(lossTot.innerText.slice(1)) - loss);
+            profitTot.innerText = "+" + (Number(profitTot.innerText.slice(1)) - profit);
+            balanceTot.innerText = Math.round((Number(profitTot.innerText.slice(1)) - Number(lossTot.innerText.slice(1))) * 100) / 100; 
+            // x-1 form y
+            ls[index+1].remove()
+            for (let i = index+1; i < ls.length; i++) {
+                ls[i].children[0].value = Number(ls[i].children[0].value) - 1
+            }
+        };
+    }
 }

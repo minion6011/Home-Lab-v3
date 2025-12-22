@@ -158,6 +158,4 @@ input[type="number"] {appearance: textfield;}
     padding: 8px;
 } th {font-weight: normal;}
 
-.payments-table tr:last-child td:first-child {border-bottom-left-radius: 10px;} 
-.payments-table tr:last-child td:last-child {border-bottom-right-radius: 10px;}
-.payments-table .songTcontainer:hover {background-color: var(--menu-bg-color)}
+.payments-table .payment-tr:hover {background-color: #DC262638}
