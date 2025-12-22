@@ -60,7 +60,7 @@ async function AddPayment() {
     optionsSelect = [false, false]; buttonAddPay.disabled = true;
     let dict = {"type":"add"};
     dict["profit"] = dict["loss"] = 0;
-    dict[selectedOption.innerText.toLowerCase()] = Number(selectedNumber.value)
+    dict[selectedOption.innerText.toLowerCase()] = Math.abs(Number(selectedNumber.value))
     dict["description"] = selectedDesc.value.trim() || "//";
     // Request
     let req = await fetch("/payments", {
