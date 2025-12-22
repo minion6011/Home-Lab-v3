@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+        <title>Accounting</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="{{ url_for('static',filename='themes.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static',filename='pages/accounting.css') }}">
+        <script src="{{ url_for('static',filename='pages/accounting.js') }}" type="text/javascript" defer></script>
+    </head>
+
+    <body>
+
+        <div class="main-container">
+            
+            <div class="summary-container">
+
+                <div class="balance-container">
+                    <p class="title">&#8227; Financial Report</p>
+
+                    <p class="balance-p"><b>&bull; Balance: <code id="balance">{{ data_accounting["profits"] - data_accounting["losses"] }}</code> €</b></p>
+                    <div class="status-container">
+                        <p class="ico">-</p>
+                        <p class="value">Loss <code id="loss">-{{ data_accounting["losses"] }}</code> €</p>
+                    </div>
+                    <div style="margin-top: 10px;" class="status-container">
+                        <p class="ico">+</p>
+                        <p class="value">Profit <code id="profit">+{{ data_accounting["profits"] }}</code> €</p>
+                    </div>
+                </div>
+
+                <div class="add-payment">
+                    <p class="title">&#8227; Add Payment</p>
+
+                    <div class="status-container">
+                        <p class="ico">€</p>
+                        <input id="selected-number" class="value-input" type="number" min="0" placeholder="....." oninput="optionsSelect[0]=this.value != ''; CheckAddPayment()">
+                    </div>
+
+                    <div style="margin-top: 10px;" class="status-container">
+                        <p class="ico">%</p>
+
+                        <div class="custom-select">
+                            <button onclick="event.stopPropagation(); OpenCloseCsSelect()" class="select-button">
+                                <p id="selected-value" class="selected-value">Select Operation Type</p>
+                                <p class="arrow">▼</p>
+                            </button>
+                            <ul onclick="SelectOption(event)" id="select-options" class="select-options hidden">
+                                <li class="profit">+ Profit</li>
+                                <li class="loss">- Loss</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 10px;" class="status-container">
+                        <p class="ico">~</p>
+                        <input id="selected-description" class="value-input" type="text" placeholder="Description...">
+                    </div>
+
+                    <button onclick="AddPayment()" class="payment-button" id="payment-button" disabled>+ Add Payment</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+
+                <table class="payments-table" id="payments-table">
+                    <tr>
+                        <th>Date</th>
+                        <th>Profit</th>
+                        <th>Loss</th>
+                        <th mobile="0">Description</th>
+                    </tr>
+                    {% for el in data_accounting["table"] %}
+                    <tr>
+                        <p></p>
+                        <th>{{ el[0] }}</th>
+                        <th class="profit">+{{ el[1] }}</th>
+                        <th class="loss">-{{ el[2] }}</th>
+                        <th mobile="0">{{ el[3]}}</th>
+                    </tr>
+                    {% endfor %}
+                </table>
+
+            </div>
+
+
+    </body>
+</html>
