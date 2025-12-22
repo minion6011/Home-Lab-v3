@@ -16,7 +16,9 @@
     html:not(.not-iframe) .main-container .table-container {margin-left: 20px;}
     .select-options {border-radius: 5px;}
 }
-
+*::-webkit-scrollbar {
+    display: none;
+}
 * {transition: all 0.25s ease;}
 body {background-color: #ffffff00;}
 body, html {

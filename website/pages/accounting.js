@@ -87,4 +87,5 @@ function AddPaymentHTML(profit, loss, description, date) {
     // Resets Values
     selectedOption.innerText = "Select Operation Type";
     selectedNumber.value = "";
+    selectedDesc.value = "";
 }
