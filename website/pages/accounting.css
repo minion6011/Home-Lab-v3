@@ -45,9 +45,9 @@ html.not-iframe .main-container .table-container {margin: 20px}
 }
 
 code {font-size: var(--small-font-size);}
-.balance, #balance {color: var(--balance-color)}
-.loss, #loss {color: var(--loss-color)}
-.profit, #profit {color: var(--profit-color)}
+.balance, #balance {color: var(--balance-color); font-weight: bold;}
+.loss, #loss {color: var(--loss-color); font-weight: bold;}
+.profit, #profit {color: var(--profit-color); font-weight: bold;}
 
 
 
@@ -154,7 +154,7 @@ input[type="number"] {appearance: textfield;}
 .payments-table td, th {
     text-align: left;
     padding: 8px;
-}
+} th {font-weight: normal;}
 
 .payments-table tr:last-child td:first-child {border-bottom-left-radius: 10px;} 
 .payments-table tr:last-child td:last-child {border-bottom-right-radius: 10px;}

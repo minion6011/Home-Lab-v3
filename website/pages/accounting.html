@@ -17,14 +17,14 @@
                 <div class="balance-container">
                     <p class="title">&#8227; Financial Report</p>
 
-                    <p class="balance-p"><b>&bull; Balance: <code id="balance">{{ data_accounting["profits"] - data_accounting["losses"] }}</code> €</b></p>
+                    <p class="balance-p"><b>&bull; Balance: <code id="balance">{{ (data_accounting["profits"] - data_accounting["losses"]) | round(2) }}</code> €</b></p>
                     <div class="status-container">
                         <p class="ico">-</p>
-                        <p class="value">Loss <code id="loss">-{{ data_accounting["losses"] }}</code> €</p>
+                        <p class="value">Loss <code id="loss">-{{ data_accounting["losses"] | round(2) }}</code> €</p>
                     </div>
                     <div style="margin-top: 10px;" class="status-container">
                         <p class="ico">+</p>
-                        <p class="value">Profit <code id="profit">+{{ data_accounting["profits"] }}</code> €</p>
+                        <p class="value">Profit <code id="profit">+{{ data_accounting["profits"] | round(2) }}</code> €</p>
                     </div>
                 </div>
 
@@ -64,15 +64,15 @@
 
                 <table class="payments-table" id="payments-table">
                     <tr>
-                        <th>Date</th>
-                        <th>Profit</th>
-                        <th>Loss</th>
-                        <th mobile="0">Description</th>
+                        <th><b>Date</b></th>
+                        <th><b>Profit</b></th>
+                        <th><b>Loss</b></th>
+                        <th mobile="0"><b>Description</b></th>
                     </tr>
                     {% for el in data_accounting["table"] %}
                     <tr>
                         <p></p>
-                        <th>{{ el[0] }}</th>
+                        <th><code>{{ el[0] }}</code></th>
                         <th class="profit">+{{ el[1] }}</th>
                         <th class="loss">-{{ el[2] }}</th>
                         <th mobile="0">{{ el[3]}}</th>
