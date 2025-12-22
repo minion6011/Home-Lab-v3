@@ -30,6 +30,7 @@ const paymentsTable = document.getElementById("payments-table");
 const balanceTot = document.getElementById("balance");
 const lossTot = document.getElementById("loss");
 const profitTot = document.getElementById("profit");
+const tableLength = document.getElementById("table-length");
 // --- Functions
 
 // Custom Select
@@ -47,6 +48,7 @@ function SelectOption(event) {
     if (target.matches("li")) {
         selectedOption.innerHTML = target.innerHTML.slice(2);
         optionsSelect[1] = true; CheckAddPayment();
+        OpenCloseCsSelect();
     }
 }
 
@@ -59,7 +61,7 @@ async function AddPayment() {
     let dict = {"type":"add"};
     dict["profit"] = dict["loss"] = 0;
     dict[selectedOption.innerText.toLowerCase()] = Number(selectedNumber.value)
-    dict["description"] = selectedDesc.value;
+    dict["description"] = selectedDesc.value.trim() || "//";
     // Request
     let req = await fetch("/payments", {
         method: "POST",
@@ -67,6 +69,7 @@ async function AddPayment() {
         body: JSON.stringify(dict),
     });
     if (req.status == 200) {
+        tableLength.innerText = Number(tableLength.innerText) + 1;
         let json = JSON.parse(await req.text());
         AddPaymentHTML(dict["profit"], dict["loss"], dict["description"], json.date)
     }
@@ -111,6 +114,7 @@ async function FunctionCell(event) {
             body: JSON.stringify({"type": "remove", "index": index}),
         });
         if (req.status == 200) {
+            tableLength.innerText = Number(tableLength.innerText) - 1;
             // Update Financial Report
             let loss = target.children[3].innerText.slice(1);
             let profit = target.children[2].innerText.slice(1);
@@ -123,5 +127,21 @@ async function FunctionCell(event) {
                 ls[i].children[0].value = Number(ls[i].children[0].value) - 1
             }
         };
+    }
+}
+
+async function ResetTable() {
+    let req = await fetch("/payments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({"type": "reset"}),
+    });
+    if (req.status == 200) {
+        let lsN = (paymentsTable.children[0].children).length;
+        for (let i = 1; i < lsN; i++) {
+            paymentsTable.children[0].children[1].remove()
+        }
+        tableLength.innerText = "0";
+        balanceTot.innerText = "0"; lossTot.innerText = "0"; profitTot.innerText = "0";
     }
 }

@@ -53,10 +53,21 @@
 
                     <div style="margin-top: 10px;" class="status-container">
                         <p class="ico">~</p>
-                        <input id="selected-description" class="value-input" type="text" placeholder="Description...">
+                        <input value="\\" id="selected-description" class="value-input" type="text" placeholder="Description...">
                     </div>
 
-                    <button onclick="AddPayment()" class="payment-button" id="payment-button" disabled>+ Add Payment</button>
+                    <button onclick="AddPayment()" class="main-button" id="payment-button" disabled>+ Add Payment</button>
+                </div>
+                    
+                <div class="table-managment">
+                    <p class="title">&#8227; Table Managment</p>
+
+                    <div style="margin-top: 10px;" class="status-container">
+                        <p class="ico">#</p>
+                        <p class="value">List of elements <code id="table-length">{{ data_accounting["table"] | length }}</code></p>
+                    </div>
+
+                    <button onclick="ResetTable()" class="main-button">Reset Table</button>
                 </div>
             </div>
 

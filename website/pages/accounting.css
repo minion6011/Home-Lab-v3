@@ -129,14 +129,14 @@ code {font-size: var(--small-font-size);}
 input[type="number"]::-webkit-outer-spin-button,input[type="number"]::-webkit-inner-spin-button {-webkit-appearance: none; margin: 0;}
 input[type="number"] {appearance: textfield;}
 
-.payment-button {
+.main-button {
     border: 0; border-radius: 50px; padding: 7.5px;
     background-color: var(--font-color); 
     color: var(--inv-color); font-size: var(--small-font-size); font-weight: bold;
     margin-left: 10px; margin-top: 15px;
     cursor: pointer;
 }
-.payment-button:disabled {
+.main-button:disabled {
     background-color: var(--elm-font-color);
     cursor: not-allowed;
 }
@@ -159,3 +159,11 @@ input[type="number"] {appearance: textfield;}
 } th {font-weight: normal;}
 
 .payments-table .payment-tr:hover {background-color: #DC262638}
+
+
+.table-managment {
+    border-radius: 25px;
+    background-color: var(--secondary-bg-color);
+    padding: 17.5px;
+    overflow: auto; 
+}
