@@ -46,7 +46,7 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    background-image: url('/website/img/login-bk.jpg');
+    background-image: url('/website/img/login-bk.webp');
     background-size: cover;
     overflow-x: hidden;
     overflow-y: auto;

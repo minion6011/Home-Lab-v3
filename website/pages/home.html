@@ -18,23 +18,23 @@
 
         <div class="main-container">
             <div class="info-container">
-                <p class="title"><img src="{{ url_for('static',filename='/img/account-ico.png') }}" class="ico"> Account Name</p>
+                <p class="title"><img src="{{ url_for('static',filename='/img/account-ico.webp') }}" class="ico"> Account Name</p>
                 <p class="info-value">{{ name }}</p>
-                <p class="title"><img src="{{ url_for('static',filename='/img/ip-ico.png') }}" class="ico"> Current Ip address</p>
+                <p class="title"><img src="{{ url_for('static',filename='/img/ip-ico.webp') }}" class="ico"> Current Ip address</p>
                 <p class="info-value">{{ ip }}</p>
-                <p class="title"><img src="{{ url_for('static',filename='/img/time-ico.png') }}" class="ico"> Logged In Until</p>
+                <p class="title"><img src="{{ url_for('static',filename='/img/time-ico.webp') }}" class="ico"> Logged In Until</p>
                 <p class="info-value" id="logged-until">00/00/0000</p>
             </div>
 
             <div class="info-container">
-                <p class="title-XL"><img src="{{ url_for('static',filename='/img/system-ico.png') }}" class="ico"> System Stats</p>
-                <p class="percentage"><img src="{{ url_for('static',filename='/img/ram-ico.png') }}" class="ico"> RAM {{ stats[0] }}</p>
-                <p class="percentage"><img src="{{ url_for('static',filename='/img/cpu-ico.png') }}" class="ico"> CPU {{ stats[1] }}</p>
-                <p class="percentage"><img src="{{ url_for('static',filename='/img/ssd-ico.png') }}" class="ico"> SSD {{ stats[2] }}</p>
+                <p class="title-XL"><img src="{{ url_for('static',filename='/img/system-ico.webp') }}" class="ico"> System Stats</p>
+                <p class="percentage"><img src="{{ url_for('static',filename='/img/ram-ico.webp') }}" class="ico"> RAM {{ stats[0] }}</p>
+                <p class="percentage"><img src="{{ url_for('static',filename='/img/cpu-ico.webp') }}" class="ico"> CPU {{ stats[1] }}</p>
+                <p class="percentage"><img src="{{ url_for('static',filename='/img/ssd-ico.webp') }}" class="ico"> SSD {{ stats[2] }}</p>
             </div>
 
             <div class="info-container">
-                <p class="title-XL"><img src="{{ url_for('static',filename='/img/terminal-ico.png') }}" class="ico"> Remote Terminal</p>
+                <p class="title-XL"><img src="{{ url_for('static',filename='/img/terminal-ico.webp') }}" class="ico"> Remote Terminal</p>
                 <p class="info-value">Command</p>
                 <input class="text-input" placeholder="sudo reboot" onkeydown="if (event.key === 'Enter') {SendCommand()}" id="terminal-input">
             </div>
