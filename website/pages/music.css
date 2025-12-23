@@ -266,6 +266,7 @@ html.not-iframe .song-container {margin: 20px}
 
 .songs-table tr:last-child td:first-child {border-bottom-left-radius: 10px;} 
 .songs-table tr:last-child td:last-child {border-bottom-right-radius: 10px;}
+.songs-table .songTcontainer {cursor: pointer;}
 .songs-table .songTcontainer:hover {background-color: var(--menu-bg-color)}
 
 .titleSong-column {
