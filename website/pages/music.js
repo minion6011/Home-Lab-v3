@@ -446,7 +446,7 @@ function CreateEditPlaylist(type, num=null) {
     });
     PlaylistModal('close')
 }
-
+EditPlsHTML(num, null, plNameIn.value)
 function EditPlsHTML(id, srcNew, titleNew, type=null) {
     playlistsLs = playlistsContainer.getElementsByClassName("pl-item");
     for (let i = 0; i < playlistsLs.length; i++) {
@@ -454,7 +454,7 @@ function EditPlsHTML(id, srcNew, titleNew, type=null) {
         if (element.querySelector(".pl-id").value == id) {
             if (type == null) {
                 if (srcNew != null) element.querySelector(".pl-img").src = srcNew;
-                if (titleNew != null) element.querySelector(".pl-text").src = titleNew;
+                if (titleNew != null) element.querySelector(".pl-text").innerText = titleNew;
             } else if (type == "delete") playlistsContainer.removeChild(element);
         }
     };
