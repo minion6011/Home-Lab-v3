@@ -101,13 +101,16 @@ function formatTime(seconds) {
 }
 function StartStopAudio() {
     if (audioControll.paused) {
+        navigator.mediaSession.playbackState = "playing";
         audioControll.play();
         playerStateImg.src = "/website/img/stop-ico.webp"
     }
     else {
+        navigator.mediaSession.playbackState = "paused";
         audioControll.pause();
         playerStateImg.src = "/website/img/play-ico.webp"
     };
+    updateMediaSessionPosition();
 }
 function ChangeVolume(mute, value) {
     if (volumeRange.value == 0) {
@@ -148,7 +151,15 @@ async function setPWA(title, artist, img) {
         navigator.mediaSession.setActionHandler('pause', () => {StartStopAudio()});
         navigator.mediaSession.setActionHandler('nexttrack', async () => {await NextSong()});
         navigator.mediaSession.setActionHandler('previoustrack', async () => {FetchSong(oldSong[0]); oldSong.splice(1, 1)})
+        navigator.mediaSession.setActionHandler("seekbackward", (details) => {Seek(false, details)});
+        navigator.mediaSession.setActionHandler("seekforward", (details) => {Seek(true, details)});
     }
+}
+
+function Seek(add, details) {
+    const skipTime = details.seekOffset || 10;
+    if (add) audioControll.currentTime = Math.min(audioControll.currentTime + skipTime, audioControll.duration);
+    else audioControll.currentTime = Math.min(audioControll.currentTime - skipTime, 0);
 }
 
 async function FetchSong(sgId) {
@@ -174,6 +185,7 @@ async function PlaySong(url, name, artist, img, index) {
     if (oldSong.length >= 3) {
         oldSong.splice(0, 1)
     }
+    audioControll.currentTime = 0;
     audioControll.src = url; await audioControll.play(); playerStateImg.src = "/website/img/stop-ico.webp"; PreloadSong(index); // Play and preload next song
     playerRange.value = 0; playerRange.max = audioControll.duration; maxDuration.innerHTML = formatTime(audioControll.duration);
     setPWA(name, artist, img);
@@ -184,18 +196,17 @@ async function PlaySong(url, name, artist, img, index) {
     
 }
 
- 
-if (window.isSecureContext) { // Only Works in HTTPS
-    audioControll.addEventListener("play", updatePositionState);
-    audioControll.addEventListener("loadedmetadata", updatePositionState);
-    function updatePositionState() {
-        if (!navigator.mediaSession || !audioControll.duration) return;
-        navigator.mediaSession.setPositionState({
-            duration: audioControll.duration,
-            playbackRate: audioControll.playbackRate,
-            position: audioControll.currentTime
-        });
-    }
+audioControll.addEventListener("timeupdate", updateMediaSessionPosition);
+audioControll.addEventListener("ratechange", updateMediaSessionPosition);
+audioControll.addEventListener("loadedmetadata", updateMediaSessionPosition);
+function updateMediaSessionPosition() {
+  if (!audioControll.duration || isNaN(audioControll.duration)) return;
+
+  navigator.mediaSession.setPositionState({
+    duration: audioControll.duration,
+    playbackRate: audioControll.playbackRate,
+    position: audioControll.currentTime
+  });
 }
 
 audioControll.addEventListener('timeupdate', () => {
