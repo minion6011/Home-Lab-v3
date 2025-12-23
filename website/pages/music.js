@@ -266,7 +266,9 @@ async function AddSong() {
         body: JSON.stringify({num: plDSId.value, type: "add", sname: songName}),
     });
     // addsongInput.disabled = false; 
-    addsongInput.placeholder = "YT name/link..."; nDownload -= 1;
+    nDownload -= 1
+    if (nDownload == 0) addsongInput.placeholder = "YT name/link...";
+    else addsongInput.placeholder = `Downloading - ${nDownload}...`;
     if (req.status == 200) {
         if (plDSId.value == currentPl[0]) currentPl[1] += 1
         let json = JSON.parse(await req.text());
