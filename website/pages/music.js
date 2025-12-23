@@ -38,6 +38,7 @@ const playerSongImg = document.getElementById("playerImg");
 const playerSongTitle = document.getElementById("playerTitle");
 
 // Songs Related
+let nDownload = 0;
 let oldSong = [];
 let oldVolume = 1;
 let currentPl = [null, null]; //plId (str), plIdLenght (str)
@@ -256,14 +257,16 @@ function CreateSongHTML(index, values) { // da aggiungere il link nel onclick --
 
 // Add-Song Button
 async function AddSong() {
-    let songName = addsongInput.value; addsongInput.value = ""; addsongInput.placeholder = "Downloading..."
-    addsongInput.disabled = true;
+    nDownload += 1;
+    let songName = addsongInput.value; addsongInput.value = ""; addsongInput.placeholder = `Downloading - ${nDownload}...`
+    // addsongInput.disabled = true;
     let req = await fetch("/songs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({num: plDSId.value, type: "add", sname: songName}),
     });
-    addsongInput.disabled = false; addsongInput.placeholder = "YT name/link...";
+    // addsongInput.disabled = false; 
+    addsongInput.placeholder = "YT name/link..."; nDownload -= 1;
     if (req.status == 200) {
         if (plDSId.value == currentPl[0]) currentPl[1] += 1
         let json = JSON.parse(await req.text());

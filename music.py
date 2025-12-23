@@ -17,8 +17,9 @@ if spotify_check:
 		while results: # Si usa il while perchè la richiesta è una paginazione # - fare check se il sito crasha
 			for item in results['items']:
 				track = item['track']
-				if track: 
-					song_names.append(track['name'])
+				if track:
+					if "artists" in track: song_names.append( (track['name'], track["artists"][0]["name"]) )
+					else: song_names.append( (track['name'], "") )
 			if results['next']:
 				results = sp.next(results)
 			else:
@@ -29,34 +30,43 @@ def downloadSong(name:str):
 	videos = []
 	if name.startswith("https://"):
 		if name.startswith("https://open.spotify.com/playlist/") and spotify_check:
-			for song in Spotify_Getsongs(name.split("/")[-1].split("?")[0]):
-				fileName = uuid.uuid4().hex
-				video = Search(song).videos[0]
-				min, sec = divmod(video.length, 60)
-				videos.append({
-					"name": video.title,
-					"artist": video.author,
-					"img": video.thumbnail_url,
-					"added": time.strftime("%d/%m/%Y", time.localtime()),
-					"duration": str(min) + ":" + str(sec).rjust(2, "0"),
-					"url_path": f"/website/music/{fileName}.mp3"
-				})
-				video.streams.get_audio_only().download(output_path="./website/music", filename=fileName+".mp3")
+			try:
+				for song, name in Spotify_Getsongs(name.split("/")[-1].split("?")[0]):
+					try:
+						fileName = uuid.uuid4().hex
+						video = Search(f"{song} {name}").videos[0]
+						min, sec = divmod(video.length, 60)
+						videos.append({
+							"name": video.title,
+							"artist": video.author,
+							"img": video.thumbnail_url,
+							"added": time.strftime("%d/%m/%Y", time.localtime()),
+							"duration": str(min) + ":" + str(sec).rjust(2, "0"),
+							"url_path": f"/website/music/{fileName}.mp3"
+						})
+						video.streams.get_audio_only().download(output_path="./website/music", filename=fileName+".mp3")
+					except Exception as e:
+						print(f"[DEBUG] Error, Spotify Playlist Single\n{e}")
+			except Exception as e:
+				print(f"[DEBUG] Error, Spotify Playlist Loop\n{e}")
 		else:
 			pl = Playlist(name)
 			try:
 				for video in pl.videos: # first test
-					fileName = uuid.uuid4().hex
-					min, sec = divmod(video.length, 60)
-					videos.append({
-						"name": video.title,
-						"artist": video.author,
-						"img": video.thumbnail_url,
-						"added": time.strftime("%d/%m/%Y", time.localtime()),
-						"duration": str(min) + ":" + str(sec).rjust(2, "0"),
-						"url_path": f"/website/music/{fileName}.mp3"
-					})
-					video.streams.get_audio_only().download(output_path="./website/music", filename=fileName+".mp3")
+					try:
+						fileName = uuid.uuid4().hex
+						min, sec = divmod(video.length, 60)
+						videos.append({
+							"name": video.title,
+							"artist": video.author,
+							"img": video.thumbnail_url,
+							"added": time.strftime("%d/%m/%Y", time.localtime()),
+							"duration": str(min) + ":" + str(sec).rjust(2, "0"),
+							"url_path": f"/website/music/{fileName}.mp3"
+						})
+						video.streams.get_audio_only().download(output_path="./website/music", filename=fileName+".mp3")
+					except Exception as e:
+						print(f"[DEBUG] Error, YT Playlist Single\n{e}")
 			except:
 				fileName = uuid.uuid4().hex
 				if name.startswith("https://youtu.be/"): name = name.replace("https://youtu.be/", "https://youtube.com/watch?v=")
