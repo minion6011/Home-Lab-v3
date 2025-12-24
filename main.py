@@ -22,4 +22,4 @@ def not_found_error(error):
     return redirect('/index'), 301
 
 if __name__ == '__main__':
-    app.run(debug=False, use_reloader=True, port=8091, host="0.0.0.0")
+    app.run(debug=False, use_reloader=True, port=5000, host="0.0.0.0")

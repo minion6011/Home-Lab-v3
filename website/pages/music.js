@@ -44,6 +44,7 @@ let oldVolume = 1;
 let currentPl = [null, null]; //plId (str), plIdLenght (str)
 let preloadData = ["", "", "", "", 0] // struct ["url", "name", "artist", "img", 0]
 const audioControll = document.getElementById("AudioControll");
+const audioPreload = document.getElementById("AudioPreload");
 
 const songTableSongs = document.getElementById("songs-table");
 
@@ -246,6 +247,7 @@ async function PreloadSong(id) {
     })
     if (req.status == 200) {
         let json = JSON.parse(await req.text());
+        audioPreload.src = json.song.url_path; // Preload
         preloadData = [json.song.url_path, json.song.name, json.song.artist, json.song.img, i]
     }
     else throw new Error("Getting a song (preload funct) returns a non-200 status code");
