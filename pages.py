@@ -101,7 +101,7 @@ def songs():
 				data_music[request.json["num"]]["songs"].remove(song)
 				with open("website/music.json", "w") as f:
 					json.dump(data_music, f, indent=4)
-				return {}, 200
+				return {"indexNew":len(data_music[request.json["num"]]["songs"])}, 200
 	return {}, 404
 
 # - Accounting

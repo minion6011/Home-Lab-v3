@@ -75,12 +75,17 @@ let imgDefault = "";
 // Songs Player
 async function DeleteSong(value) {
     let id = value.parentElement.parentElement.children[0].innerText;
+    if (value.parentElement.parentElement.children[1].children[1].innerText.substring(0,30) == playerSongTitle.innerText.substring(0,30)) {
+        audioControll.src = "";
+        mainContainer.dataset.play = "0";
+    }
     let req = await fetch("/songs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({num: plDSId.value, type: "delete", index: id-1}),
     });
     if (req.status == 200) {
+        let json = JSON.parse(await req.text());
         if (plDSId.value == currentPl[0]) currentPl[1] -= 1;
         if (preloadData[4]+1 == id) PreloadSong(id);
         value.parentElement.parentElement.parentElement.removeChild(value.parentElement.parentElement);
@@ -91,6 +96,7 @@ async function DeleteSong(value) {
                 ls[i].setAttribute("onclick", `FetchSong(${Number(ls[i].children[0].innerText) - 1});`);
             }
         };
+        plDsDesc.innerHTML = plDsDesc.innerHTML.replace(/( - )(.*?)(<\/i>)/, "$1" + Number(json.indexNew) + "$3");
     }
     else throw new Error("Getting a song returns a non-200 status code");
 }
@@ -185,8 +191,8 @@ async function PlaySong(url, name, artist, img, index) {
     if (oldSong.length >= 3) {
         oldSong.splice(0, 1)
     }
-    audioControll.currentTime = 0;
     audioControll.src = url; await audioControll.play(); playerStateImg.src = "/website/img/stop-ico.webp"; PreloadSong(index); // Play and preload next song
+    audioControll.currentTime = 0;
     playerRange.value = 0; playerRange.max = audioControll.duration; maxDuration.innerHTML = formatTime(audioControll.duration);
     setPWA(name, artist, img);
     if (playerRange.disabled) playerRange.disabled = false;
@@ -270,11 +276,12 @@ function CreateSongHTML(index, values) { // da aggiungere il link nel onclick --
 async function AddSong() {
     nDownload += 1;
     let songName = addsongInput.value; addsongInput.value = ""; addsongInput.placeholder = `Downloading - ${nDownload}...`
+    let startPl = plDSId.value
     // addsongInput.disabled = true;
     let req = await fetch("/songs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({num: plDSId.value, type: "add", sname: songName}),
+        body: JSON.stringify({num: startPl, type: "add", sname: songName}),
     });
     // addsongInput.disabled = false; 
     nDownload -= 1
@@ -283,10 +290,12 @@ async function AddSong() {
     if (req.status == 200) {
         if (plDSId.value == currentPl[0]) currentPl[1] += 1
         let json = JSON.parse(await req.text());
-        json.nwSongs.forEach((song, index) => {
-            CreateSongHTML(json.indexStart+index, song)
-        });
-        plDsDesc.innerHTML = plDsDesc.innerHTML.replace(/( - )(.*?)(<\/i>)/, "$1" + (Number(json.indexStart)+Number(json.nwSongs.length)) + "$3");
+        if (startPl == plDSId.value) {
+            json.nwSongs.forEach((song, index) => {
+                CreateSongHTML(json.indexStart+index, song)
+            });
+            plDsDesc.innerHTML = plDsDesc.innerHTML.replace(/( - )(.*?)(<\/i>)/, "$1" + (Number(json.indexStart)+Number(json.nwSongs.length)) + "$3");
+        }
     }
     else throw new Error("Adding a song returns a non-200 status code");
 }
@@ -446,7 +455,6 @@ function CreateEditPlaylist(type, num=null) {
     });
     PlaylistModal('close')
 }
-EditPlsHTML(num, null, plNameIn.value)
 function EditPlsHTML(id, srcNew, titleNew, type=null) {
     playlistsLs = playlistsContainer.getElementsByClassName("pl-item");
     for (let i = 0; i < playlistsLs.length; i++) {
