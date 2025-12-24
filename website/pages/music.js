@@ -76,6 +76,7 @@ let imgDefault = "";
 async function DeleteSong(value) {
     let id = value.parentElement.parentElement.children[0].innerText;
     if (value.parentElement.parentElement.children[1].children[1].innerText.substring(0,30) == playerSongTitle.innerText.substring(0,30)) {
+        StartStopAudio()
         audioControll.src = "";
         mainContainer.dataset.play = "0";
     }
