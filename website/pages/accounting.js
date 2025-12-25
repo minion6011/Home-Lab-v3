@@ -60,7 +60,7 @@ async function AddPayment() {
     optionsSelect = [false, false]; buttonAddPay.disabled = true;
     let dict = {"type":"add"};
     dict["profit"] = dict["loss"] = 0;
-    dict[selectedOption.innerText.toLowerCase()] = Math.abs(Number(selectedNumber.value))
+    dict[selectedOption.innerText.toLowerCase()] = Math.abs( Math.round(Number(selectedNumber.value) * 100) / 100)
     dict["description"] = selectedDesc.value.trim() || "//";
     // Request
     let req = await fetch("/payments", {
@@ -78,8 +78,8 @@ async function AddPayment() {
 function AddPaymentHTML(profit, loss, description, date) {
     // Update Financial Report
     balanceTot.innerText = Math.round((Number(balanceTot.innerText) + (profit - loss)) * 100) / 100; 
-    lossTot.innerText = "-" + (Number(lossTot.innerText.slice(1)) + loss);
-    profitTot.innerText = "+" + (Number(profitTot.innerText.slice(1)) + profit);
+    lossTot.innerText = "-" + Math.round((Number(lossTot.innerText.slice(1)) + loss) * 100) / 100;
+    profitTot.innerText = "+" + Math.round((Number(profitTot.innerText.slice(1)) + profit) * 100) / 100;
     // Add Table element
     trElement = document.createElement("tr"); trElement.className = "payment-tr";
     trElement.innerHTML = `
@@ -106,7 +106,7 @@ async function FunctionCell(event) {
     let target = e.target.parentNode || e.srcElement.parentNode;
     if (target.matches("tr") && target.className == "payment-tr") {
         let ls = paymentsTable.children[0].children;
-        let index = Number(target.children[0].value)
+        let index = Math.round( Number(target.children[0].value)*100 ) / 100
         // Request
         let req = await fetch("/payments", {
             method: "POST",
@@ -118,8 +118,8 @@ async function FunctionCell(event) {
             // Update Financial Report
             let loss = target.children[3].innerText.slice(1);
             let profit = target.children[2].innerText.slice(1);
-            lossTot.innerText = "-" + (Number(lossTot.innerText.slice(1)) - loss);
-            profitTot.innerText = "+" + (Number(profitTot.innerText.slice(1)) - profit);
+            lossTot.innerText = "-" + Math.round( (Number(lossTot.innerText.slice(1)) - loss)*100 ) / 100;
+            profitTot.innerText = "+" + Math.round( (Number(profitTot.innerText.slice(1)) - profit)*100 ) / 100;
             balanceTot.innerText = Math.round((Number(profitTot.innerText.slice(1)) - Number(lossTot.innerText.slice(1))) * 100) / 100; 
             // x-1 form y
             ls[index+1].remove()
