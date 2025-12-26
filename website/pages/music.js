@@ -220,8 +220,8 @@ function updateMediaSessionPosition() {
 audioControll.addEventListener('timeupdate', () => {
   if (audioControll.duration) {
     playerRange.value = audioControll.currentTime;
-    currentDuration.innerHTML = formatTime(audioControll.currentTime)
     playerRange.style.setProperty('--range-progress-width', `${(playerRange.value - playerRange.min) / (playerRange.max - playerRange.min) * 100}%`);
+    currentDuration.innerHTML = formatTime(audioControll.currentTime);
   }
 });
 

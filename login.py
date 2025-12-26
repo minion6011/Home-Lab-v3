@@ -4,7 +4,7 @@ from flask import request, render_template, redirect
 import time
 
 logged_users = {}
-logged_users = {'127.0.0.1': 174690956394.0599308}
+logged_users = {'127.0.0.1': 174690956395}
 # {'ip': timestamp}; if timestamp > 60m == Relogin
 
 @app.before_request
@@ -15,9 +15,8 @@ def usercheck_before_request():
                 return render_template("login.html")
             else:
                 return {}, 401
-    elif request.remote_addr in logged_users and logged_users[request.remote_addr] > time.time():
-        logged_users[request.remote_addr] = time.time() + config["login_duration_minutes"] * 60
-    #return request.remote_addr
+    if request.remote_addr in logged_users and logged_users[request.remote_addr] > time.time():
+            logged_users[request.remote_addr] = time.time() + config["login_duration_minutes"] * 60
     
 
 @app.route('/login', methods=['POST'])
