@@ -3,7 +3,9 @@ const settingMenu = document.getElementById("setting-menu");
 const settingMenuSidebar = document.getElementById("setting-menu-sidebar");
 
 const buttonDark = document.getElementById("dark-button");
+const buttonDarkMobile = document.getElementById("dark-button_mobile");
 const buttonLight = document.getElementById("light-button");
+const buttonLightMobile = document.getElementById("light-button_mobile");
 
 const iframePages = document.getElementById("pages-iframe");
 
@@ -31,13 +33,14 @@ else {
 function changeTheme(color) {
     localStorage.setItem("theme", color);
     if (color === "dark") {
-        buttonDark.style.backgroundColor = "var(--selected-theme-bg-color)"
-        buttonLight.style.backgroundColor = "#ffffff00"
+        buttonDarkMobile.style.backgroundColor = buttonDark.style.backgroundColor = "var(--selected-theme-bg-color)"
+        buttonLightMobile.style.backgroundColor = buttonLight.style.backgroundColor = "#ffffff00"
         document.body.classList.remove("light");
     }
     else {
-        buttonLight.style.backgroundColor = "var(--selected-theme-bg-color)"
-        buttonDark.style.backgroundColor = "#ffffff00"
+        buttonLightMobile.style.backgroundColor = buttonLight.style.backgroundColor = "var(--selected-theme-bg-color)"
+        buttonDarkMobile.style.backgroundColor = buttonDark.style.backgroundColor = "#ffffff00"
+        
         document.body.classList.add("light");
     }
 }
