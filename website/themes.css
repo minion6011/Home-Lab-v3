@@ -35,6 +35,10 @@
     --profit-color: #00C853;
     --loss-color: #D32F2F;
     --border-color: #191919;
+    
+    /* - Agenda - */
+    --check-button-color: #404040;
+    --check-button-hover-color: #4b4b4b7a;
 }
 .light {
     --font-color: #000000;
@@ -60,6 +64,10 @@
 
     /* - Accounting - */
     --border-color: #ffffff;
+
+    /* - Agenda - */
+    --check-button-color: #eaeaea;
+    --check-button-hover-color: #bcbcbc7a;
 }
 
 @media (max-width: 1003px) {

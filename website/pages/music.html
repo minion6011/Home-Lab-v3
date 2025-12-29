@@ -71,7 +71,7 @@
                             <img src="{{ url_for('static',filename='img/mAdd-ico.webp') }}">
                         </button>
 
-                        <input id="songs-input" class="songs-input" onkeydown="if (event.key === 'Enter') {AddSong()}" placeholder="YT name/link..." style="display: none;">
+                        <input id="songs-input" class="songs-input" onkeydown="if (event.key === 'Enter' && this.value != '') AddSong()" placeholder="YT name/link..." style="display: none;">
                     </div>
                 </div>
 

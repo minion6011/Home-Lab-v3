@@ -108,9 +108,9 @@ html.not-iframe .main-container .notes-container {margin: 20px}
 	left: 0;
 	height: 25px; width: 25px;
 	border-radius: 6.5px;
-	background-color: var(--but-hover-bg-color);
+	background-color: var(--check-button-color);
 }
-.to_do-container:hover input[type="checkbox"] ~ .checkmark {background-color: var(--translucent-bg-color);}
+.to_do-container:hover input[type="checkbox"] ~ .checkmark {background-color: var(--check-button-hover-color);}
 
 .to_do-container input[type="checkbox"]:checked ~ .checkmark {background-color: var(--selected-theme-bg-color);}
 .to_do-container input[type="checkbox"]:checked ~ .text {text-decoration: line-through;}

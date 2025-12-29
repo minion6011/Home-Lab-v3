@@ -75,6 +75,7 @@ async function addTodo() {
         }
         checkListTodo.insertBefore(mainDiv, checkListTodo.firstChild)
         TodoAddInput.value = "";
+        TodoAddButton.disabled = true;
     }
     else throw new Error("Adding a To-Do returns a non-200 status code");
 }
