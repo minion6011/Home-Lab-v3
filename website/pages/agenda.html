@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+        <title>Agenda</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="{{ url_for('static',filename='themes.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static',filename='pages/agenda.css') }}">
+        <script src="{{ url_for('static',filename='pages/agenda.js') }}" type="text/javascript" defer></script>
+    </head>
+
+    <body>
+
+        <div class="main-container">
+            
+            <div class="to_do_list-container">
+                <p class="title" style="margin-bottom: 15px;">&#8227; To-Do List</p>
+                <div class="to_do-input-container">
+                    <input id="todo-input" oninput="TodoAddButton.disabled = this.value == ''" class="to_do-input" type="text" placeholder="Insert a To-Do tasks...">
+                    <button id="todo-button" onclick="addTodo()" class="to_do-button" disabled>+ Add To-Do</button>
+                </div>
+
+                <div id="check-list">
+                    {% for i in range( todoList | length) %}
+                        <div class="to_do-elements">
+                            <label onclick="switchTodo(this)" class="to_do-container">
+                                <input id="todoIndex" type="hidden" value="{{ i }}">
+                                <input id="todoState" type="checkbox" {{ todoList[i][1] }}>
+                                <p id="todoText" class="text">{{ todoList[i][0] }}</p>
+                                <span class="checkmark"></span>
+                            </label>
+                            <span onclick="deleteTodo(this)" class="close">&#x2715;</span>
+                        </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+            <div class="notes-container">
+                <p class="title">&#8227; Notes</p>
+            </div>
+
+
+    </body>
+</html>

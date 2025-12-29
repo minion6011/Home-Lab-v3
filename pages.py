@@ -7,9 +7,10 @@ import psutil, os, json, time
 
 with open("website/music.json") as f:
 	data_music = json.load(f)
-
 with open("website/accounting.json") as f:
 	data_accounting = json.load(f)
+with open("website/agenda.json") as f:
+	data_agenda = json.load(f)
 
 # - Home
 def get_stats():
@@ -139,5 +140,30 @@ def payments():
 			data_accounting["table"] = []
 			with open("website/accounting.json", "w") as f:
 				json.dump(data_accounting, f, indent=4)
+			return {}, 200
+	return {}, 404
+
+# - Agenda
+@app.route('/agenda', methods=['GET'])
+def agenda():
+	return render_template("/pages/agenda.html", todoList=data_agenda["todo"])
+
+@app.route('/todo', methods=['POST'])
+def todo():
+	if request.json and "type" in request.json:
+		if request.json["type"] == "remove" and "index" in request.json:
+			del data_agenda["todo"][int(request.json["index"])]
+			with open("website/agenda.json", "w") as f:
+				json.dump(data_agenda, f, indent=4)
+			return {}, 200
+		if request.json["type"] == "switch" and "index" in request.json and "state" in request.json:
+			data_agenda["todo"][int(request.json["index"])][1] = request.json["state"]
+			with open("website/agenda.json", "w") as f:
+				json.dump(data_agenda, f, indent=4)
+			return {}, 200
+		elif request.json["type"] == "add" and "text" in request.json:
+			data_agenda["todo"].insert(0, [request.json["text"], ""])
+			with open("website/agenda.json", "w") as f:
+				json.dump(data_agenda, f, indent=4)
 			return {}, 200
 	return {}, 404
