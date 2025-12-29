@@ -73,7 +73,7 @@ html.not-iframe .main-container .notes-container {margin: 20px}
 .to_do-input {
 	color: var(--font-color); font-size: var(--small-font-size);
 	background-color: var(--secondary-bg-color);
-	border: 0;
+	border: 0; width: 60%;
 } .to_do-input:focus {outline: none;}
 
 /* To-Do List */
