@@ -118,7 +118,7 @@ async function removeNote(element) {
     if (req.status == 200) {
 
         for (let i = 0; i < checkListNotes.children.length; i++) {
-            if (i > Number(element.parentElement.children[0])) {
+            if (i > Number(element.parentElement.children[0].value)) {
                 checkListNotes.children[i].children[0].value = Number(checkListNotes.children[i].children[0].value) - 1;
             };
         };
