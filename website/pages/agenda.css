@@ -4,13 +4,15 @@
 	.notes-container {margin-top: 25px;} th[mobile="0"] {display: none;}
 	.to_do-container .checkmark {scale: 2;}
 	.to_do-container .text {margin: 0 0 0 15px;}
-	.to_do-elements {margin-left: 20px;}
+	.to_do-input-container.notes-input-ct {margin-bottom: 20px;}
+	.notes-elements {margin-top: 15px;} .notes-elements:has(.note) {padding: 20px; gap: 17.5px;}
 }
 @media (min-width: 1003px) { /* Schermo PC */
 	.main-container {grid-template-columns: 45% 55%} /* Options + Table */
 	html.not-iframe .main-container .to_do_list-container {margin: 20px 0 20px 20px;}
 	html:not(.not-iframe) .main-container .notes-container {margin-left: 20px;}
 	.to_do-container .text {margin: 0;}
+	.notes-elements:has(.note) {padding: 10px; gap: 7.5px;}
 }
 *::-webkit-scrollbar {
 	display: none;
@@ -132,4 +134,26 @@ html.not-iframe .main-container .notes-container {margin: 20px}
 	border-width: 0 3px 3px 0;
 	transform: rotate(45deg);
 }
+/* --- */
+/* Notes */
+.notes-elements {
+	display: flex; flex-wrap: wrap;
+	width: 95%;
+	background-color: var(--ver-hover-bg-color);
+	border-radius: 12.5px;
+	margin: auto;
+}
+.notes-elements .note {
+	padding: 15px;
+	flex: 1 1 25%;
+	font-size: var(--small-font-size);
+	max-width: 100%;
+	line-break: anywhere;
+	background-color: var(--check-button-color);
+	border-radius: 15px;
+
+	display: flex;
+	justify-content: space-between;
+}
+
 /* --- */

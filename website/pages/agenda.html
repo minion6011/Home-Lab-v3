@@ -20,7 +20,7 @@
                 </div>
 
                 <div id="check-list">
-                    {% for i in range( todoList | length) %}
+                    {% for i in range(todoList | length) %}
                         <div class="to_do-elements">
                             <label onclick="switchTodo(this)" class="to_do-container">
                                 <input id="todoIndex" type="hidden" value="{{ i }}">
@@ -38,7 +38,20 @@
             <div class="notes-container">
                 <p class="title">&#8227; Notes</p>
 
-                <div></div>
+                <div class="to_do-input-container notes-input-ct">
+                    <input id="notes-input" onkeydown="if (event.key === 'Enter' && this.value != '') addNote()" oninput="NotesAddButton.disabled = this.value == ''" class="to_do-input" type="text" placeholder="Insert a note...">
+                    <button id="notes-button" onclick="addNote()" class="to_do-button" disabled>+ Add Note</button>
+                </div>
+
+                <div class="notes-elements" id="notes-list">
+                    {% for i in range(agendaList | length) %}
+                        <div class="note">
+                            <input type="hidden" value="{{ i }}">
+                            <span>{{ agendaList[i] }}</span>
+                            <span onclick="removeNote(this)" class="close">&#x2715;</span>
+                        </div>
+                    {% endfor %}
+                </div>
 
             </div>
 

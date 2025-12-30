@@ -146,7 +146,7 @@ def payments():
 # - Agenda
 @app.route('/agenda', methods=['GET'])
 def agenda():
-	return render_template("/pages/agenda.html", todoList=data_agenda["todo"])
+	return render_template("/pages/agenda.html", todoList=data_agenda["todo"], agendaList=data_agenda["notes"])
 
 @app.route('/todo', methods=['POST'])
 def todo():
@@ -163,6 +163,21 @@ def todo():
 			return {}, 200
 		elif request.json["type"] == "add" and "text" in request.json:
 			data_agenda["todo"].insert(0, [request.json["text"], ""])
+			with open("website/agenda.json", "w") as f:
+				json.dump(data_agenda, f, indent=4)
+			return {}, 200
+	return {}, 404
+
+@app.route('/note', methods=['POST'])
+def note():
+	if request.json and "type" in request.json:
+		if request.json["type"] == "add" and "text" in request.json:
+			data_agenda["notes"].insert(0, request.json["text"])
+			with open("website/agenda.json", "w") as f:
+				json.dump(data_agenda, f, indent=4)
+			return {}, 200
+		elif request.json["type"] == "remove" and "index" in request.json:
+			del data_agenda["notes"][int(request.json["index"])]
 			with open("website/agenda.json", "w") as f:
 				json.dump(data_agenda, f, indent=4)
 			return {}, 200
