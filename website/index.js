@@ -21,6 +21,17 @@ if (localStorage.getItem("lastPage") !== null) {
     }
 }
 
+// Logged Check
+(function () { // change how fetch works
+    const originalFetch = window.fetch;
+    window.fetch = async function (...args) {
+        const response = await originalFetch(...args);
+        if (response.status === 401) {
+            location.reload();
+        }
+        return response;
+    };
+})();
 
 // Theme Management
 if (localStorage.getItem("theme") === "light") {

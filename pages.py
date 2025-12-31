@@ -50,12 +50,12 @@ def playlist():
 			num = request.form["num"]
 			playlist = data_music[request.form["num"]]
 		else:
-			data_music["number_tot"] = data_music["number_tot"] + 1
+			if len(data_music) != 0: num = str( int( list(data_music.keys())[-1] )+1 )
+			else: num = 0
 
-			data_music[str(data_music["number_tot"])] = {}
-			playlist = data_music[str(data_music["number_tot"])]
+			data_music[num] = {}
+			playlist = data_music[num]
 			playlist["songs"] = []
-			num = str(data_music["number_tot"])
 		playlist["name"] = request.form["name"]
 		playlist["description"] = request.form["description"].replace("\r","")
 		file = request.files.getlist('img')
@@ -75,7 +75,6 @@ def playlist():
 						os.remove(os.path.join(os.path.dirname(__file__), song["url_path"].lstrip("/")))
 				except: pass
 				del data_music[request.json["num"]]
-				data_music["number_tot"] -= 1
 				with open("website/music.json", "w") as f:
 					json.dump(data_music, f, indent=4)
 				return {}, 200
