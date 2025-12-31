@@ -1,5 +1,3 @@
-
-
 /* Theme Loader */
 if (localStorage.getItem("theme") === "light") {
     document.body.classList.add("light");
@@ -16,13 +14,22 @@ window.addEventListener("storage", (event) => {
         document.body.classList.remove("light");
     }
 });
-/* --- */
-
 /* Iframe Check */
 if (window.self === window.top) {
     document.documentElement.classList.add("not-iframe");
 }
-/* --- */
+// Logged Check
+(function () { // change how fetch works
+    const originalFetch = window.fetch;
+    window.fetch = async function (...args) {
+        const response = await originalFetch(...args);
+        if (response.status === 401) {
+            location.reload();
+        }
+        return response;
+    };
+})();
+
 
 const terminalInput = document.getElementById("terminal-input")
 

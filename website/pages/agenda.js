@@ -18,6 +18,17 @@ window.addEventListener("storage", (event) => { // This event is different from 
 if (window.self === window.top) {
     document.documentElement.classList.add("not-iframe");
 };
+// Logged Check
+(function () { // change how fetch works
+    const originalFetch = window.fetch;
+    window.fetch = async function (...args) {
+        const response = await originalFetch(...args);
+        if (response.status === 401) {
+            location.reload();
+        }
+        return response;
+    };
+})();
 // --- Variables
 const checkListTodo = document.getElementById("check-list");
 const TodoAddButton = document.getElementById("todo-button");

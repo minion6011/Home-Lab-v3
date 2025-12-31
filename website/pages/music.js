@@ -18,6 +18,17 @@ window.addEventListener("storage", (event) => { // This event is different from 
 if (window.self === window.top) {
     document.documentElement.classList.add("not-iframe");
 }
+// Logged Check
+(function () { // change how fetch works
+    const originalFetch = window.fetch;
+    window.fetch = async function (...args) {
+        const response = await originalFetch(...args);
+        if (response.status === 401) {
+            location.reload();
+        }
+        return response;
+    };
+})();
 // --- Variables
 // - Main
 const mainContainer = document.getElementById("mainContainer");
@@ -403,6 +414,7 @@ function PlaylistModal(arg) {
 fileInput.addEventListener('change', () => {
     modalState[0] = true; checkStatus();
     const file = fileInput.files[0];
+    if (file == undefined) return
     if (imgDefault === "") imgDefault = imgView.src;
     const reader = new FileReader();
     reader.onload = (e) => imgView.src = e.target.result;
