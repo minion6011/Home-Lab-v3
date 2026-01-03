@@ -4,7 +4,6 @@ from flask import request, render_template, redirect
 import time
 
 logged_users = {}
-logged_users = {'127.0.0.1': 174690956395}
 # {'ip': timestamp}; if timestamp > 60m == Relogin
 
 def get_client_ip():
