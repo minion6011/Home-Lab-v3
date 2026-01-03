@@ -27,7 +27,7 @@ def get_stats():
 
 @app.route('/home', methods=['GET'])
 def home():
-	return render_template("/pages/home.html", name=config["username"], ip=get_client_ip(), log_until=logged_users[request.remote_addr], stats=get_stats())
+	return render_template("/pages/home.html", name=config["username"], ip=get_client_ip(), log_until=logged_users[get_client_ip()], stats=get_stats())
 
 @app.route('/send_command', methods=['POST'])
 def home_terminal():
