@@ -1,8 +1,9 @@
 from __main__ import app, config
 
-from flask import render_template, request
-from login import logged_users
+from login import logged_users, get_client_ip
 from music import downloadSong
+from flask import render_template, request
+
 import psutil, os, json, time
 
 with open("website/music.json") as f:
@@ -26,7 +27,7 @@ def get_stats():
 
 @app.route('/home', methods=['GET'])
 def home():
-	return render_template("/pages/home.html", name=config["username"], ip=request.remote_addr, log_until=logged_users[request.remote_addr], stats=get_stats())
+	return render_template("/pages/home.html", name=config["username"], ip=get_client_ip(), log_until=logged_users[request.remote_addr], stats=get_stats())
 
 @app.route('/send_command', methods=['POST'])
 def home_terminal():
