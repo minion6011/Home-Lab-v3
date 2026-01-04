@@ -21,7 +21,8 @@
     .songTable-delete img {width: 35px; height: 40px;}
 
     .up .song-details {display: none;}
-    .up .music-buttons button img {width: 68px; height: 68px; margin-top: 15px;}
+    .up .music-buttons button img {width: 68px; height: 68px;}
+    .player-container .up {margin-top: 15px;}
     .volume-slider {display: none;}
 
     .player-container .down #playerRange::-webkit-slider-runnable-track, .player-container .down #playerRange {height: 11.25px;}
