@@ -270,6 +270,8 @@ html.not-iframe .song-container {margin: 20px}
 .songs-table .songTcontainer {cursor: pointer;}
 .songs-table .songTcontainer:hover {background-color: var(--menu-bg-color)}
 
+.songs-table .songTcontainer :nth-child(3) {line-break: anywhere}
+
 .titleSong-column {
     display: flex;
     width: 90%;
