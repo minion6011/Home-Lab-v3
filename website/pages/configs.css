@@ -1,8 +1,13 @@
 @media (max-width: 1003px) { /* Schermo Telefono */
     .editor {min-height: 400px;}
+    input[type="checkbox"] {
+        scale: 2;
+        margin-right: 10px;
+    }
 }
 @media (min-width: 1003px) { /* Schermo PC */
     .editor {min-height: 200px;}
+    input[type="checkbox"] {margin-left: 0;}
 }
 
 body {
@@ -62,6 +67,7 @@ summary {
 }
 .section-content {
     margin-top: 12px;
+    font-size: var(--mini-font-size);
 }
 .label {
     font-size: var(--mini-font-size);
@@ -70,7 +76,6 @@ summary {
 }
 .user-ds {margin: 0;}
 .user-ds code {background-color: var(--translucent-bg-color);}
-input[type="checkbox"] {margin-left: 0;}
 
 .reload-btn {
     margin-top: 20px;
@@ -81,4 +86,8 @@ input[type="checkbox"] {margin-left: 0;}
     color: #ffffff;
     font-size: var(--small-font-size);
     cursor: pointer;
+}
+.checkbox-container {
+    display: flex;
+    align-items: center;
 }

@@ -37,9 +37,10 @@
                     <summary>Users 👤</summary>
 
                     <div class="section-content">
-                        <input type="checkbox" id="disconnectUsers">
-                        <label for="disconnectUsers"> Disconnect all users?</label> <br>
-
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="disconnectUsers">
+                            <label for="disconnectUsers"> Disconnect all users?</label> <br>
+                        </div>
                         {% for user in users %}
                             <p class="user-ds">User: <code>{{ user }}</code> <b>-</b> Timestamp: <code>{{ users[user] }}</code></p>
                         {% endfor %}
