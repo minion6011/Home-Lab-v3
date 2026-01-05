@@ -198,8 +198,11 @@ def loadConfigs():
 		if all(key in request.json for key in ["themesFile", "configFile", "disconnectAll"]): # struct str(0), str(1), str[bool](2)
 			with open("website/themes.css", "w") as f:
 				f.write(request.json["themesFile"])
+			config_data = json.loads(request.json["configFile"])
 			with open("config.json", "w") as f:
-				f.write(request.json["configFile"])
+				json.dump(config_data, f, indent=4)
+			config.clear()
+			config.update(config_data)
 			if request.json["disconnectAll"]:
 				logged_users.clear()
 			return {}, 200
