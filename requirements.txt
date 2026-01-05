@@ -1,0 +1,4 @@
+pytubefix
+flask
+psutil
+spotipy
