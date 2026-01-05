@@ -3,6 +3,7 @@
     --mini-font-size: 15px;
     --small-font-size: 16px;
     --medium-font-size: 18px;
+    --smedium-font-size: 18px;
     --X-font-size: 20px;
     --XM-font-size: 20px;
     --XL-font-size: 25px;
@@ -74,6 +75,7 @@
     :root {
         --mini-font-size: 30px;
         --small-font-size: 40px;
+        --smedium-font-size: 35px;
         --medium-font-size: 45px;
         --big-font-size: 50px;
 

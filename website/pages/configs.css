@@ -1,0 +1,84 @@
+@media (max-width: 1003px) { /* Schermo Telefono */
+    .editor {min-height: 400px;}
+}
+@media (min-width: 1003px) { /* Schermo PC */
+    .editor {min-height: 200px;}
+}
+
+body {
+    background-color: #ffffff00;
+    
+}
+body, html {
+    height: 100%;
+    font-family: var(--font-family);
+    color: var(--font-color);
+    margin: 0;
+}
+*::-webkit-scrollbar {
+    display: none;
+}
+
+.main-container {
+    row-gap: 7.5%;
+    overflow: auto;
+
+    height: 100%;
+    background-color: var(--secondary-bg-color);
+    margin: auto;
+}
+html.not-iframe .main-container {
+    height: 100%;
+}
+html:not(.not-iframe) .main-container {
+    border-radius: 25px;
+    width: 95%;
+}
+.main-container .setting-container {
+    margin: 2%;
+    
+}
+*:not(.editor):not(.editor *) {
+    transition: all 0.25s ease;
+}
+
+
+h1 {
+    margin-bottom: 20px;
+    font-size: var(--XL-font-size);
+}
+details {
+    background: var(--menu-bg-color);
+    border: 1px solid var(--but-hover-bg-color);
+    border-radius: 6px;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+}
+summary {
+    font-size: var(--smedium-font-size);
+    cursor: pointer;
+    font-weight: bold;
+    gap: 8px;
+}
+.section-content {
+    margin-top: 12px;
+}
+.label {
+    font-size: var(--mini-font-size);
+    color: var(--elm-font-color);
+    margin-bottom: 6px;
+}
+.user-ds {margin: 0;}
+.user-ds code {background-color: var(--translucent-bg-color);}
+input[type="checkbox"] {margin-left: 0;}
+
+.reload-btn {
+    margin-top: 20px;
+    padding: 10px 18px;
+    background: var(--selected-theme-bg-color);
+    border: none;
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: var(--small-font-size);
+    cursor: pointer;
+}

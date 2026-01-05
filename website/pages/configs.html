@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+        <title>Configs</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="{{ url_for('static',filename='themes.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static',filename='pages/configs.css') }}">
+        <script src="{{ url_for('static',filename='pages/configs.js') }}" type="text/javascript" defer></script>
+        <!-- Editor -->
+        <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+    </head>
+
+    <body>
+
+        <div class="main-container">
+            <div class="setting-container">
+
+                <h1>Configs & Info</h1>
+
+                <details>
+                    <summary>Themes File ✏️</summary>
+                    <div class="section-content">
+                        <div class="label">themes.css</div>
+                        <div id="editor-themes" class="editor"></div>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>Config File ⚙️</summary>
+                    <div class="section-content">
+                        <div class="label">config.json</div>
+                        <div id="editor-config" class="editor"></div>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>Users 👤</summary>
+
+                    <div class="section-content">
+                        <input type="checkbox" id="disconnectUsers">
+                        <label for="disconnectUsers"> Disconnect all users?</label> <br>
+
+                        {% for user in users %}
+                            <p class="user-ds">User: <code>{{ user }}</code> <b>-</b> Timestamp: <code>{{ users[user] }}</code></p>
+                        {% endfor %}
+                    </div>
+                </details>
+
+                <button onclick="UpdateConfigs()" class="reload-btn">Save & Reload</button>
+
+                <script>
+                    require.config({paths: {vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs'}});
+
+                    require(['vs/editor/editor.main'], function () {
+                        const editorThemes = monaco.editor.create(document.getElementById('editor-themes'), {
+                            value: `{{ themesFile | safe }}`,
+                            language: 'css',
+                            theme: 'vs-dark',
+                            automaticLayout: true
+                        });
+                        const editorConfig = monaco.editor.create(document.getElementById('editor-config'), {
+                            value: `{{ configFile | safe }}`,
+                            language: 'json',
+                            theme: 'vs-dark',
+                            automaticLayout: true
+                        });
+                        window.getThemes = () => editorThemes.getValue();
+                        window.getConfig = () => editorConfig.getValue();
+                    });
+                </script>
+
+            </div>
+        </div>
+
+    </body>
+</html>

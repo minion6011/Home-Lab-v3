@@ -1,4 +1,4 @@
-/* Theme Loader */
+// Theme Loader
 if (localStorage.getItem("theme") === "light") {
     document.body.classList.add("light");
 }
@@ -6,15 +6,15 @@ else {
     document.body.classList.remove("light");
 }
 
-window.addEventListener("storage", (event) => {
+window.addEventListener("storage", (event) => { // This event is different from the defaults
     if (event.newValue === "light") {
         document.body.classList.add("light");
     }
-    else if (event.newValue === "dark"){
+    else if (event.newValue === "dark") {
         document.body.classList.remove("light");
     }
 });
-/* Iframe Check */
+// Iframe Check
 if (window.self === window.top) {
     document.documentElement.classList.add("not-iframe");
 }
@@ -30,14 +30,16 @@ if (window.self === window.top) {
     };
 })();
 // --- Variables
-const terminalInput = document.getElementById("terminal-input")
+const disconnectCheck = document.getElementById("disconnectUsers");
 
 // --- Functions
-async function SendCommand() {
-    await fetch(`/send_command`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body:  JSON.stringify({command: terminalInput.value}),
+async function UpdateConfigs() {
+    let req = await fetch("/load-configs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({themesFile: getThemes(), configFile: getConfig(), disconnectAll: disconnectCheck.checked}),
     });
-    terminalInput.value = "";
+    if (req.status == 200) {
+        window.parent.location.reload();
+    }
 }

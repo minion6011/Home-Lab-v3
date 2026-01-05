@@ -24,7 +24,7 @@ if (window.self === window.top) {
     window.fetch = async function (...args) {
         const response = await originalFetch(...args);
         if (response.status === 401) {
-            location.reload();
+            window.parent.location.reload();
         }
         return response;
     };

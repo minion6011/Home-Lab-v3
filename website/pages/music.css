@@ -39,7 +39,7 @@
     .main-container[data-status="1"] {grid-template-columns: 35% 65%} /* Library + Player */
     .main-container[data-status="0"] {grid-template-columns: 100% 0%} /* Library */
     .main-container[data-play="1"] {grid-template-rows: 1fr 0.2fr;} /* Row1 + Row2 (player) */
-    html:not(.not-iframe) .main-container {row-gap: 3.5%;}
+    html:not(.not-iframe) .main-container[data-play="1"] {row-gap: 3.5%;}
 
     .ico-small {width: 18.5px; height: 18.5px;}
     .header .button {height: 40px;width: 150px;}

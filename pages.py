@@ -182,3 +182,25 @@ def note():
 				json.dump(data_agenda, f, indent=4)
 			return {}, 200
 	return {}, 404
+
+# - Settings
+@app.route('/configs', methods=['GET'])
+def configs():
+	with open("website/themes.css") as f:
+		themesFile = f.read()
+	with open("config.json") as f:
+		configFile = f.read()
+	return render_template("/pages/configs.html", themesFile=themesFile, configFile=configFile, users=logged_users)
+
+@app.route('/load-configs', methods=['POST'])
+def loadConfigs():
+	if request.json:
+		if all(key in request.json for key in ["themesFile", "configFile", "disconnectAll"]): # struct str(0), str(1), str[bool](2)
+			with open("website/themes.css", "w") as f:
+				f.write(request.json["themesFile"])
+			with open("config.json", "w") as f:
+				f.write(request.json["configFile"])
+			if request.json["disconnectAll"]:
+				logged_users.clear()
+			return {}, 200
+	return {}, 404
