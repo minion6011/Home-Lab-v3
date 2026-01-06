@@ -61,7 +61,7 @@ def playlist():
 		playlist["description"] = request.form["description"].replace("\r","")
 		file = request.files.getlist('img')
 		if file:
-			file[0].save(os.path.join(os.path.dirname(__file__), f"website\\music\\{num}.webp"))
+			file[0].save(os.path.join(os.path.dirname(__file__), "website","music", f"{num}.webp"))
 		playlist["img"] = f"/website/music/{num}.webp"
 		with open("website/music.json", "w") as f:
 			json.dump(data_music, f, indent=4)
