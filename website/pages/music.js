@@ -129,7 +129,6 @@ function StartStopAudio() {
         audioControll.pause();
         playerStateImg.src = "/website/img/play-ico.webp"
     };
-    updateMediaSessionPosition();
 }
 function ChangeVolume(mute, value) {
     if (volumeRange.value == 0) {
@@ -205,6 +204,7 @@ async function PlaySong(url, name, artist, img, index) {
         oldSong.splice(0, 1)
     }
     audioControll.src = url; await audioControll.play(); playerStateImg.src = "/website/img/stop-ico.webp"; PreloadSong(index); // Play and preload next song
+    navigator.mediaSession.playbackState = "playing";
     audioControll.currentTime = 0;
     playerRange.value = 0; playerRange.max = audioControll.duration; maxDuration.innerHTML = formatTime(audioControll.duration);
     setPWA(name, artist, img);
@@ -215,17 +215,25 @@ async function PlaySong(url, name, artist, img, index) {
     
 }
 
-audioControll.addEventListener("timeupdate", updateMediaSessionPosition);
-audioControll.addEventListener("ratechange", updateMediaSessionPosition);
-audioControll.addEventListener("loadedmetadata", updateMediaSessionPosition);
-function updateMediaSessionPosition() {
-  if (!audioControll.duration || isNaN(audioControll.duration)) return;
+// Media Session
+let lastPosition = 0;
 
-  navigator.mediaSession.setPositionState({
-    duration: audioControll.duration,
-    playbackRate: audioControll.playbackRate,
-    position: audioControll.currentTime
-  });
+audioControll.addEventListener("play", () => { updateMediaSessionPosition(true); });
+audioControll.addEventListener("pause", () => { updateMediaSessionPosition(true); });
+audioControll.addEventListener("seeking", () => { updateMediaSessionPosition(true); });
+audioControll.addEventListener("ratechange", () => { updateMediaSessionPosition(true); });
+function updateMediaSessionPosition(force = false) {
+    if (!navigator.mediaSession?.setPositionState) return; // Check Media session; if setPositionState exists
+    if (!audioControll.duration || isNaN(audioControll.duration)) return; // Audio duration not null
+    if (!force && audioControll.paused === false) return; // if not paused updates
+
+    lastPosition = audioControll.currentTime;
+
+    navigator.mediaSession.setPositionState({
+        duration: audioControll.duration,
+        playbackRate: audioControll.playbackRate,
+        position: lastPosition
+    });
 }
 
 audioControll.addEventListener('timeupdate', () => {
