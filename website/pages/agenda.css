@@ -6,7 +6,7 @@
 	.to_do-container .text {margin: 0 0 0 15px;}
 	.to_do-input-container.notes-input-ct {margin-bottom: 20px;}
 	.notes-elements {margin-top: 15px;} .notes-elements:has(.note) {padding: 20px; gap: 17.5px;}
-	.notes-elements .note {flex: 1 1 45%;}
+	.notes-elements .note {flex: 1 1 100%;}
 }
 @media (min-width: 1003px) { /* Schermo PC */
 	.main-container {grid-template-columns: 45% 55%} /* Options + Table */
