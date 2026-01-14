@@ -32,6 +32,14 @@ if (localStorage.getItem("lastPage") !== null) {
         return response;
     };
 })();
+iframePages.addEventListener("load", (event) => {
+    fetch(iframePages.src)
+    .then(res => {
+        if (res.status == 401) { 
+            location.reload();
+        }
+    });
+});
 
 // Theme Management
 if (localStorage.getItem("theme") === "light") {
