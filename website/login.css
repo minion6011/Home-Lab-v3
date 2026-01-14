@@ -110,6 +110,7 @@ html, body {
     color: var(--text-color);
     background-color: #ffffff00;
     border-color: #fff;
+    border-style: solid;
     outline: none;
 
     width: 80%;
