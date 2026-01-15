@@ -10,7 +10,7 @@ app = Flask(__name__, static_folder="website", template_folder="website")
 import login
 import pages
 
-@app.route('/index', methods=['GET'])
+@app.route('/index')
 def index():
     return render_template("index.html")
 
