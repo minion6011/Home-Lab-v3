@@ -10,16 +10,16 @@ app = Flask(__name__, static_folder="website", template_folder="website")
 import login
 import pages
 
-@app.route('/index')
-def index():
-    return render_template("index.html")
+@app.route('/<page>')
+def index(page):
+    return render_template("index.html", pageLoad=page)
 
 
 # - Error Handlers
 
 @app.errorhandler(404)
 def not_found_error(error):
-    return redirect('/index'), 301
+    return redirect('/'), 301
 
 if __name__ == '__main__':
     app.run(debug=False, use_reloader=True, port=5000, host="0.0.0.0")

@@ -9,6 +9,7 @@
     </head>
 
     <body>
+        <input value="{{ pageLoad }}" id="pagesId-input" type="hidden">
         <div class="main-container">
             <div class="title-container">Control <b>Panel</b> <br><b>Index</b></div>
 
@@ -36,17 +37,19 @@
                 <p class="version">v1.0.0</p>
 
                 <p class="title">Options</p>
-                <p data-path="/home" class="element" id="active-navbar" onclick="openMenu(this)">Home</p>
-                <p data-path="/music" class="element" onclick="openMenu(this)">Music</p>
-                <p data-path="/accounting" class="element" onclick="openMenu(this)">Accounting</p>
-                <p data-path="/agenda" class="element" onclick="openMenu(this)">Agenda</p>
+                <!-- Struct: <a href="/id" data-path="url">Name</a> -->
+                <a href="/home" data-path="/pages/home" id="active-navbar">Home</a>
+                <a href="/music" data-path="/pages/music">Music</a>
+                <a href="/accounting" data-path="/pages/accounting">Accounting</a>
+                <a href="/agenda" data-path="/pages/agenda">Agenda</a>
+
 
                 <p class="title">Ext. Services</p>
-                <p data-path="/configs" class="element" onclick="openMenu(this)">Configs</p>
+                <a href="/configs" data-path="/pages/configs">Configs</a>
             </div>
             
             <div class="iframe-container" id="container-iframe">
-                <iframe src="/home" id="pages-iframe" title="pages-iframe"></iframe>
+                <iframe src="/pages/home" id="pages-iframe" title="pages-iframe"></iframe>
             </div>
             
 

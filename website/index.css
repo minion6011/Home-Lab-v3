@@ -30,6 +30,9 @@ html, body {
     color: var(--font-color);
     margin: 0;
 }
+a {
+    all: unset;
+}
 
 .main-container {
     --nav-width: 15rem;
@@ -60,18 +63,19 @@ html, body {
     padding:  0 1rem 0 1rem;
     margin: 7.5% 0 0 0;
 }
-.navbar-container .element {
+.navbar-container a { /* <a> Is used for the elemets of the Navbar */
     color: var(--elm-font-color);
     padding: 0.5rem 1rem 0.5rem 1rem;
     margin: 10px 0 0 0;
     border-radius: 10px;
 
     transition: all 0.3s ease;
+    display: block;
 }
-.navbar-container .element:hover {
+.navbar-container a:hover {
     background-color: var(--elm-hover-bg-color);
 }
-.navbar-container #active-navbar {
+.navbar-container a#active-navbar {
     background-color: var(--elm-hover-bg-color);
 }
 .navbar-container .sidebar-header { /* Only for mobile */

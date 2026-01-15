@@ -17,7 +17,9 @@ body, html {
     color: var(--font-color);
     margin: 0;
 }
-
+*::-webkit-scrollbar {
+    display: none;
+}
 
 .main-container {
     row-gap: 7.5%;

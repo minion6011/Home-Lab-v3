@@ -25,7 +25,7 @@ def get_stats():
 		("█"*int(ssd/6.25)+"░"*(15-int(ssd/6.25)))+f" {ssd}%"
 		]
 
-@app.route('/home')
+@app.route('/pages/home')
 def home():
 	return render_template("/pages/home.html", name=config["username"], ip=get_client_ip(), log_until=logged_users[get_client_ip()], stats=get_stats())
 
@@ -39,7 +39,7 @@ def home_terminal():
 		return "Bad Request", 400
 
 # - Music
-@app.route('/music')
+@app.route('/pages/music')
 def music():
 	return render_template("/pages/music.html", data_music=data_music)
 
@@ -106,7 +106,7 @@ def songs():
 	return {}, 404
 
 # - Accounting
-@app.route('/accounting')
+@app.route('/pages/accounting')
 def accounting():
 	return render_template("/pages/accounting.html", data_accounting=data_accounting)
 
@@ -144,7 +144,7 @@ def payments():
 	return {}, 404
 
 # - Agenda
-@app.route('/agenda')
+@app.route('/pages/agenda')
 def agenda():
 	return render_template("/pages/agenda.html", todoList=data_agenda["todo"], agendaList=data_agenda["notes"])
 
@@ -184,7 +184,7 @@ def note():
 	return {}, 404
 
 # - Settings
-@app.route('/configs')
+@app.route('/pages/configs')
 def configs():
 	with open("website/themes.css") as f:
 		themesFile = f.read()

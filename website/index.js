@@ -9,17 +9,17 @@ const buttonLightMobile = document.getElementById("light-button_mobile");
 
 const iframePages = document.getElementById("pages-iframe");
 
-// Page Loader
-if (localStorage.getItem("lastPage") !== null) {
-    let newElement = document.querySelector(`[data-path='${localStorage.getItem("lastPage")}']`);
-    let oldElement = document.getElementById("active-navbar");
+// Pages Load
+const pageIdIn = document.getElementById("pagesId-input");
 
-    if (newElement != oldElement) {
-        oldElement.id = "";
-        newElement.id = "active-navbar";
-        iframePages.src = newElement.dataset.path;
-    }
+let newElement = document.querySelector(`a[href='/${pageIdIn.value}']`);
+let oldElement = document.getElementById("active-navbar");
+if (newElement != oldElement) {
+    oldElement.id = ""; newElement.id = "active-navbar";
+    newElement.setAttribute("onClick", "return false;") // Disable Re-Click
+    iframePages.src = newElement.dataset.path;
 }
+
 
 // Logged Check
 (function () { // change how fetch works
@@ -106,24 +106,6 @@ document.addEventListener('click', (event) => {
         }
     }
 });
-
-/* --- */
-
-// Navbar
-
-
-function openMenu(newElement) {
-    iframePages.src = "about:blank";
-    setTimeout(() => {
-        iframePages.src = newElement.dataset.path;
-    }, 0);
-    if (newElement.id === "active-navbar") return;
-    let oldElement = document.getElementById("active-navbar");
-    oldElement.id = "";
-    
-    newElement.id = "active-navbar";
-    localStorage.setItem("lastPage", newElement.dataset.path);
-}
 
 /* --- */
 
