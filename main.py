@@ -10,8 +10,9 @@ app = Flask(__name__, static_folder="website", template_folder="website")
 import login
 import pages
 
+@app.route('/')
 @app.route('/<page>')
-def index(page):
+def index(page="home"): # Change "home" with the default page id
     return render_template("index.html", pageLoad=page)
 
 
