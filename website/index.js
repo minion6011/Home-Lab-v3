@@ -24,8 +24,8 @@ const pageIdIn = document.getElementById("pagesId-input");
 let newElement = document.querySelector(`a[href='/${pageIdIn.value}']`);
 let oldElement = document.getElementById("active-navbar");
 if (newElement != oldElement) {
-    oldElement.id = ""; newElement.id = "active-navbar";
-    newElement.setAttribute("onClick", "return false;") // Disable Re-Click
+    if (oldElement) oldElement.id = ""; 
+    newElement.id = "active-navbar";
     domEl.iframePages.src = newElement.dataset.path;
 }
 
@@ -74,6 +74,30 @@ function changeTheme(color) {
 }
 
 /* --- */
+
+document.addEventListener("click", (e) => { // **Thanks Internet
+    const link = e.target.closest("a[data-path]");
+    if (!link) return;
+    e.preventDefault(); // No-Reload
+    const pagePath = link.dataset.path;
+    const iframePath = new URL(domEl.iframePages.src).pathname;
+    if (pagePath != iframePath) {
+        let oldElement = document.getElementById("active-navbar");
+        if (oldElement) oldElement.id = "";
+
+        link.id = "active-navbar";
+
+        const url = link.getAttribute("href");
+        if (domEl.iframePages.contentWindow) domEl.iframePages.contentWindow.location.replace(pagePath);
+        else domEl.iframePages.src = pagePath;
+
+        history.pushState({ pagePath },"", url);
+    }
+});
+window.addEventListener("popstate", (e) => {
+    window.location.reload()
+});
+
 
 // Settings Menù
 function openSettings() {
