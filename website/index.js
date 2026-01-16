@@ -75,13 +75,12 @@ function changeTheme(color) {
 
 /* --- */
 
-document.addEventListener("click", (e) => { // **Thanks Internet
+document.addEventListener("click", (e) => { // **Thanks Internet for the help
     const link = e.target.closest("a[data-path]");
     if (!link) return;
     e.preventDefault(); // No-Reload
     const pagePath = link.dataset.path;
-    const iframePath = new URL(domEl.iframePages.src).pathname;
-    if (pagePath != iframePath) {
+    if (pagePath != domEl.iframePages.contentWindow.location.pathname) {
         let oldElement = document.getElementById("active-navbar");
         if (oldElement) oldElement.id = "";
 
