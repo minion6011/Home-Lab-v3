@@ -1,3 +1,24 @@
+/* --- Variables --- */
+let optionsSelect = [false, false]; // struct 0(input!=null), 1(select!=defaultoption)
+const domEl = {
+    customSelect: document.getElementById("select-options"),
+    selectedOption: document.getElementById("selected-value"),
+    selectedNumber: document.getElementById("selected-number"),
+    selectedDesc: document.getElementById("selected-description"),
+    buttonAddPay: document.getElementById("payment-button"),
+    paymentsTable: document.getElementById("payments-table"),
+
+    balanceTot: document.getElementById("balance"),
+    lossTot: document.getElementById("loss"),
+    profitTot: document.getElementById("profit"),
+    tableLength: document.getElementById("table-length")
+}
+const endpoints = {
+    payments: "/payments"
+}
+
+/* --- Functions --- */
+/* - Default - */
 // Theme Loader
 if (localStorage.getItem("theme") === "light") {
     document.body.classList.add("light");
@@ -29,58 +50,45 @@ if (window.self === window.top) {
         return response;
     };
 })();
-// --- Variables
-let optionsSelect = [false, false]; // struct 0(input!=null), 1(select!=defaultoption)
-const customSelect = document.getElementById("select-options");
-const selectedOption = document.getElementById("selected-value");
-const selectedNumber = document.getElementById("selected-number");
-const selectedDesc = document.getElementById("selected-description");
-const buttonAddPay = document.getElementById("payment-button");
-const paymentsTable = document.getElementById("payments-table");
-
-const balanceTot = document.getElementById("balance");
-const lossTot = document.getElementById("loss");
-const profitTot = document.getElementById("profit");
-const tableLength = document.getElementById("table-length");
-// --- Functions
+/* - - */
 
 // Custom Select
 document.addEventListener('click', (event) => {
-    if (!customSelect.classList.contains("hidden") && !customSelect.contains(event.target)) {
+    if (!domEl.customSelect.classList.contains("hidden") && !domEl.customSelect.contains(event.target)) {
         OpenCloseCsSelect()
     }
 });
 function OpenCloseCsSelect() {
-    customSelect.classList.toggle("hidden", !customSelect.classList.contains("hidden"));
+    domEl.customSelect.classList.toggle("hidden", !domEl.customSelect.classList.contains("hidden"));
 }
 function SelectOption(event) {
     let e = event || window.event;
     let target = e.target || e.srcElement;
     if (target.matches("li")) {
-        selectedOption.innerHTML = target.innerHTML.slice(2);
+        domEl.selectedOption.innerHTML = target.innerHTML.slice(2);
         optionsSelect[1] = true; CheckAddPayment();
         OpenCloseCsSelect();
     }
 }
 
 function CheckAddPayment() {
-    buttonAddPay.disabled = optionsSelect[0] + optionsSelect[1] != 2
+    domEl.buttonAddPay.disabled = optionsSelect[0] + optionsSelect[1] != 2
 }
 
 async function AddPayment() {
-    optionsSelect = [false, false]; buttonAddPay.disabled = true;
+    optionsSelect = [false, false]; domEl.buttonAddPay.disabled = true;
     let dict = {"type":"add"};
     dict["profit"] = dict["loss"] = 0;
-    dict[selectedOption.innerText.toLowerCase()] = Math.abs( Math.round(Number(selectedNumber.value) * 100) / 100)
-    dict["description"] = selectedDesc.value.trim() || "//";
+    dict[domEl.selectedOption.innerText.toLowerCase()] = Math.abs( Math.round(Number(domEl.selectedNumber.value) * 100) / 100)
+    dict["description"] = domEl.selectedDesc.value.trim() || "//";
     // Request
-    let req = await fetch("/payments", {
+    let req = await fetch(endpoints.payments, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dict),
     });
     if (req.status == 200) {
-        tableLength.innerText = Number(tableLength.innerText) + 1;
+        domEl.tableLength.innerText = Number(domEl.tableLength.innerText) + 1;
         let json = JSON.parse(await req.text());
         AddPaymentHTML(dict["profit"], dict["loss"], dict["description"], json.date)
     }
@@ -88,9 +96,9 @@ async function AddPayment() {
 }
 function AddPaymentHTML(profit, loss, description, date) {
     // Update Financial Report
-    balanceTot.innerText = Math.round((Number(balanceTot.innerText) + (profit - loss)) * 100) / 100; 
-    lossTot.innerText = "-" + Math.round((Number(lossTot.innerText.slice(1)) + loss) * 100) / 100;
-    profitTot.innerText = "+" + Math.round((Number(profitTot.innerText.slice(1)) + profit) * 100) / 100;
+    domEl.balanceTot.innerText = Math.round((Number(domEl.balanceTot.innerText) + (profit - loss)) * 100) / 100; 
+    domEl.lossTot.innerText = "-" + Math.round((Number(domEl.lossTot.innerText.slice(1)) + loss) * 100) / 100;
+    domEl.profitTot.innerText = "+" + Math.round((Number(domEl.profitTot.innerText.slice(1)) + profit) * 100) / 100;
     // Add Table element
     trElement = document.createElement("tr"); trElement.className = "payment-tr";
     trElement.innerHTML = `
@@ -100,38 +108,38 @@ function AddPaymentHTML(profit, loss, description, date) {
     <th class="loss">-${loss}</th>
     <th mobile="0">${description}</th>
     `;
-    paymentsTable.children[0].insertBefore(trElement, paymentsTable.children[0].children[1]);
+    domEl.paymentsTable.children[0].insertBefore(trElement, domEl.paymentsTable.children[0].children[1]);
     // x+1 on other index
-    let ls = paymentsTable.children[0].children;
+    let ls = domEl.paymentsTable.children[0].children;
     for (let i = 2; i < ls.length; i++) {
         ls[i].children[0].value = Number(ls[i].children[0].value) + 1
     };
     // Resets Values
-    selectedOption.innerText = "Select Operation Type";
-    selectedNumber.value = "";
-    selectedDesc.value = "";
+    domEl.selectedOption.innerText = "Select Operation Type";
+    domEl.selectedNumber.value = "";
+    domEl.selectedDesc.value = "";
 }
 
 async function FunctionCell(event) {
     let e = event || window.event;
     let target = e.target.parentNode || e.srcElement.parentNode;
     if (target.matches("tr") && target.className == "payment-tr") {
-        let ls = paymentsTable.children[0].children;
+        let ls = domEl.paymentsTable.children[0].children;
         let index = Math.round( Number(target.children[0].value)*100 ) / 100
         // Request
-        let req = await fetch("/payments", {
+        let req = await fetch(endpoints.payments, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({"type": "remove", "index": index}),
         });
         if (req.status == 200) {
-            tableLength.innerText = Number(tableLength.innerText) - 1;
+            domEl.tableLength.innerText = Number(domEl.tableLength.innerText) - 1;
             // Update Financial Report
             let loss = target.children[3].innerText.slice(1);
             let profit = target.children[2].innerText.slice(1);
-            lossTot.innerText = "-" + Math.round( (Number(lossTot.innerText.slice(1)) - loss)*100 ) / 100;
-            profitTot.innerText = "+" + Math.round( (Number(profitTot.innerText.slice(1)) - profit)*100 ) / 100;
-            balanceTot.innerText = Math.round((Number(profitTot.innerText.slice(1)) - Number(lossTot.innerText.slice(1))) * 100) / 100; 
+            domEl.lossTot.innerText = "-" + Math.round( (Number(domEl.lossTot.innerText.slice(1)) - loss)*100 ) / 100;
+            domEl.profitTot.innerText = "+" + Math.round( (Number(domEl.profitTot.innerText.slice(1)) - profit)*100 ) / 100;
+            domEl.balanceTot.innerText = Math.round((Number(domEl.profitTot.innerText.slice(1)) - Number(domEl.lossTot.innerText.slice(1))) * 100) / 100; 
             // x-1 form y
             ls[index+1].remove()
             for (let i = index+1; i < ls.length; i++) {
@@ -142,17 +150,17 @@ async function FunctionCell(event) {
 }
 
 async function ResetTable() {
-    let req = await fetch("/payments", {
+    let req = await fetch(endpoints.payments, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({"type": "reset"}),
     });
     if (req.status == 200) {
-        let lsN = (paymentsTable.children[0].children).length;
+        let lsN = (domEl.paymentsTable.children[0].children).length;
         for (let i = 1; i < lsN; i++) {
-            paymentsTable.children[0].children[1].remove()
+            domEl.paymentsTable.children[0].children[1].remove()
         }
-        tableLength.innerText = "0";
-        balanceTot.innerText = "0"; lossTot.innerText = "0"; profitTot.innerText = "0";
+        domEl.tableLength.innerText = "0";
+        domEl.balanceTot.innerText = "0"; domEl.lossTot.innerText = "0"; domEl.profitTot.innerText = "0";
     }
 }
