@@ -1,4 +1,14 @@
-/* Theme Loader */
+/* --- Variables --- */
+const domEl = {
+    terminalInput: document.getElementById("terminal-input")
+}
+const endpoints = {
+    sendCommand: "/send_command"
+}
+
+/* --- Functions --- */
+/* - Default - */
+// Theme Loader
 if (localStorage.getItem("theme") === "light") {
     document.body.classList.add("light");
 }
@@ -14,7 +24,7 @@ window.addEventListener("storage", (event) => {
         document.body.classList.remove("light");
     }
 });
-/* Iframe Check */
+// Iframe Check
 if (window.self === window.top) {
     document.documentElement.classList.add("not-iframe");
 }
@@ -29,15 +39,14 @@ if (window.self === window.top) {
         return response;
     };
 })();
-// --- Variables
-const terminalInput = document.getElementById("terminal-input")
+/* - - */
 
 // --- Functions
 async function SendCommand() {
-    await fetch(`/send_command`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body:  JSON.stringify({command: terminalInput.value}),
+    await fetch(endpoints.sendCommand, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({command: domEl.terminalInput.value}),
     });
-    terminalInput.value = "";
+    domEl.terminalInput.value = "";
 }

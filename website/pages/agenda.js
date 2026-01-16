@@ -1,3 +1,20 @@
+/* --- Variables --- */
+const domEl = {
+    checkListTodo: document.getElementById("check-list"),
+    TodoAddButton: document.getElementById("todo-button"),
+    TodoAddInput: document.getElementById("todo-input"),
+
+    checkListNotes: document.getElementById("notes-list"),
+    NotesAddButton: document.getElementById("notes-button"),
+    NotesAddInput: document.getElementById("notes-input")
+}
+const endpoints = {
+    todo: "/todo",
+    note: "/note"
+}
+
+/* --- Functions --- */
+/* - Default - */
 // Theme Loader
 if (localStorage.getItem("theme") === "light") {
     document.body.classList.add("light");
@@ -29,22 +46,14 @@ if (window.self === window.top) {
         return response;
     };
 })();
-// --- Variables
-const checkListTodo = document.getElementById("check-list");
-const TodoAddButton = document.getElementById("todo-button");
-const TodoAddInput = document.getElementById("todo-input");
-
-const checkListNotes = document.getElementById("notes-list");
-const NotesAddButton = document.getElementById("notes-button");
-const NotesAddInput = document.getElementById("notes-input");
-// --- Functions
+/* - - */
 
 // Todo
 async function switchTodo(element) {
     let dict = {type: "switch", index: element.children[0].value, state: ""}
     if (element.children[1].checked) {dict.state = "checked"};
 
-    let req = await fetch("/todo", {
+    let req = await fetch(endpoints.todo, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dict),
@@ -55,25 +64,25 @@ async function switchTodo(element) {
     
 }
 async function deleteTodo(element) {
-    let req = await fetch("/todo", {
+    let req = await fetch(endpoints.todo, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({type: "remove", index: element.parentElement.children[0].children[0].value}),
     });
     if (req.status == 200) {
-        for (let i = 0; i < checkListTodo.children.length; i++) {
+        for (let i = 0; i < domEl.checkListTodo.children.length; i++) {
             if (i > Number(element.parentElement.children[0].children[0].value))
-                checkListTodo.children[i].children[0].children[0].value = Number(checkListTodo.children[i].children[0].children[0].value) - 1;
+                domEl.checkListTodo.children[i].children[0].children[0].value = Number(domEl.checkListTodo.children[i].children[0].children[0].value) - 1;
         };
-        checkListTodo.removeChild(element.parentElement);
+        domEl.checkListTodo.removeChild(element.parentElement);
     }
     else throw new Error("Deleting a To-Do returns a non-200 status code");
 }
 async function addTodo() {
-    let req = await fetch("/todo", {
+    let req = await fetch(endpoints.todo, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({type: "add", text: TodoAddInput.value}),
+        body: JSON.stringify({type: "add", text: domEl.TodoAddInput.value}),
     });
     if (req.status == 200) {
         let mainDiv = document.createElement("div"); mainDiv.className = "to_do-elements";
@@ -81,59 +90,59 @@ async function addTodo() {
         <label onclick="switchTodo(this)" class="to_do-container">
             <input id="todoIndex" type="hidden" value="0">
             <input id="todoState" type="checkbox">
-            <p id="todoText" class="text">${TodoAddInput.value}</p>
+            <p id="todoText" class="text">${domEl.TodoAddInput.value}</p>
             <span class="checkmark"></span>
         </label>
         <span onclick="deleteTodo(this)" class="close">&#x2715;</span>
         `;
-        for (let i = 0; i < checkListTodo.children.length; i++) {
-            checkListTodo.children[i].children[0].children[0].value = Number(checkListTodo.children[i].children[0].children[0].value) + 1;
+        for (let i = 0; i < domEl.checkListTodo.children.length; i++) {
+            domEl.checkListTodo.children[i].children[0].children[0].value = Number(domEl.checkListTodo.children[i].children[0].children[0].value) + 1;
         };
-        checkListTodo.insertBefore(mainDiv, checkListTodo.firstChild);
-        TodoAddInput.value = "";
-        TodoAddButton.disabled = true;
+        domEl.checkListTodo.insertBefore(mainDiv, domEl.checkListTodo.firstChild);
+        domEl.TodoAddInput.value = "";
+        domEl.TodoAddButton.disabled = true;
     }
     else throw new Error("Adding a To-Do returns a non-200 status code");
 }
 
 // Notes
 async function addNote() {
-    let req = await fetch("/note", {
+    let req = await fetch(endpoints.note, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({type: "add", text: NotesAddInput.value}),
+        body: JSON.stringify({type: "add", text: domEl.NotesAddInput.value}),
     });
     if (req.status == 200) {
         let mainDiv = document.createElement("div"); mainDiv.className = "note";
         mainDiv.innerHTML = `
         <input type="hidden" value="0">
-        <span>${NotesAddInput.value}</span>
+        <span>${domEl.NotesAddInput.value}</span>
         <span onclick="removeNote(this)" class="close">&#x2715;</span>
         `;
-        for (let i = 0; i < checkListNotes.children.length; i++) {
-            checkListNotes.children[i].children[0].value = Number(checkListNotes.children[i].children[0].value) + 1;
+        for (let i = 0; i < domEl.checkListNotes.children.length; i++) {
+            domEl.checkListNotes.children[i].children[0].value = Number(domEl.checkListNotes.children[i].children[0].value) + 1;
         };
-        checkListNotes.insertBefore(mainDiv, checkListNotes.firstChild);
-        NotesAddInput.value = "";
-        NotesAddButton.disabled = true;
+        domEl.checkListNotes.insertBefore(mainDiv, domEl.checkListNotes.firstChild);
+        domEl.NotesAddInput.value = "";
+        domEl.NotesAddButton.disabled = true;
     }
     else throw new Error("Adding a Note returns a non-200 status code");
 }
 
 async function removeNote(element) {
-    let req = await fetch("/note", {
+    let req = await fetch(endpoints.note, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({type: "remove", index: element.parentElement.children[0].value}),
     });
     if (req.status == 200) {
 
-        for (let i = 0; i < checkListNotes.children.length; i++) {
+        for (let i = 0; i < domEl.checkListNotes.children.length; i++) {
             if (i > Number(element.parentElement.children[0].value)) {
-                checkListNotes.children[i].children[0].value = Number(checkListNotes.children[i].children[0].value) - 1;
+                domEl.checkListNotes.children[i].children[0].value = Number(domEl.checkListNotes.children[i].children[0].value) - 1;
             };
         };
-        checkListNotes.removeChild(element.parentElement)
+        domEl.checkListNotes.removeChild(element.parentElement)
     }
     else throw new Error("Adding a Note returns a non-200 status code");
 }

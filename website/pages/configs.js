@@ -1,3 +1,13 @@
+/* --- Variables --- */
+const domEl = {
+    disconnectCheck: document.getElementById("disconnectUsers")
+}
+const endpoints = {
+    loadConfig: "/load-configs"
+}
+
+/* --- Functions --- */
+/* - Default - */
 // Theme Loader
 if (localStorage.getItem("theme") === "light") {
     document.body.classList.add("light");
@@ -29,15 +39,13 @@ if (window.self === window.top) {
         return response;
     };
 })();
-// --- Variables
-const disconnectCheck = document.getElementById("disconnectUsers");
+/* - - */
 
-// --- Functions
 async function UpdateConfigs() {
-    let req = await fetch("/load-configs", {
+    let req = await fetch(endpoints.loadConfig, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({themesFile: getThemes(), configFile: getConfig(), disconnectAll: disconnectCheck.checked}),
+        body: JSON.stringify({themesFile: getThemes(), configFile: getConfig(), disconnectAll: domEl.disconnectCheck.checked}),
     });
     if (req.status == 200) {
         window.parent.location.reload();

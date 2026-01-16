@@ -15,7 +15,7 @@
             <div class="to_do_list-container">
                 <p class="title" style="margin-bottom: 15px;">&#8227; To-Do List</p>
                 <div class="to_do-input-container">
-                    <input id="todo-input" onkeydown="if (event.key === 'Enter' && this.value != '') addTodo()" oninput="TodoAddButton.disabled = this.value == ''" class="to_do-input" type="text" placeholder="Insert a To-Do tasks...">
+                    <input id="todo-input" onkeydown="if (event.key === 'Enter' && this.value != '') addTodo()" oninput="domEl.TodoAddButton.disabled = this.value == ''" class="to_do-input" type="text" placeholder="Insert a To-Do tasks...">
                     <button id="todo-button" onclick="addTodo()" class="to_do-button" disabled>+ Add To-Do</button>
                 </div>
 
@@ -39,7 +39,7 @@
                 <p class="title">&#8227; Notes</p>
 
                 <div class="to_do-input-container notes-input-ct">
-                    <input id="notes-input" onkeydown="if (event.key === 'Enter' && this.value != '') addNote()" oninput="NotesAddButton.disabled = this.value == ''" class="to_do-input" type="text" placeholder="Insert a note...">
+                    <input id="notes-input" onkeydown="if (event.key === 'Enter' && this.value != '') addNote()" oninput="domEl.NotesAddButton.disabled = this.value == ''" class="to_do-input" type="text" placeholder="Insert a note...">
                     <button id="notes-button" onclick="addNote()" class="to_do-button" disabled>+ Add Note</button>
                 </div>
 
