@@ -16,6 +16,7 @@ const domEl = {
 const endpoints = {
     login: "/login"
 }
+defaultPageId = "/home"
 
 /* --- Functions --- */
 // Pages Load
@@ -25,6 +26,10 @@ let newElement = document.querySelector(`a[href='/${pageIdIn.value}']`);
 let oldElement = document.getElementById("active-navbar");
 if (newElement != oldElement) {
     if (oldElement) oldElement.id = ""; 
+    newElement.id = "active-navbar";
+    domEl.iframePages.src = newElement.dataset.path;
+} else if (!newElement) {
+    newElement = document.querySelector(`a[href='${defaultPageId}']`);
     newElement.id = "active-navbar";
     domEl.iframePages.src = newElement.dataset.path;
 }
