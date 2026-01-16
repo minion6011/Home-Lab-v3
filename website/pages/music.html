@@ -54,7 +54,7 @@
                         <div class="text">
                             <div class="title-sep"> 
                                 <p id="plDs-title">Playlist Name</p>
-                                <p class="close" onclick="mainContainer.dataset.status = '0'">&#x2715;</p>
+                                <p class="close" onclick="domElSongs.mainContainer.dataset.status = '0'">&#x2715;</p>
                             </div>
                             <p id="plDs-desc">Playlist Description</p>
                         </div>
@@ -119,7 +119,7 @@
 
                 <div class="down">
                     <p id="cur-duration">0:00</p>
-                    <input value=0 disabled id="playerRange" oninput="if (!this.disabled) audioControll.currentTime = this.value" type="range">
+                    <input value=0 disabled id="playerRange" oninput="if (!this.disabled) domElSongs.audioControll.currentTime = this.value" type="range">
                     <p id="max-duration">0:00</p>
                 </div>
             </div>

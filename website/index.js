@@ -1,14 +1,23 @@
-const settingMenu = document.getElementById("setting-menu");
+/* --- Variables --- */
+const domEl = {
+    settingMenu: document.getElementById("setting-menu"),
+    settingMenuSidebar: document.getElementById("setting-menu-sidebar"),
 
-const settingMenuSidebar = document.getElementById("setting-menu-sidebar");
+    buttonDark: document.getElementById("dark-button"),
+    buttonDarkMobile: document.getElementById("dark-button_mobile"),
+    buttonLight: document.getElementById("light-button"),
+    buttonLightMobile: document.getElementById("light-button_mobile"),
 
-const buttonDark = document.getElementById("dark-button");
-const buttonDarkMobile = document.getElementById("dark-button_mobile");
-const buttonLight = document.getElementById("light-button");
-const buttonLightMobile = document.getElementById("light-button_mobile");
+    iframePages: document.getElementById("pages-iframe"),
 
-const iframePages = document.getElementById("pages-iframe");
+    iframeContainer: document.getElementById("container-iframe"),
+    navbarContainer: document.getElementById("container-navbar")
+}
+const endpoints = {
+    login: "/login"
+}
 
+/* --- Functions --- */
 // Pages Load
 const pageIdIn = document.getElementById("pagesId-input");
 
@@ -17,7 +26,7 @@ let oldElement = document.getElementById("active-navbar");
 if (newElement != oldElement) {
     oldElement.id = ""; newElement.id = "active-navbar";
     newElement.setAttribute("onClick", "return false;") // Disable Re-Click
-    iframePages.src = newElement.dataset.path;
+    domEl.iframePages.src = newElement.dataset.path;
 }
 
 
@@ -32,8 +41,8 @@ if (newElement != oldElement) {
         return response;
     };
 })();
-iframePages.addEventListener("load", (event) => {
-    fetch(iframePages.src)
+domEl.iframePages.addEventListener("load", (event) => {
+    fetch(domEl.iframePages.src)
     .then(res => {
         if (res.status == 401) { 
             location.reload();
@@ -52,13 +61,13 @@ else {
 function changeTheme(color) {
     localStorage.setItem("theme", color);
     if (color === "dark") {
-        buttonDarkMobile.style.backgroundColor = buttonDark.style.backgroundColor = "var(--selected-theme-bg-color)"
-        buttonLightMobile.style.backgroundColor = buttonLight.style.backgroundColor = "#ffffff00"
+        domEl.buttonDarkMobile.style.backgroundColor = domEl.buttonDark.style.backgroundColor = "var(--selected-theme-bg-color)"
+        domEl.buttonLightMobile.style.backgroundColor = domEl.buttonLight.style.backgroundColor = "#ffffff00"
         document.body.classList.remove("light");
     }
     else {
-        buttonLightMobile.style.backgroundColor = buttonLight.style.backgroundColor = "var(--selected-theme-bg-color)"
-        buttonDarkMobile.style.backgroundColor = buttonDark.style.backgroundColor = "#ffffff00"
+        domEl.buttonLightMobile.style.backgroundColor = domEl.buttonLight.style.backgroundColor = "var(--selected-theme-bg-color)"
+        domEl.buttonDarkMobile.style.backgroundColor = domEl.buttonDark.style.backgroundColor = "#ffffff00"
         
         document.body.classList.add("light");
     }
@@ -69,39 +78,39 @@ function changeTheme(color) {
 // Settings Menù
 function openSettings() {
     if (!window.matchMedia("(max-width: 1003px)").matches) {
-        settingMenu.style.display = "block";
-        settingMenu.classList.remove("hide");
-        settingMenu.classList.add("show");
+        domEl.settingMenu.style.display = "block";
+        domEl.settingMenu.classList.remove("hide");
+        domEl.settingMenu.classList.add("show");
     } else {
-        settingMenuSidebar.style.display = "block";
-        settingMenuSidebar.classList.remove("hide");
-        settingMenuSidebar.classList.add("show");
+        domEl.settingMenuSidebar.style.display = "block";
+        domEl.settingMenuSidebar.classList.remove("hide");
+        domEl.settingMenuSidebar.classList.add("show");
     }
 }
 
 document.addEventListener('click', (event) => {
     if (!window.matchMedia("(max-width: 1003px)").matches) {
-        if (settingMenu.style.display == "block" && !settingMenu.contains(event.target)) {
+        if (domEl.settingMenu.style.display == "block" && !domEl.settingMenu.contains(event.target)) {
 
-            settingMenu.classList.add("hide");
-            settingMenu.classList.remove("show");
+            domEl.settingMenu.classList.add("hide");
+            domEl.settingMenu.classList.remove("show");
 
-            settingMenu.addEventListener('animationend', function handler() {
-                settingMenu.style.display = "none";
-                settingMenu.classList.remove("hide");
-                settingMenu.removeEventListener('animationend', handler);
+            domEl.settingMenu.addEventListener('animationend', function handler() {
+                domEl.settingMenu.style.display = "none";
+                domEl.settingMenu.classList.remove("hide");
+                domEl.settingMenu.removeEventListener('animationend', handler);
             });
         }
     }
     else {
-        if (settingMenuSidebar.style.display == "block" && !settingMenuSidebar.contains(event.target)) {
-            settingMenuSidebar.classList.add("hide");
-            settingMenuSidebar.classList.remove("show");
+        if (domEl.settingMenuSidebar.style.display == "block" && !domEl.settingMenuSidebar.contains(event.target)) {
+            domEl.settingMenuSidebar.classList.add("hide");
+            domEl.settingMenuSidebar.classList.remove("show");
 
-            settingMenuSidebar.addEventListener('animationend', function handler() {
-                settingMenuSidebar.style.display = "none";
-                settingMenuSidebar.classList.remove("hide");
-                settingMenuSidebar.removeEventListener('animationend', handler);
+            domEl.settingMenuSidebar.addEventListener('animationend', function handler() {
+                domEl.settingMenuSidebar.style.display = "none";
+                domEl.settingMenuSidebar.classList.remove("hide");
+                domEl.settingMenuSidebar.removeEventListener('animationend', handler);
             });
         }
     }
@@ -111,34 +120,30 @@ document.addEventListener('click', (event) => {
 
 // Sidebar Functions
 
-
-const iframeContainer = document.getElementById("container-iframe")
-const navbarContainer = document.getElementById("container-navbar")
-
 function openPagesSidebar() {
-    if (navbarContainer.dataset.status == "off") {
-        navbarContainer.dataset.status = "on"
-        navbarContainer.style.opacity = "0" // Transition
-        iframeContainer.style.display = "none"
-        navbarContainer.style.display = "block"
-        setTimeout(() => {navbarContainer.style.opacity = "1"}, 50); // Transition
+    if (domEl.navbarContainer.dataset.status == "off") {
+        domEl.navbarContainer.dataset.status = "on"
+        domEl.navbarContainer.style.opacity = "0" // Transition
+        domEl.iframeContainer.style.display = "none"
+        domEl.navbarContainer.style.display = "block"
+        setTimeout(() => {domEl.navbarContainer.style.opacity = "1"}, 50); // Transition
     }
     else {
-        navbarContainer.dataset.status = "off"
-        iframeContainer.style.opacity = "0" // Transition
-        navbarContainer.style.display = "none"
-        iframeContainer.style.display = "block"
-        setTimeout(() => {iframeContainer.style.opacity = "1"}, 50); // Transition
+        domEl.navbarContainer.dataset.status = "off"
+        domEl.iframeContainer.style.opacity = "0" // Transition
+        domEl.navbarContainer.style.display = "none"
+        domEl.iframeContainer.style.display = "block"
+        setTimeout(() => {domEl.iframeContainer.style.opacity = "1"}, 50); // Transition
     }
 }
 
 const mediaQuery = window.matchMedia("(max-width: 1003px)");
 
 function handleResize(e) { // Fix openPagesSidebar()
-  if (!e.matches) {
-    navbarContainer.style.display = ""
-    iframeContainer.style.display = ""
-  }
+    if (!e.matches) {
+        domEl.navbarContainer.style.display = ""
+        domEl.iframeContainer.style.display = ""
+    }
 }
 
 mediaQuery.addEventListener("change", handleResize);

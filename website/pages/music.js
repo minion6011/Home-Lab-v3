@@ -1,3 +1,71 @@
+/* --- Variables --- */
+// Songs Related
+let nDownload = 0;
+let oldSong = [];
+let oldVolume = 1;
+let currentPl = [null, null]; //plId (str), plIdLenght (str)
+let preloadData = ["", "", "", "", 0] // struct ["url", "name", "artist", "img", 0]
+let shuffleState = false;
+
+// Modal Related
+let modalState = [false,false];
+let imgDefault = "";
+
+const domElSgPy = { // Song Player Elements
+    playerStateImg: document.getElementById("play-stop-img"),
+    playerLoopBtn: document.getElementById("loop-btn"),
+    playerShuffleBtn: document.getElementById("shuffle-btn"),
+    muteImg: document.getElementById("mute-img"),
+    volumeRange: document.getElementById("volumeRange"),
+
+    currentDuration: document.getElementById("cur-duration"),
+    maxDuration: document.getElementById("max-duration"),
+
+    playerRange: document.getElementById("playerRange"),
+    playerSongImg: document.getElementById("playerImg"),
+    playerSongTitle: document.getElementById("playerTitle")
+}
+const domElSongs = { // Songs Elements
+    mainContainer: document.getElementById("mainContainer"),
+
+    audioControll: document.getElementById("AudioControll"),
+    audioPreload: document.getElementById("AudioPreload"),
+
+    songTableSongs: document.getElementById("songs-table"),
+
+    addsongInput: document.getElementById("songs-input"),
+
+    plDsImg: document.getElementById("plDs-img"),
+    plDsTitle: document.getElementById("plDs-title"),
+    plDsDesc: document.getElementById("plDs-desc"),
+    plDSId: document.getElementById("plDs-id")
+}
+const domElPlaylist = { // Playlist Elements
+    playlistsContainer: document.getElementById("playlists-container"),
+
+    plNameIn: document.getElementById("pl-name"),
+    plDescIn: document.getElementById("pl-desc"),
+
+    fileInput: document.getElementById("img-file"),
+    imgView: document.getElementById("modal-pl-img"),
+
+    playlistModal: document.getElementById("playlist-modal"),
+    playlistModalTitle: document.getElementById("modal-pl-title"),
+    buttonModal: document.getElementById("pl-btn"),
+}
+const endpoints = {
+    songs: "/songs",
+    playlist: "/playlist",
+    
+    playIco: "/website/img/play-ico.webp",
+    stopIco: "/website/img/stop-ico.webp",
+    muteIco: "/website/img/mute-ico.webp",
+    volumeIco: "/website/img/volume-ico.webp",
+    deleteIco: "/website/img/delete-ico.webp"
+}
+
+/* --- Functions --- */
+/* - Default - */
 // Theme Loader
 if (localStorage.getItem("theme") === "light") {
     document.body.classList.add("light");
@@ -29,87 +97,34 @@ if (window.self === window.top) {
         return response;
     };
 })();
-// --- Variables
-// - Main
-const mainContainer = document.getElementById("mainContainer");
+/* - - */
 
-// - Song
-// Player Related
-const playerStateImg = document.getElementById("play-stop-img");
-const playerLoopBtn = document.getElementById("loop-btn");
-const playerShuffleBtn = document.getElementById("shuffle-btn");
-const muteImg = document.getElementById("mute-img");
-const volumeRange = document.getElementById("volumeRange");
-
-const currentDuration = document.getElementById("cur-duration");
-const maxDuration = document.getElementById("max-duration");
-
-const playerRange = document.getElementById("playerRange");
-const playerSongImg = document.getElementById("playerImg");
-const playerSongTitle = document.getElementById("playerTitle");
-
-// Songs Related
-let nDownload = 0;
-let oldSong = [];
-let oldVolume = 1;
-let currentPl = [null, null]; //plId (str), plIdLenght (str)
-let preloadData = ["", "", "", "", 0] // struct ["url", "name", "artist", "img", 0]
-const audioControll = document.getElementById("AudioControll");
-const audioPreload = document.getElementById("AudioPreload");
-
-const songTableSongs = document.getElementById("songs-table");
-
-let shuffleState = false;
-const addsongInput = document.getElementById("songs-input");
-
-const plDsImg = document.getElementById("plDs-img");
-const plDsTitle = document.getElementById("plDs-title");
-const plDsDesc = document.getElementById("plDs-desc");
-const plDSId = document.getElementById("plDs-id");
-
-// - Modal Related
-// Playlist
-const playlistsContainer = document.getElementById("playlists-container");
-let modalState = [false,false];
-
-const plNameIn = document.getElementById("pl-name");
-const plDescIn = document.getElementById("pl-desc");
-
-const fileInput = document.getElementById("img-file");
-const imgView = document.getElementById("modal-pl-img");
-
-const playlistModal = document.getElementById("playlist-modal");
-const playlistModalTitle = document.getElementById("modal-pl-title");
-const buttonModal = document.getElementById("pl-btn");
-
-let imgDefault = "";
-// --- Functions
 // Songs Player
 async function DeleteSong(value) {
     let id = value.parentElement.parentElement.children[0].innerText;
-    if (value.parentElement.parentElement.children[1].children[1].innerText.substring(0,30) == playerSongTitle.innerText.substring(0,30)) {
+    if (value.parentElement.parentElement.children[1].children[1].innerText.substring(0,30) == domElSgPy.playerSongTitle.innerText.substring(0,30)) {
         StartStopAudio()
-        audioControll.src = "";
-        mainContainer.dataset.play = "0";
+        domElSongs.audioControll.src = "";
+        domElSongs.mainContainer.dataset.play = "0";
     }
-    let req = await fetch("/songs", {
+    let req = await fetch(endpoints.songs, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({num: plDSId.value, type: "delete", index: id-1}),
+        body: JSON.stringify({num: domElSongs.plDSId.value, type: "delete", index: id-1}),
     });
     if (req.status == 200) {
         let json = JSON.parse(await req.text());
-        if (plDSId.value == currentPl[0]) currentPl[1] -= 1;
+        if (domElSongs.plDSId.value == currentPl[0]) currentPl[1] -= 1;
         if (preloadData[4]+1 == id) PreloadSong(id);
         value.parentElement.parentElement.parentElement.removeChild(value.parentElement.parentElement);
-        let ls = songTableSongs.getElementsByClassName("songTcontainer")
+        let ls = domElSongs.songTableSongs.getElementsByClassName("songTcontainer")
         for (let i = 0; i < ls.length; i++) {
             if (Number(ls[i].children[0].innerText)>Number(id)) {
                 ls[i].children[0].innerText = (Number(ls[i].children[0].innerText) - 1).toString()
                 ls[i].setAttribute("onclick", `FetchSong(${Number(ls[i].children[0].innerText) - 1});`);
             }
         };
-        plDsDesc.innerHTML = plDsDesc.innerHTML.replace(/( - )(.*?)(<\/i>)/, "$1" + Number(json.indexNew) + "$3");
+        domElSongs.plDsDesc.innerHTML = domElSongs.plDsDesc.innerHTML.replace(/( - )(.*?)(<\/i>)/, "$1" + Number(json.indexNew) + "$3");
     }
     else throw new Error("Getting a song returns a non-200 status code");
 }
@@ -119,19 +134,19 @@ function formatTime(seconds) {
     return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
 }
 function StartStopAudio() {
-    if (audioControll.paused) {
+    if (domElSongs.audioControll.paused) {
         navigator.mediaSession.playbackState = "playing";
-        audioControll.play();
-        playerStateImg.src = "/website/img/stop-ico.webp"
+        domElSongs.audioControll.play();
+        domElSgPy.playerStateImg.src = endpoints.stopIco;
     }
     else {
         navigator.mediaSession.playbackState = "paused";
-        audioControll.pause();
-        playerStateImg.src = "/website/img/play-ico.webp"
+        domElSongs.audioControll.pause();
+        domElSgPy.playerStateImg.src = endpoints.playIco;
     };
 }
 function ChangeVolume(mute, value) {
-    if (volumeRange.value == 0) {
+    if (domElSgPy.volumeRange.value == 0) {
         if (mute) {
             if (oldVolume == 0) {value = oldVolume = 0.5}
             else {value = oldVolume};
@@ -139,17 +154,17 @@ function ChangeVolume(mute, value) {
         if (!mute) oldVolume = 0;
     }
     else if (value != 0 && !mute) oldVolume = value;
-    volumeRange.value = audioControll.volume = value;
-    if (value == 0) muteImg.src = "/website/img/mute-ico.webp"
-    else muteImg.src = "/website/img/volume-ico.webp";
+    domElSgPy.volumeRange.value = domElSongs.audioControll.volume = value;
+    if (value == 0) domElSgPy.muteImg.src = endpoints.muteIco
+    else domElSgPy.muteImg.src = endpoints.volumeIco;
 }
 function LoopToogle() {
-    audioControll.loop = !audioControll.loop;
-    playerLoopBtn.classList.toggle("on", audioControll.loop);
+    domElSongs.audioControll.loop = !domElSongs.audioControll.loop;
+    domElSgPy.playerLoopBtn.classList.toggle("on", domElSongs.audioControll.loop);
 }
 
 async function NextSong() {
-    if (preloadData[0] == audioControll.src) {
+    if (preloadData[0] == domElSongs.audioControll.src) {
         await PreloadSong(preloadData[4])
     }
     PlaySong(preloadData[0], preloadData[1], preloadData[2], preloadData[3], preloadData[4])
@@ -160,7 +175,7 @@ async function setPWA(title, artist, img) {
         navigator.mediaSession.metadata = new MediaMetadata({ 
             title: title,
             artist: artist,
-            album: plDsTitle.innerText,
+            album: domElSongs.plDsTitle.innerText,
             artwork: [
                 { src: img, sizes: "512x512", type: "image/png" }
             ],
@@ -176,14 +191,14 @@ async function setPWA(title, artist, img) {
 
 function Seek(add, details) {
     const skipTime = details.seekOffset || 10;
-    if (add) audioControll.currentTime = Math.min(audioControll.currentTime + skipTime, audioControll.duration);
-    else audioControll.currentTime = Math.min(audioControll.currentTime - skipTime, 0);
+    if (add) domElSongs.audioControll.currentTime = Math.min(domElSongs.audioControll.currentTime + skipTime, domElSongs.audioControll.duration);
+    else domElSongs.audioControll.currentTime = Math.min(domElSongs.audioControll.currentTime - skipTime, 0);
 }
 
 async function FetchSong(sgId) {
-    currentPl[0] = plDSId.value;
+    currentPl[0] = domElSongs.plDSId.value;
     currentPl[1] = document.getElementsByClassName("songTcontainer").length-1;
-    let req = await fetch("/songs", {
+    let req = await fetch(endpoints.songs, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({num: currentPl[0], type: "get", index: sgId}),
@@ -196,56 +211,56 @@ async function FetchSong(sgId) {
 }
 
 async function PlaySong(url, name, artist, img, index) {
-    if (mainContainer.dataset.play == "0") {
-        mainContainer.dataset.play = "1"
+    if (domElSongs.mainContainer.dataset.play == "0") {
+        domElSongs.mainContainer.dataset.play = "1"
     }
     oldSong.push(index);
     if (oldSong.length >= 3) {
         oldSong.splice(0, 1)
     }
-    audioControll.src = url; 
-    await audioControll.play(); navigator.mediaSession.playbackState = "playing";
-    playerStateImg.src = "/website/img/stop-ico.webp"; PreloadSong(index); // Play and preload next song
+    domElSongs.audioControll.src = url; 
+    await domElSongs.audioControll.play(); navigator.mediaSession.playbackState = "playing";
+    domElSgPy.playerStateImg.src = endpoints.stopIco; PreloadSong(index); // Play and preload next song
 
-    audioControll.currentTime = 0;
-    playerRange.value = 0; playerRange.max = audioControll.duration; maxDuration.innerHTML = formatTime(audioControll.duration);
+    domElSongs.audioControll.currentTime = 0;
+    domElSgPy.playerRange.value = 0; domElSgPy.playerRange.max = domElSongs.audioControll.duration; domElSgPy.maxDuration.innerHTML = formatTime(domElSongs.audioControll.duration);
     setPWA(name, artist, img);
-    if (playerRange.disabled) playerRange.disabled = false;
+    if (domElSgPy.playerRange.disabled) domElSgPy.playerRange.disabled = false;
     // Player Setup
     let SongReduc = name.substring(0,40); if (name.length>40) {SongReduc+="..."}
-    playerSongImg.src = img; playerSongTitle.innerText = SongReduc;
+    domElSgPy.playerSongImg.src = img; domElSgPy.playerSongTitle.innerText = SongReduc;
     
 }
 
 // Media Session
-audioControll.addEventListener("play", updatePositionState);
-audioControll.addEventListener("pause", updatePositionState);
-audioControll.addEventListener("seeking", updatePositionState);
+domElSongs.audioControll.addEventListener("play", updatePositionState);
+domElSongs.audioControll.addEventListener("pause", updatePositionState);
+domElSongs.audioControll.addEventListener("seeking", updatePositionState);
 
-audioControll.addEventListener("ratechange", updatePositionState);
-audioControll.addEventListener("loadedmetadata", updatePositionState);
-audioControll.addEventListener("timeupdate", updatePositionState);
+domElSongs.audioControll.addEventListener("ratechange", updatePositionState);
+domElSongs.audioControll.addEventListener("loadedmetadata", updatePositionState);
+domElSongs.audioControll.addEventListener("timeupdate", updatePositionState);
 
 function updatePositionState() {
-    if (!audioControll.duration || isNaN(audioControll.duration)) return;
+    if (!domElSongs.audioControll.duration || isNaN(domElSongs.audioControll.duration)) return;
     if ('setPositionState' in navigator.mediaSession) {
         navigator.mediaSession.setPositionState({
-            duration: Math.floor(audioControll.duration),
-            playbackRate: audioControll.playbackRate,
-            position: Math.floor(audioControll.currentTime),
+            duration: Math.floor(domElSongs.audioControll.duration),
+            playbackRate: domElSongs.audioControll.playbackRate,
+            position: Math.floor(domElSongs.audioControll.currentTime),
         });
     }
 }
 
-audioControll.addEventListener('timeupdate', () => {
-  if (audioControll.duration) {
-    playerRange.value = audioControll.currentTime;
-    playerRange.style.setProperty('--range-progress-width', `${(playerRange.value - playerRange.min) / (playerRange.max - playerRange.min) * 100}%`);
-    currentDuration.innerHTML = formatTime(audioControll.currentTime);
+domElSongs.audioControll.addEventListener('timeupdate', () => {
+  if (domElSongs.audioControll.duration) {
+    domElSgPy.playerRange.value = domElSongs.audioControll.currentTime;
+    domElSgPy.playerRange.style.setProperty('--range-progress-width', `${(domElSgPy.playerRange.value - domElSgPy.playerRange.min) / (domElSgPy.playerRange.max - domElSgPy.playerRange.min) * 100}%`);
+    domElSgPy.currentDuration.innerHTML = formatTime(domElSongs.audioControll.currentTime);
   }
 });
 
-audioControll.addEventListener('ended', () => {
+domElSongs.audioControll.addEventListener('ended', () => {
     PlaySong(preloadData[0], preloadData[1], preloadData[2], preloadData[3], preloadData[4])
     PreloadSong(preloadData[4]);
 });
@@ -256,7 +271,7 @@ async function PreloadSong(id) {
     if (shuffleState && length >= 1) {i = Math.floor(Math.random() * length)}
     if (i == id) { if (i+1>length) {i--} else {i++};} // Evita che appaia lo stesso numero
     if (i > length) {i = 0}; // Ricomincia
-    let req = await fetch("/songs", {
+    let req = await fetch(endpoints.songs, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -267,7 +282,7 @@ async function PreloadSong(id) {
     })
     if (req.status == 200) {
         let json = JSON.parse(await req.text());
-        audioPreload.src = json.song.url_path; // Preload
+        domElSongs.audioPreload.src = json.song.url_path; // Preload
         preloadData = [json.song.url_path, json.song.name, json.song.artist, json.song.img, i]
     }
     else throw new Error("Getting a song (preload funct) returns a non-200 status code");
@@ -288,64 +303,64 @@ function CreateSongHTML(index, values) { // da aggiungere il link nel onclick --
     <td data-visible="0">${values.duration}</td>
     <td style="text-align: center;">
         <button onclick="event.stopPropagation(); DeleteSong(this)" class="songTable-delete">
-            <img src="/website/img/delete-ico.webp">
+            <img src="${endpoints.deleteIco}">
         </button>
     </td>
     `;
-    songTableSongs.appendChild(trElement);
+    domElSongs.songTableSongs.appendChild(trElement);
 }
 
 // Add-Song Button
 async function AddSong() {
     nDownload += 1;
-    let songName = addsongInput.value; addsongInput.value = ""; addsongInput.placeholder = `Downloading - ${nDownload}...`
-    let startPl = plDSId.value
-    // addsongInput.disabled = true;
-    let req = await fetch("/songs", {
+    let songName = domElSongs.addsongInput.value; domElSongs.addsongInput.value = ""; domElSongs.addsongInput.placeholder = `Downloading - ${nDownload}...`
+    let startPl = domElSongs.plDSId.value
+    // domElSongs.addsongInput.disabled = true;
+    let req = await fetch(endpoints.songs, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({num: startPl, type: "add", sname: songName}),
     });
-    // addsongInput.disabled = false; 
+    // domElSongs.addsongInput.disabled = false; 
     nDownload -= 1
-    if (nDownload == 0) addsongInput.placeholder = "YT name/link...";
-    else addsongInput.placeholder = `Downloading - ${nDownload}...`;
+    if (nDownload == 0) domElSongs.addsongInput.placeholder = "YT name/link...";
+    else domElSongs.addsongInput.placeholder = `Downloading - ${nDownload}...`;
     if (req.status == 200) {
-        if (plDSId.value == currentPl[0]) currentPl[1] += 1
+        if (domElSongs.plDSId.value == currentPl[0]) currentPl[1] += 1
         let json = JSON.parse(await req.text());
-        if (startPl == plDSId.value) {
+        if (startPl == domElSongs.plDSId.value) {
             json.nwSongs.forEach((song, index) => {
                 CreateSongHTML(json.indexStart+index, song)
             });
-            plDsDesc.innerHTML = plDsDesc.innerHTML.replace(/( - )(.*?)(<\/i>)/, "$1" + (Number(json.indexStart)+Number(json.nwSongs.length)) + "$3");
+            domElSongs.plDsDesc.innerHTML = domElSongs.plDsDesc.innerHTML.replace(/( - )(.*?)(<\/i>)/, "$1" + (Number(json.indexStart)+Number(json.nwSongs.length)) + "$3");
         }
     }
     else throw new Error("Adding a song returns a non-200 status code");
 }
 function SongAddInput() {
-    if (addsongInput.style.display == "block") { // Fade Out
-        addsongInput.classList.add("animate", "out");
-        addsongInput.addEventListener("animationend", () => {
-            addsongInput.classList.remove("animate", "out");
-            addsongInput.style.display = "none";
+    if (domElSongs.addsongInput.style.display == "block") { // Fade Out
+        domElSongs.addsongInput.classList.add("animate", "out");
+        domElSongs.addsongInput.addEventListener("animationend", () => {
+            domElSongs.addsongInput.classList.remove("animate", "out");
+            domElSongs.addsongInput.style.display = "none";
         }, { once: true });
 
-    } else if (addsongInput.style.display == "none" && !addsongInput.classList.contains("animate")) { // Fade In
-        addsongInput.style.display = "block";
-        addsongInput.classList.add("animate");
+    } else if (domElSongs.addsongInput.style.display == "none" && !domElSongs.addsongInput.classList.contains("animate")) { // Fade In
+        domElSongs.addsongInput.style.display = "block";
+        domElSongs.addsongInput.classList.add("animate");
     }
 }
 
 // Delete Button
 async function deletePl() {
-    let req = await fetch("/playlist", {
+    let req = await fetch(endpoints.playlist, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({num: plDSId.value, type: "delete"}),
+        body: JSON.stringify({num: domElSongs.plDSId.value, type: "delete"}),
     });
     if (req.status == 200) {
-        EditPlsHTML(plDSId.value, null, null, "delete");
-        mainContainer.dataset.status = "0";
+        EditPlsHTML(domElSongs.plDSId.value, null, null, "delete");
+        domElSongs.mainContainer.dataset.status = "0";
     }
     else throw new Error("Deleting a playlist returns a non-200 status code");
 }
@@ -353,14 +368,14 @@ async function deletePl() {
 // Shuffle Button
 function TurnShuffle() {
     shuffleState = !shuffleState;
-    playerShuffleBtn.classList.toggle("on", shuffleState);
+    domElSgPy.playerShuffleBtn.classList.toggle("on", shuffleState);
 }
 
 
 // Playlist
 // Playlist Grid Check
 if (localStorage.getItem("pl-grid")) {
-    playlistsContainer.className = localStorage.getItem("pl-grid")
+    domElPlaylist.playlistsContainer.className = localStorage.getItem("pl-grid")
 }
 // ---
 
@@ -368,10 +383,10 @@ async function OpenPlaylist(item) {
     let ItemPlId = item.querySelector(".pl-id");
     let data = await GetPlData(ItemPlId.value);
     if (data == null) throw new Error("Playlist data returned null (Code was not 200)")
-    plDSId.value = ItemPlId.value;
-    plDsImg.src = data.img; plDsTitle.innerHTML = data.name; plDsDesc.innerHTML = `${data.description.replaceAll("\n", "<br>")}<br><br><i>Songs - ${data.songs.length}</i>`;
-    mainContainer.dataset.status = "1";
-    songTableSongs.innerHTML = songTableSongs.children[0].children[0].innerHTML; // reset list
+    domElSongs.plDSId.value = ItemPlId.value;
+    domElSongs.plDsImg.src = data.img; domElSongs.plDsTitle.innerHTML = data.name; domElSongs.plDsDesc.innerHTML = `${data.description.replaceAll("\n", "<br>")}<br><br><i>Songs - ${data.songs.length}</i>`;
+    domElSongs.mainContainer.dataset.status = "1";
+    domElSongs.songTableSongs.innerHTML = domElSongs.songTableSongs.children[0].children[0].innerHTML; // reset list
     data.songs.forEach((song, index) => {
         CreateSongHTML(index, song);
     });
@@ -379,7 +394,7 @@ async function OpenPlaylist(item) {
 
 
 async function GetPlData(plNum) {
-    let req = await fetch("/playlist", {
+    let req = await fetch(endpoints.playlist, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({num: plNum, type: "get"}),
@@ -393,48 +408,48 @@ async function GetPlData(plNum) {
 
 function GridChangePlaylist(arg) { // 'playlists-details' or 'playlists-grid'
     if (arg == 'playlists-details' || arg == 'playlists-grid') {
-        playlistsContainer.className = arg;
+        domElPlaylist.playlistsContainer.className = arg;
         localStorage.setItem("pl-grid", arg);
     }
 }
 
 // Modal Related 
 function PlaylistModal(arg) {
-    if (imgDefault === "") imgDefault = imgView.src;
-    if (imgDefault != "") imgView.src = imgDefault;
+    if (imgDefault === "") imgDefault = domElPlaylist.imgView.src;
+    if (imgDefault != "") domElPlaylist.imgView.src = imgDefault;
     if (arg === "edit") { // Needs changes
-        modalState = [true,true]; buttonModal.disabled = false;
-        fileInput.files[0] = null;
-        imgView.src = plDsImg.src; plNameIn.value = plDsTitle.innerText; plDescIn.value = plDsDesc.innerText.substring(0, plDsDesc.innerText.lastIndexOf("\n\n"));
-        buttonModal.setAttribute("onClick", `CreateEditPlaylist('edit', ${plDSId.value})`); playlistModalTitle.innerText = "Edit Playlist";
-        playlistModal.style.display = "block";
+        modalState = [true,true]; domElPlaylist.buttonModal.disabled = false;
+        domElPlaylist.fileInput.files[0] = null;
+        domElPlaylist.imgView.src = domElSongs.plDsImg.src; domElPlaylist.plNameIn.value = domElSongs.plDsTitle.innerText; domElPlaylist.plDescIn.value = domElSongs.plDsDesc.innerText.substring(0, domElSongs.plDsDesc.innerText.lastIndexOf("\n\n"));
+        domElPlaylist.buttonModal.setAttribute("onClick", `CreateEditPlaylist('edit', ${domElSongs.plDSId.value})`); domElPlaylist.playlistModalTitle.innerText = "Edit Playlist";
+        domElPlaylist.playlistModal.style.display = "block";
     }
     else if (arg === "new") {
         modalState = [false,false];
-        plNameIn.value = ""; plDescIn.value = ""; buttonModal.disabled = true;
-        buttonModal.setAttribute("onClick", "CreateEditPlaylist()"); playlistModalTitle.innerText = "Create Playlist";
-        playlistModal.style.display = "block";
+        domElPlaylist.plNameIn.value = ""; domElPlaylist.plDescIn.value = ""; domElPlaylist.buttonModal.disabled = true;
+        domElPlaylist.buttonModal.setAttribute("onClick", "CreateEditPlaylist()"); domElPlaylist.playlistModalTitle.innerText = "Create Playlist";
+        domElPlaylist.playlistModal.style.display = "block";
     }
     else if (arg === "close") {
-        playlistModal.style.display = "none";
+        domElPlaylist.playlistModal.style.display = "none";
     }
 }
 
-fileInput.addEventListener('change', () => {
+domElPlaylist.fileInput.addEventListener('change', () => {
     modalState[0] = true; checkStatus();
-    const file = fileInput.files[0];
+    const file = domElPlaylist.fileInput.files[0];
     if (file == undefined) return
-    if (imgDefault === "") imgDefault = imgView.src;
+    if (imgDefault === "") imgDefault = domElPlaylist.imgView.src;
     const reader = new FileReader();
-    reader.onload = (e) => imgView.src = e.target.result;
+    reader.onload = (e) => domElPlaylist.imgView.src = e.target.result;
     reader.readAsDataURL(file);
 });
-plNameIn.addEventListener("change", () => {
-    modalState[1] = (plNameIn.value != ""); checkStatus(); 
+domElPlaylist.plNameIn.addEventListener("change", () => {
+    modalState[1] = (domElPlaylist.plNameIn.value != ""); checkStatus(); 
 });
 
 function checkStatus() {
-    buttonModal.disabled = !(modalState[0] && modalState[1]);
+    domElPlaylist.buttonModal.disabled = !(modalState[0] && modalState[1]);
 };
 
 // Create-Edit Playlist
@@ -445,49 +460,49 @@ function CreateEditPlaylist(type, num=null) {
     if (type === "edit") {
         formData.append("num", num);
     }
-    formData.append("img", fileInput.files[0]);
-    formData.append('name', plNameIn.value);
-    formData.append('description', plDescIn.value);
-    if (fileInput.files[0] == null) {ptype = "application/json"} else {ptype = fileInput.files[0].contentType}
+    formData.append("img", domElPlaylist.fileInput.files[0]);
+    formData.append('name', domElPlaylist.plNameIn.value);
+    formData.append('description', domElPlaylist.plDescIn.value);
+    if (domElPlaylist.fileInput.files[0] == null) {ptype = "application/json"} else {ptype = domElPlaylist.fileInput.files[0].contentType}
     const requestOptions = {
         headers: {
             "Content-Type": ptype,
         },
         mode: "no-cors",
         method: "POST",
-        files: fileInput.files[0],
+        files: domElPlaylist.fileInput.files[0],
         body: formData,
     };
-    fetch("/playlist", requestOptions).then((response) => {
+    fetch(endpoints.playlist, requestOptions).then((response) => {
         response.json().then((data) => {
             if (type != "edit") {CreatePlHTML(data.plSrc, data.plName, data.plNum);}
             else {
                 // Img
-                if (fileInput.files[0] != null) {
+                if (domElPlaylist.fileInput.files[0] != null) {
                     const reader = new FileReader();
                     reader.onload = (e) => {
-                        plDsImg.src = e.target.result
+                        domElSongs.plDsImg.src = e.target.result
                         EditPlsHTML(num, e.target.result, null)
                     };
-                    reader.readAsDataURL(fileInput.files[0]);
+                    reader.readAsDataURL(domElPlaylist.fileInput.files[0]);
                 }
                 // Title + Desc
-                plDsTitle.innerText = plNameIn.value; plDsDesc.innerHTML = plDescIn.value.replaceAll("\n","<br>") + plDsDesc.innerHTML.slice(plDsDesc.innerHTML.lastIndexOf("<br><br>")-plDsDesc.innerHTML.length);
-                EditPlsHTML(num, null, plNameIn.value)
+                domElSongs.plDsTitle.innerText = domElPlaylist.plNameIn.value; domElSongs.plDsDesc.innerHTML = domElPlaylist.plDescIn.value.replaceAll("\n","<br>") + domElSongs.plDsDesc.innerHTML.slice(domElSongs.plDsDesc.innerHTML.lastIndexOf("<br><br>")-domElSongs.plDsDesc.innerHTML.length);
+                EditPlsHTML(num, null, domElPlaylist.plNameIn.value)
             }
         });
     });
     PlaylistModal('close')
 }
 function EditPlsHTML(id, srcNew, titleNew, type=null) {
-    playlistsLs = playlistsContainer.getElementsByClassName("pl-item");
+    playlistsLs = domElPlaylist.playlistsContainer.getElementsByClassName("pl-item");
     for (let i = 0; i < playlistsLs.length; i++) {
         element = playlistsLs[i];
         if (element.querySelector(".pl-id").value == id) {
             if (type == null) {
                 if (srcNew != null) element.querySelector(".pl-img").src = srcNew;
                 if (titleNew != null) element.querySelector(".pl-text").innerText = titleNew;
-            } else if (type == "delete") playlistsContainer.removeChild(element);
+            } else if (type == "delete") domElPlaylist.playlistsContainer.removeChild(element);
         }
     };
 }
@@ -511,5 +526,5 @@ async function CreatePlHTML(imgSrc, plName, plNum) {
     hiddenInput.className = "pl-id";
 
     divMain.append(img, p, hiddenInput);
-    playlistsContainer.appendChild(divMain);
+    domElPlaylist.playlistsContainer.appendChild(divMain);
 }
