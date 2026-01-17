@@ -52,6 +52,8 @@ const domElPlaylist = { // Playlist Elements
     playlistModal: document.getElementById("playlist-modal"),
     playlistModalTitle: document.getElementById("modal-pl-title"),
     buttonModal: document.getElementById("pl-btn"),
+    
+    delPlButton: document.getElementById("del-pl-btn"),
 }
 const endpoints = {
     songs: "/songs",
@@ -352,6 +354,17 @@ function SongAddInput() {
 }
 
 // Delete Button
+let deleteTimeout = null;
+function deleteChangeState(fstate=null) {
+    let stateDel = (!domElPlaylist.delPlButton.classList.contains("clicked-del") && fstate==null) || fstate == true
+    domElPlaylist.delPlButton.classList.toggle("clicked-del", stateDel);
+    if (stateDel)
+        domElPlaylist.delPlButton.setAttribute("onClick", "deleteChangeState(); deletePl()")
+    else
+        domElPlaylist.delPlButton.setAttribute("onClick", "deleteChangeState()")
+    clearTimeout(deleteTimeout);
+    deleteTimeout = setTimeout(() => {deleteChangeState(false)}, 5000); // after 5 seconds
+}
 async function deletePl() {
     let req = await fetch(endpoints.playlist, {
         method: "POST",
@@ -380,6 +393,7 @@ if (localStorage.getItem("pl-grid")) {
 // ---
 
 async function OpenPlaylist(item) {
+    deleteChangeState(false)
     let ItemPlId = item.querySelector(".pl-id");
     let data = await GetPlData(ItemPlId.value);
     if (data == null) throw new Error("Playlist data returned null (Code was not 200)")

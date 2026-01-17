@@ -217,6 +217,8 @@ html.not-iframe .song-container {margin: 20px}
 .song-btn img {
     filter: invert(var(--img-invert-value));
 }
+.song-btn.clicked-del { background-color: var(--del-bg-color); }
+.song-btn.clicked-del:hover { background-color: var(--del-hover-bg-color); }
 
 .song-container .playlist-songs {
     background-color: var(--menu-bg-color);

@@ -64,7 +64,7 @@
                         <button class="song-btn" onclick="PlaylistModal('edit')">
                             <img src="{{ url_for('static',filename='img/pencil-ico.webp') }}">
                         </button>
-                        <button class="song-btn" onclick="deletePl()">
+                        <button class="song-btn" onclick="deleteChangeState()" id="del-pl-btn">
                             <img src="{{ url_for('static',filename='img/delete-ico.webp') }}">
                         </button>
                         <button class="song-btn" onclick="SongAddInput()">

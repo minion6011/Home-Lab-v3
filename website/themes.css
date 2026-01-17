@@ -30,6 +30,10 @@
     
     /* -- Index Elements */
     --secondary-bg-color: #252525;
+    
+    /* - Music - */
+    --del-bg-color: #ff00009e;
+    --del-hover-bg-color: #d30b0b85;
 
     /* - Accounting - */
     --balance-color: #2962FF;
@@ -62,6 +66,10 @@
 
     /* -- Index Elements */
     --secondary-bg-color: #ffffff;
+
+    /* - Music - */
+    --del-bg-color: #ff00009e;
+    --del-hover-bg-color: #ff0000b4;
 
     /* - Accounting - */
     --border-color: #ffffff;
