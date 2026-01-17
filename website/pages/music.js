@@ -431,6 +431,7 @@ function GridChangePlaylist(arg) { // 'playlists-details' or 'playlists-grid'
 function PlaylistModal(arg) {
     if (imgDefault === "") imgDefault = domElPlaylist.imgView.src;
     if (imgDefault != "") domElPlaylist.imgView.src = imgDefault;
+    domElPlaylist.fileInput.value = null; // Reset
     if (arg === "edit") { // Needs changes
         modalState = [true,true]; domElPlaylist.buttonModal.disabled = false;
         domElPlaylist.fileInput.files[0] = null;
