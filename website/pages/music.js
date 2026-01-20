@@ -105,9 +105,9 @@ if (window.self === window.top) {
 async function DeleteSong(value) {
     let id = value.parentElement.parentElement.children[0].innerText;
     if (value.parentElement.parentElement.children[1].children[1].innerText.substring(0,30) == domElSgPy.playerSongTitle.innerText.substring(0,30)) {
-        StartStopAudio()
-        domElSongs.audioControll.src = "";
         domElSongs.mainContainer.dataset.play = "0";
+        if (domElSongs.audioControll.playing) StartStopAudio();
+        domElSongs.audioControll.src = "";
     }
     let req = await fetch(endpoints.songs, {
         method: "POST",
