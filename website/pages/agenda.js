@@ -50,6 +50,7 @@ if (window.self === window.top) {
 
 // Todo
 async function switchTodo(element) {
+    element.children[1].checked = !element.children[1].checked;
     let dict = {type: "switch", index: element.children[0].value, state: ""}
     if (element.children[1].checked) {dict.state = "checked"};
 

@@ -22,12 +22,12 @@
                 <div id="check-list">
                     {% for i in range(todoList | length) %}
                         <div class="to_do-elements">
-                            <label onclick="switchTodo(this)" class="to_do-container">
+                            <div onclick="switchTodo(this)" class="to_do-container">
                                 <input id="todoIndex" type="hidden" value="{{ i }}">
                                 <input id="todoState" type="checkbox" {{ todoList[i][1] }}>
                                 <p id="todoText" class="text">{{ todoList[i][0] }}</p>
                                 <span class="checkmark"></span>
-                            </label>
+                            </div>
                             <span onclick="deleteTodo(this)" class="close">&#x2715;</span>
                         </div>
                     {% endfor %}
