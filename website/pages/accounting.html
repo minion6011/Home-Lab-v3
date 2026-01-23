@@ -86,7 +86,9 @@
                         <th><code>{{ el[0] }}</code></th>
                         <th class="profit">+{{ el[1] }}</th>
                         <th class="loss">-{{ el[2] }}</th>
-                        <th mobile="0">{{ el[3]}}</th>
+                        <th mobile="0">
+                            <span onclick="event.stopPropagation()">{{ el[3]}}</span>
+                        </th>
                     </tr>
                     {% endfor %}
                 </table>

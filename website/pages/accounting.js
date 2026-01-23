@@ -106,7 +106,7 @@ function AddPaymentHTML(profit, loss, description, date) {
     <th><code>${date}</code></th>
     <th class="profit">+${profit}</th>
     <th class="loss">-${loss}</th>
-    <th mobile="0">${description}</th>
+    <th mobile="0"><span onclick="event.stopPropagation()">${description}</span></th>
     `;
     domEl.paymentsTable.children[0].insertBefore(trElement, domEl.paymentsTable.children[0].children[1]);
     // x+1 on other index
