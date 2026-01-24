@@ -431,8 +431,8 @@ function GridChangePlaylist(arg) { // 'playlists-details' or 'playlists-grid'
 function PlaylistModal(arg) {
     if (imgDefault === "") imgDefault = domElPlaylist.imgView.src;
     if (imgDefault != "") domElPlaylist.imgView.src = imgDefault;
-    domElPlaylist.fileInput.value = null; // Reset
     if (arg === "edit") { // Needs changes
+        domElPlaylist.fileInput.value = null; // Reset
         modalState = [true,true]; domElPlaylist.buttonModal.disabled = false;
         domElPlaylist.fileInput.files[0] = null;
         domElPlaylist.imgView.src = domElSongs.plDsImg.src; domElPlaylist.plNameIn.value = domElSongs.plDsTitle.innerText; domElPlaylist.plDescIn.value = domElSongs.plDsDesc.innerText.substring(0, domElSongs.plDsDesc.innerText.lastIndexOf("\n\n"));
@@ -440,6 +440,7 @@ function PlaylistModal(arg) {
         domElPlaylist.playlistModal.style.display = "block";
     }
     else if (arg === "new") {
+        domElPlaylist.fileInput.value = null; // Reset
         modalState = [false,false];
         domElPlaylist.plNameIn.value = ""; domElPlaylist.plDescIn.value = ""; domElPlaylist.buttonModal.disabled = true;
         domElPlaylist.buttonModal.setAttribute("onClick", "CreateEditPlaylist()"); domElPlaylist.playlistModalTitle.innerText = "Create Playlist";
