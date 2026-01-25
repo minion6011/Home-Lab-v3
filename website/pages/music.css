@@ -11,7 +11,7 @@
 
     .playlists-grid .pl-item {max-width: 250px;}
     .pl-item .pl-img {height: 250px; width: 250px;}
-    .playlists-grid {grid-template-columns: repeat(auto-fit, minmax(205px, 1fr));}
+    .playlists-grid {grid-template-columns: repeat(auto-fill, minmax(205px, 1fr));}
 
     .song-btn {padding: 15px;}
     .song-btn img {width: 60px; height: 60px;}
@@ -48,7 +48,7 @@
 
     .playlists-grid .pl-item {max-width: 150px;}
     .pl-item .pl-img {height: 150px; width: 150px;}
-    .playlists-grid {grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));}
+    .playlists-grid {grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));}
 
     .song-container {margin-left: 20px;}
     .song-btn {padding: 10px;}
@@ -532,10 +532,10 @@ html:not(.not-iframe) .modal-playlist {
     gap: 20px;
 }
 .main-container[data-status="0"] .playlists-details {
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
 }
 .main-container[data-status="1"] .playlists-details {
-    grid-template-columns: repeat(auto-fit, minmax(100%, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
 }
 .playlists-grid {
     display: grid;
