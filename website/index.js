@@ -84,8 +84,13 @@ document.addEventListener("click", (e) => { // **Thanks Internet for the help
     const link = e.target.closest("a[data-path]");
     if (!link) return;
     e.preventDefault(); // No-Reload
+    try {
+        pathname = domEl.iframePages?.contentWindow?.location?.pathname;
+    } catch (e) {
+        pathname = undefined;
+    }
     const pagePath = link.dataset.path;
-    if (pagePath != domEl.iframePages.contentWindow.location.pathname) {
+    if (pagePath != pathname) {
         let oldElement = document.getElementById("active-navbar");
         if (oldElement) oldElement.id = "";
 
