@@ -17,7 +17,7 @@ def get_client_ip():
 
 @app.before_request
 def usercheck_before_request():
-    if not "login" in request.path and not "error" in request.path:
+    if not "login" in request.path and not "error" in request.path and not "favicon" in request.path:
         if get_client_ip() not in logged_users or logged_users[get_client_ip()] < time.time():
             if not request.method == "POST":
                 return render_template("login.html"), 401
