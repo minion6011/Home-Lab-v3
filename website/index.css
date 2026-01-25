@@ -216,15 +216,14 @@ a {
 }
 .sidebar-container .dropdown-menu-sidebar {
     display: none;
-    position: absolute;
+    position: fixed;
     background-color: var(--menu-bg-color);
     padding: 1.85rem;
     border-radius: 5px;
-
+    bottom: 220px;
     margin-top: 10px;
-    bottom: 14rem;
     right: 5rem;
-    z-index: 1;
+    /* z-index: 1; */
     border: var(--font-color) 1px solid;
     font-size: var(--small-font-size);
 }
