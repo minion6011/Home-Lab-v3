@@ -3,7 +3,7 @@
         will-change: grid-template-rows;
         transition: grid-template-rows 0.4s ease-in-out;
         grid-template-columns: 100%;
-        grid-template-rows: 0.975fr max-content;
+        grid-template-rows: 0.985fr max-content;
         /* grid-template-rows: 1fr max-content; */
     }
     .title-container {display: none;} .navbar-container {display: none;} .header-container {display: none;}
@@ -41,7 +41,8 @@ a {
     inline-size: 100%;
     block-size: 100%;
     background-color: var(--containers-bg-color);
-    height: 100dvh;
+    height: 100vh;     /* except */
+    height: 100svh;    /* try */
 }
 
 /* Navbar Elements */
