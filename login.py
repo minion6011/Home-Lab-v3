@@ -1,12 +1,13 @@
 from __main__ import app, config
 
-from flask import request, render_template, redirect
+from flask import request, render_template
 import time
 
+excludedLogin = ("login", "favicon") # Paths that will not be checked
 logged_users = {}
 # {'ip': timestamp}; if timestamp > 60m == Relogin
 
-def get_client_ip():
+def get_client_ip(): # Must be changed with session
     if "CF-Connecting-IP" in request.headers:
         return request.headers["CF-Connecting-IP"]
     elif "X-Forwarded-For" in request.headers:
@@ -14,21 +15,20 @@ def get_client_ip():
     else:
         return request.remote_addr
 
-
 @app.before_request
 def usercheck_before_request():
-    if not "login" in request.path and not "error" in request.path and not "favicon" in request.path:
+    if all(el not in request.path for el in excludedLogin): # Must be changed to .startswith with specific urls in the tuple
         if get_client_ip() not in logged_users or logged_users[get_client_ip()] < time.time():
             if not request.method == "POST":
                 return render_template("login.html"), 401
-            else:
-                return {}, 401
+            return {}, 401
     if get_client_ip() in logged_users and logged_users[get_client_ip()] > time.time():
             logged_users[get_client_ip()] = time.time() + config["login_duration_minutes"] * 60
     
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST', 'GET'])
 def login_api():
+    if request.method == "GET": return render_template("login.html"), 401
     if request.is_json and "username" in request.json and "password" in request.json:
         if request.json["username"] == config["username"] and request.json["password"] == config["password"]:
             logged_users[get_client_ip()] = time.time() + config["login_duration_minutes"] * 60
