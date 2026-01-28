@@ -1,6 +1,6 @@
 from __main__ import app, config
 
-from flask import request, render_template, session
+from flask import request, render_template, session, redirect
 import time
 
 excludedLogin = ("login", "favicon", "logout") # Paths that will not be checked
@@ -27,6 +27,7 @@ def login():
         else:
             return {"status": "fail"}, 401
 
-@app.route('/logout', methods=['POST', 'GET'])
+@app.route('/logout')
 def logout():
     session.clear()
+    return redirect('/'), 301

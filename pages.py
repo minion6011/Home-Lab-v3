@@ -13,6 +13,7 @@ with open("website/agenda.json") as f:
 	data_agenda = json.load(f)
 
 # - Home
+startedTime = time.time()
 def get_stats():
 	# Percentage Value 16 char; 100/16 = 6,25; salti da 6,25
 	ram = psutil.virtual_memory().percent
@@ -26,7 +27,7 @@ def get_stats():
 
 @app.route('/pages/home')
 def home():
-	return render_template("/pages/home.html", name=config["username"], log_until=session["expires_at"], stats=get_stats())
+	return render_template("/pages/home.html", name=config["username"], log_until=session["expires_at"], online_since=startedTime, stats=get_stats())
 
 @app.route('/send_command', methods=['POST'])
 def home_terminal():

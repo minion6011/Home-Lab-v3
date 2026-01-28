@@ -20,7 +20,8 @@ This is the third version of the [Homelab](https://github.com/minion6011/Home-La
 ### Images & Icons
 - **Login background image**: Image by **[Freepik](https://microsoft.github.io/monaco-editor/)**
 - **System icon**: Image by **[Freepik](https://microsoft.github.io/monaco-editor/)**
-- **IP icon**: Icon by **Yogi Aprelliyanto** – [Flaticon](https://www.flaticon.com/)
+- **Logout icon**: Icon by **Afian Rochmah Afif** – [Flaticon](https://www.flaticon.com/)
+- **Start icon**: Icon by **Gregor Cresnar** - [Flaticon](https://www.flaticon.com/)
 - **Time icon**: Icon by **Freepik** – [Flaticon](https://www.flaticon.com/)
 - **Add icon**: Icon by **Yudhi Restu** – [Flaticon](https://www.flaticon.com/)
 - **Details icon**: Icon by **Fir3Ghost** – [Flaticon](https://www.flaticon.com/)
