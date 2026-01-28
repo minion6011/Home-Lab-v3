@@ -1,8 +1,7 @@
 from __main__ import app, config
 
-from login import logged_users, get_client_ip
 from music import downloadSong
-from flask import render_template, request
+from flask import render_template, request, session
 
 import psutil, os, json, time
 
@@ -14,6 +13,7 @@ with open("website/agenda.json") as f:
 	data_agenda = json.load(f)
 
 # - Home
+startedTime = time.time()
 def get_stats():
 	# Percentage Value 16 char; 100/16 = 6,25; salti da 6,25
 	ram = psutil.virtual_memory().percent
@@ -27,7 +27,7 @@ def get_stats():
 
 @app.route('/pages/home')
 def home():
-	return render_template("/pages/home.html", name=config["username"], ip=get_client_ip(), log_until=logged_users[get_client_ip()], stats=get_stats())
+	return render_template("/pages/home.html", name=config["username"], log_until=session["expires_at"], online_since=startedTime, stats=get_stats())
 
 @app.route('/send_command', methods=['POST'])
 def home_terminal():
@@ -190,12 +190,12 @@ def configs():
 		themesFile = f.read()
 	with open("config.json") as f:
 		configFile = f.read()
-	return render_template("/pages/configs.html", themesFile=themesFile, configFile=configFile, users=logged_users)
+	return render_template("/pages/configs.html", themesFile=themesFile, configFile=configFile)
 
 @app.route('/load-configs', methods=['POST'])
 def loadConfigs():
 	if request.json:
-		if all(key in request.json for key in ["themesFile", "configFile", "disconnectAll"]): # struct str(0), str(1), str[bool](2)
+		if all(key in request.json for key in ["themesFile", "configFile"]): # struct str(0), str(1)
 			with open("website/themes.css", "w") as f:
 				f.write(request.json["themesFile"])
 			config_data = json.loads(request.json["configFile"])
@@ -203,7 +203,5 @@ def loadConfigs():
 				json.dump(config_data, f, indent=4)
 			config.clear()
 			config.update(config_data)
-			if request.json["disconnectAll"]:
-				logged_users.clear()
 			return {}, 200
 	return {}, 404

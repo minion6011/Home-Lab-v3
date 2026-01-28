@@ -34,20 +34,6 @@
                     </div>
                 </details>
 
-                <details>
-                    <summary>Users 👤</summary>
-
-                    <div class="section-content">
-                        <div class="checkbox-container">
-                            <input type="checkbox" id="disconnectUsers">
-                            <label for="disconnectUsers"> Disconnect all users?</label> <br>
-                        </div>
-                        {% for user in users %}
-                            <p class="user-ds">User: <code>{{ user }}</code> <b>-</b> Timestamp: <code>{{ users[user] }}</code></p>
-                        {% endfor %}
-                    </div>
-                </details>
-
                 <button onclick="UpdateConfigs()" class="reload-btn">Save & Reload</button>
 
                 <script>

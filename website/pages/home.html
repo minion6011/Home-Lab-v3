@@ -13,18 +13,22 @@
         <script defer>
             document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById("logged-until").innerHTML = new Date(parseInt('{{ log_until }}')*1000).toLocaleString()
+            });
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById("started-since").innerHTML = new Date(parseInt('{{ online_since }}')*1000).toLocaleString()
             });  
         </script>
 
 
         <div class="main-container">
-            <div class="info-container">
+            <div class="info-container" style="position: relative;">
+                <img onclick="window.parent.location.href='/logout'" class="logout-btn-ico" src="{{ url_for('static',filename='/img/logout-ico.webp') }}">
                 <p class="title"><img src="{{ url_for('static',filename='/img/account-ico.webp') }}" class="ico"> Account Name</p>
                 <p class="info-value">{{ name }}</p>
-                <p class="title"><img src="{{ url_for('static',filename='/img/ip-ico.webp') }}" class="ico"> Current Ip address</p>
-                <p class="info-value">{{ ip }}</p>
                 <p class="title"><img src="{{ url_for('static',filename='/img/time-ico.webp') }}" class="ico"> Logged In Until</p>
                 <p class="info-value" id="logged-until">00/00/0000</p>
+                <p class="title"><img src="{{ url_for('static',filename='/img/power-ico.webp') }}" class="ico"> Website Online Since</p>
+                <p class="info-value" id="started-since">00/00/0000</p>
             </div>
 
             <div class="info-container">

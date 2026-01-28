@@ -1,10 +1,12 @@
 @media (max-width: 1003px) { /* Schermo Telefono */
     .info-container .ico {width: 37px; height: 37px;}
+    .logout-btn-ico {width: 56px; height: 58px; margin: 25px 25px 0 0;}
     .main-container {grid-template-columns: 1fr; grid-template-rows: 1fr 1fr 1fr;}
     .custom-br {margin-top: 7.5%;}
 }
 @media (min-width: 1003px) { /* Schermo PC */
     .info-container .ico {width: 18.5px; height: 18.5px;}
+    .logout-btn-ico {width: 24px; height: 26px; margin: 17.5px 17.5px 0 0;}
     .main-container {grid-template-columns: 1fr 1fr; grid-template-rows: 40% 40%;}
 }
 
@@ -76,5 +78,13 @@ html:not(.not-iframe) .main-container {
     font-size: var(--small-font-size);
 }
 .info-container .ico {
+    filter: invert(var(--img-invert-value));
+}
+
+.logout-btn-ico {
+    position: absolute;
+    right: 0;
+    cursor: pointer;
+
     filter: invert(var(--img-invert-value));
 }
