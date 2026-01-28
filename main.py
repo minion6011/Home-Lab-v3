@@ -6,6 +6,7 @@ with open("config.json") as f:
 
 
 app = Flask(__name__, static_folder="website", template_folder="website")
+app.secret_key = "key"
 # - Flask Modules
 import login
 import pages
