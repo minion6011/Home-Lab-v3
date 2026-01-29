@@ -1,6 +1,6 @@
 @media (max-width: 1003px) { /* Schermo Telefono */
     .info-container .ico {width: 37px; height: 37px;}
-    .logout-btn-ico {width: 56px; height: 58px; margin: 25px 25px 0 0;}
+    .logout-btn-ico {width: 56px; height: 58px; margin: 45px 25px 0 0;}
     .main-container {grid-template-columns: 1fr; grid-template-rows: 1fr 1fr 1fr;}
     .custom-br {margin-top: 7.5%;}
 }
