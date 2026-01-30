@@ -15,7 +15,8 @@ def loadMusic():
 		if lastkey != int(key):
 			dataCopy[str(lastkey)] = data[key]
 			dataCopy[str(lastkey)]["img"] = f"/website/music/{lastkey}.webp"
-			os.remove(os.path.join(os.path.dirname(__file__), "website","music", f"{lastkey}.webp"))
+			if os.path.exists(os.path.join(os.path.dirname(__file__), "website","music", f"{lastkey}.webp")):
+				os.remove(os.path.join(os.path.dirname(__file__), "website","music", f"{lastkey}.webp"))
 			os.rename(
 				os.path.join(os.path.dirname(__file__), "website","music", f"{key}.webp"),
 				os.path.join(os.path.dirname(__file__), "website","music", f"{lastkey}.webp")

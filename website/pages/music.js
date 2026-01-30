@@ -497,8 +497,9 @@ function CreateEditPlaylist(type, num=null) {
                 if (domElPlaylist.fileInput.files[0] != null) {
                     const reader = new FileReader();
                     reader.onload = (e) => {
-                        domElSongs.plDsImg.src = e.target.result
-                        EditPlsHTML(num, e.target.result, null)
+                        domElSongs.plDsImg.src = e.target.result;
+                        domElSongs.plDsImg.reload;
+                        EditPlsHTML(num, e.target.result, null);
                     };
                     reader.readAsDataURL(domElPlaylist.fileInput.files[0]);
                 }
@@ -516,7 +517,10 @@ function EditPlsHTML(id, srcNew, titleNew, type=null) {
         element = playlistsLs[i];
         if (element.querySelector(".pl-id").value == id) {
             if (type == null) {
-                if (srcNew != null) element.querySelector(".pl-img").src = srcNew;
+                if (srcNew != null) {
+                    element.querySelector(".pl-img").src = srcNew;
+                    element.querySelector(".pl-img").reload;
+                }
                 if (titleNew != null) element.querySelector(".pl-text").innerText = titleNew;
             } else if (type == "delete") domElPlaylist.playlistsContainer.removeChild(element);
         }
