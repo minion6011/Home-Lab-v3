@@ -5,8 +5,25 @@ from flask import render_template, request, session
 
 import psutil, os, json, time
 
-with open("website/music.json") as f:
-	data_music = json.load(f)
+# -- Loads JSON files
+def loadMusic():
+	with open("website/music.json") as f: data = json.load(f)
+	lastkey = -1 # - Sort Playlists
+	dataCopy = data.copy()
+	for key in data:
+		lastkey += 1
+		if lastkey != int(key):
+			dataCopy[str(lastkey)] = data[key]
+			dataCopy[str(lastkey)]["img"] = f"/website/music/{lastkey}.webp"
+			os.remove(os.path.join(os.path.dirname(__file__), "website","music", f"{lastkey}.webp"))
+			os.rename(
+				os.path.join(os.path.dirname(__file__), "website","music", f"{key}.webp"),
+				os.path.join(os.path.dirname(__file__), "website","music", f"{lastkey}.webp")
+			)
+			del dataCopy[key]
+	with open("website/music.json", "w") as f: json.dump(dataCopy, f, indent=4)
+	return dataCopy # - Send Sorted Playlists
+data_music = loadMusic()
 with open("website/accounting.json") as f:
 	data_accounting = json.load(f)
 with open("website/agenda.json") as f:
