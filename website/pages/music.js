@@ -92,11 +92,15 @@ if (window.self === window.top) {
 (function () { // change how fetch works
     const originalFetch = window.fetch;
     window.fetch = async function (...args) {
-        const response = await originalFetch(...args);
-        if (response.status === 401) {
-            window.parent.location.reload();
+        try {
+            const response = await originalFetch(...args);
+            if (response.status === 401) {
+                window.parent.location.reload();
+            }
+            return response;
+        } catch (err) {
+            return null;
         }
-        return response;
     };
 })();
 /* - - */
@@ -212,6 +216,19 @@ async function FetchSong(sgId) {
     else throw new Error("Getting a song returns a non-200 status code");
 }
 
+function RPCDiscord(name, artist, img, duration) {
+    fetch("http://127.0.0.1:8765/rpc", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            title: name,
+            artist: artist,
+            img: img,
+            duration: duration
+        })
+    });
+}
+
 async function PlaySong(url, name, artist, img, index) {
     if (domElSongs.mainContainer.dataset.play == "0") {
         domElSongs.mainContainer.dataset.play = "1"
@@ -231,7 +248,8 @@ async function PlaySong(url, name, artist, img, index) {
     // Player Setup
     let SongReduc = name.substring(0,40); if (name.length>40) {SongReduc+="..."}
     domElSgPy.playerSongImg.src = img; domElSgPy.playerSongTitle.innerText = SongReduc;
-    
+    // Loads DiscordRPC
+    RPCDiscord(name, artist, img, domElSongs.audioControll.duration)
 }
 
 // Media Session
@@ -497,9 +515,8 @@ function CreateEditPlaylist(type, num=null) {
                 if (domElPlaylist.fileInput.files[0] != null) {
                     const reader = new FileReader();
                     reader.onload = (e) => {
-                        domElSongs.plDsImg.src = e.target.result;
-                        domElSongs.plDsImg.reload;
-                        EditPlsHTML(num, e.target.result, null);
+                        domElSongs.plDsImg.src = e.target.result
+                        EditPlsHTML(num, e.target.result, null)
                     };
                     reader.readAsDataURL(domElPlaylist.fileInput.files[0]);
                 }
@@ -517,10 +534,7 @@ function EditPlsHTML(id, srcNew, titleNew, type=null) {
         element = playlistsLs[i];
         if (element.querySelector(".pl-id").value == id) {
             if (type == null) {
-                if (srcNew != null) {
-                    element.querySelector(".pl-img").src = srcNew;
-                    element.querySelector(".pl-img").reload;
-                }
+                if (srcNew != null) element.querySelector(".pl-img").src = srcNew;
                 if (titleNew != null) element.querySelector(".pl-text").innerText = titleNew;
             } else if (type == "delete") domElPlaylist.playlistsContainer.removeChild(element);
         }
