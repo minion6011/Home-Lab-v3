@@ -9,8 +9,7 @@ This is the third version of the [Homelab](https://github.com/minion6011/Home-La
   It allows you to run commands on the site host, view component usage statistics and allows you to view your login session information.
 - **Music** <br>
   It allows you to **create playlists** and **add songs** from **YouTube** *(through name, link and playlist)* or import a playlist from Spotify (*requires an [app](https://developer.spotify.com/dashboard) `client ID` and `secret`, you don't need to have* **Spotify Premium**). <br>
-  This page has a <b>discord RPC integration</b> that you can install from the [RPC folder](/RPC/README.md).
-
+  This page has a <b>discord RPC integration</b> that you can install from the [RPC folder](/RPC/README.md); You can enable/disable this integration by changing `RPCEnabled` value.
 - **Accounting** <br>
   It allows you to keep an accounting within the site with the possibility of adding payments of **two types** (*profit and loss*), together with their addition date (**date on which the payment was added to the site**) and description.
 - **Agenda** <br>
