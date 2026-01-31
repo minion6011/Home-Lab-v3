@@ -1,3 +1,5 @@
+/* --- Config --- */
+const RPCEnabled = false;
 /* --- Variables --- */
 // Songs Related
 let nDownload = 0;
@@ -249,7 +251,8 @@ async function PlaySong(url, name, artist, img, index) {
     let SongReduc = name.substring(0,40); if (name.length>40) {SongReduc+="..."}
     domElSgPy.playerSongImg.src = img; domElSgPy.playerSongTitle.innerText = SongReduc;
     // Loads DiscordRPC
-    RPCDiscord(name, artist, img, domElSongs.audioControll.duration)
+    if (RPCEnabled)
+        RPCDiscord(name, artist, img, domElSongs.audioControll.duration)
 }
 
 // Media Session
