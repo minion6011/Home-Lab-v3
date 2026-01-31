@@ -5,6 +5,7 @@ import time, threading
 
 CLIENT_ID = "app_id"
 
+connected = False
 rpc = Presence(CLIENT_ID)
 app = Flask(__name__)
 CORS(app)
@@ -12,16 +13,15 @@ CORS(app)
 taskReset = None
 
 def cancelRPC():
-    rpc.clear()
+    try: rpc.clear()
+    except: pass
     
 @app.route("/rpc", methods=["POST"])
 def set_rpc():
     data = request.json
     if str(rpc.loop).find("running=False") != -1:
-        try:
-            rpc.connect()
-        except:
-            return {"message": "Server ON, Discord client OFF"}, 200
+        try: rpc.connect()
+        except: return {"message": "Server ON, Discord client OFF"}, 200
     rpc.update(
         activity_type = ActivityType.LISTENING,
         details=data["title"],
