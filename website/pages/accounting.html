@@ -34,7 +34,7 @@
 
                     <div class="status-container">
                         <p class="ico">€</p>
-                        <input id="selected-number" class="value-input" type="number" min="0" placeholder="....." oninput="optionsSelect[0]=this.value != ''; CheckAddPayment()">
+                        <input id="selected-number" class="value-input" type="number" min="0" placeholder="....." oninput="optionsSelect[0]=this.value != ''; CheckAddPayment()" onkeydown="if (event.key === 'Enter' && this.value != '') domEl.selectedDesc.focus()">
                     </div>
 
                     <div style="margin-top: 10px;" class="status-container">
@@ -54,7 +54,7 @@
 
                     <div style="margin-top: 10px;" class="status-container">
                         <p class="ico">~</p>
-                        <input id="selected-description" class="value-input" type="text" placeholder="Description...">
+                        <input id="selected-description" class="value-input" type="text" placeholder="Description..." onkeydown="if (event.key === 'Enter' && this.value != '' && optionsSelect[0] + optionsSelect[1] == 2) AddPayment()">
                     </div>
 
                     <button onclick="AddPayment()" class="main-button" id="payment-button" disabled>+ Add Payment</button>
