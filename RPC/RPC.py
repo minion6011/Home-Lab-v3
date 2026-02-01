@@ -1,12 +1,10 @@
 from flask import Flask, request
 from flask_cors import CORS
-from pypresence import Presence, ActivityType
-import time, threading
+import time, threading, pypresence
 
 CLIENT_ID = "app_id"
 
-connected = False
-rpc = Presence(CLIENT_ID)
+rpc = pypresence.Presence(CLIENT_ID)
 app = Flask(__name__)
 CORS(app)
 
@@ -15,27 +13,37 @@ taskReset = None
 def cancelRPC():
     try: rpc.clear()
     except: pass
-    
+
+def setRPC(title: str, artist: str, img: str, duration: float):
+    try:
+        rpc.update(
+            activity_type = pypresence.ActivityType.LISTENING,
+            details=title,
+            state=artist,
+            large_image=img,
+            start=time.time(),
+            end=time.time()+duration
+        )
+        global taskReset
+        if taskReset:
+            taskReset.cancel()
+
+        taskReset = threading.Timer(duration-2.5, cancelRPC)
+        taskReset.start()
+        return True
+    except Exception as e:
+        return False
+
 @app.route("/rpc", methods=["POST"])
 def set_rpc():
     data = request.json
-    if str(rpc.loop).find("running=False") != -1:
-        try: rpc.connect()
-        except: return {"message": "Server ON, Discord client OFF"}, 200
-    rpc.update(
-        activity_type = ActivityType.LISTENING,
-        details=data["title"],
-        state=data['artist'],
-        large_image=data['img'],
-        start=time.time(),
-        end=time.time()+data["duration"]
-    )
-    global taskReset
-    if taskReset:
-        taskReset.cancel()
-
-    taskReset = threading.Timer(data["duration"], cancelRPC)
-    taskReset.start()
+    state = setRPC(data["title"], data['artist'], data['img'], data["duration"])
+    if not state:
+        try:
+            rpc.connect()
+            state = setRPC(data["title"], data['artist'], data['img'], data["duration"])
+        except Exception as e:
+            return {"error": f"Error: {str(e)}"}, 500
     return {"message": "Server ON, Discord client ON"}, 200
 
 app.run(host="127.0.0.1", port=8765)
