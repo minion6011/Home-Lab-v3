@@ -1,6 +1,6 @@
 @media (max-width: 1003px) { /* Schermo Telefono */
     .main-container[data-status="1"] .library-container {display: none;}
-    .main-container[data-play="1"] {grid-template-rows: 1fr 0.125fr;} /* Row1 + Row2 (player) */
+    .main-container[data-play="1"] {grid-template-rows: 1fr max-content;} /* Row1 + Row2 (player) */
     html:not(.not-iframe) .main-container {row-gap: 1.5%;}
 
     .main-container {grid-template-columns: 1fr}
@@ -22,7 +22,7 @@
 
     .up .song-details {display: none;}
     .up .music-buttons button img {width: 68px; height: 68px;}
-    .player-container .up {margin-top: 15px;}
+    .player-container .up {margin: 5px 0 5px 0}
     .volume-slider {display: none;}
 
     .player-container .down #playerRange::-webkit-slider-runnable-track, .player-container .down #playerRange {height: 11.25px;}
@@ -147,7 +147,7 @@ html.not-iframe .main-container[data-play="1"] .player-container {margin: 0px 20
     word-break: break-word;
 }
 .up .music-buttons {
-    position: absolute;
+    position: sticky;
     left: 50%;
     transform: translateX(-50%);
 }
