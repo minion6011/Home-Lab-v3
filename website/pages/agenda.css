@@ -6,7 +6,6 @@
 	.to_do-container .text {margin: 0 0 0 15px;}
 	.to_do-input-container.notes-input-ct {margin-bottom: 20px;}
 	.notes-elements {margin-top: 15px;} .notes-elements:has(.note) {padding: 20px; gap: 17.5px;}
-	.notes-elements .note {flex: 1 1 100%;}
 }
 @media (min-width: 1003px) { /* Schermo PC */
 	.main-container {grid-template-columns: 45% 55%} /* Options + Table */
@@ -14,7 +13,6 @@
 	html:not(.not-iframe) .main-container .notes-container {margin-left: 20px;}
 	.to_do-container .text {margin: 0;}
 	.notes-elements:has(.note) {padding: 10px; gap: 7.5px;}
-	.notes-elements .note {flex: 1 1 25%;}
 }
 *::-webkit-scrollbar {
 	display: none;
@@ -154,6 +152,7 @@ html.not-iframe .main-container .notes-container {margin: 20px}
 	border-radius: 15px;
 
 	display: flex;
+	flex: 1 1 max-content;
 	justify-content: space-between;
 }
 

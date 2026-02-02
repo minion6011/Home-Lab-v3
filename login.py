@@ -4,10 +4,29 @@ from flask import request, render_template, session, redirect
 import time
 
 excludedLogin = ("login", "favicon", "logout") # Paths that will not be checked
+ratelimitData = {}
 # session["expires_at"] > 60m == Relogin
+
+def get_client_ip():
+    if "CF-Connecting-IP" in request.headers:
+        return request.headers["CF-Connecting-IP"]
+    elif "X-Forwarded-For" in request.headers: 
+        return request.headers["X-Forwarded-For"].split(",")[0].strip()
+    else: 
+        return request.remote_addr
+
+def checkRatelimit():
+    clientIp = get_client_ip()
+    if not clientIp in ratelimitData or time.time() > ratelimitData[clientIp]["time"]:
+        ratelimitData[clientIp] = {"time": time.time() + 60, "requests": 1}
+    else:
+        if ratelimitData[clientIp]["requests"] >= config["requestPerMinute"]:
+            return True
+        ratelimitData[clientIp]["requests"] += 1
 
 @app.before_request
 def usercheck_before_request():
+    if checkRatelimit(): return {"error": "too many request"}, 429
     if all(el not in request.path for el in excludedLogin):
         if not session.get("expires_at") or session["expires_at"] < time.time():
             if not request.method == "POST":
