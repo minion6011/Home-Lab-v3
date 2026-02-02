@@ -5,5 +5,7 @@
     "website-secret_key": "key",
 
     "spotify_CL-ID": "",
-    "spotify-CL-SECRET": ""
+    "spotify-CL-SECRET": "",
+
+    "requestPerMinute": 270
 }
