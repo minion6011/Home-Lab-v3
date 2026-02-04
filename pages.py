@@ -70,7 +70,7 @@ def playlist():
 			playlist = data_music[request.form["num"]]
 		else:
 			if len(data_music) != 0: num = str( int( list(data_music.keys())[-1] )+1 )
-			else: num = 0
+			else: num = "0"
 
 			data_music[num] = {}
 			playlist = data_music[num]
