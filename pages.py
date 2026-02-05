@@ -223,3 +223,14 @@ def loadConfigs():
 			config.update(config_data)
 			return {}, 200
 	return {}, 404
+
+# - Compression
+@app.route('/pages/compression')
+def compression():
+	return render_template("/pages/compression.html")
+
+@app.route('/compress', methods=['POST'])
+def compress_file():
+	if request.form:
+		pass
+	return {}, 404

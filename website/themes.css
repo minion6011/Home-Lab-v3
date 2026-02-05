@@ -2,11 +2,13 @@
     --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     --mini-font-size: 15px;
     --small-font-size: 16px;
-    --medium-font-size: 18px;
     --smedium-font-size: 18px;
+    --medium-font-size: 18px;
+
     --X-font-size: 20px;
     --XM-font-size: 20px;
     --XL-font-size: 25px;
+    --XXL-font-size: 30px;
 
     /* Theme Variables */
     --font-color: #fff;
@@ -85,10 +87,10 @@
         --small-font-size: 40px;
         --smedium-font-size: 35px;
         --medium-font-size: 45px;
-        --big-font-size: 50px;
 
         --X-font-size: 35px;
         --XM-font-size: 40px;
         --XL-font-size: 40px;
+        --XXL-font-size: 55px;
     }
 }

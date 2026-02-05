@@ -131,6 +131,7 @@ html.not-iframe .main-container[data-play="1"] .player-container {margin: 0px 20
 .main-container[data-play="0"] .player-container {display: none;}
 .main-container[data-play="1"] .player-container {display: grid; row-gap: 5px;}
 .player-container {
+    height: max-content;
     border-radius: 25px;
     background-color: var(--secondary-bg-color);
     padding: 12.5px;

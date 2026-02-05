@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+        <title>Compression</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="{{ url_for('static',filename='themes.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static',filename='pages/compression.css') }}">
+        <script src="{{ url_for('static',filename='pages/compression.js') }}" type="text/javascript" defer></script>
+        <link rel="icon" type="image/ico" href="{{ url_for('static',filename='img/favicon.ico') }}"/>
+    </head>
+
+    <body>
+        <div class="main-container">
+
+            <div class="video-container">
+                <h1 class="title">Compression</h1>
+                <p class="text"><b>•</b> Please enter a video</p>
+                <input id="video-file" type="file" style="display: none;" accept="video/mp4">
+                <img id="video-img" onclick="document.getElementById('video-file').click()" src="{{ url_for('static',filename='img/videoDefault-ico.webp') }}" class="video-insert">
+            </div>
+
+            <div class="uncompressed-container" style="display: none;" id="uncompressed-show">
+                <p class="text-video">• Uncompressed Video</p>
+                <video controls id="show-video" style="display: none; margin-top: 15px;"></video>
+            </div>
+
+
+            <div class="options-container">
+                <h1 class="title">Options</h1>
+                <p class="text-label"><b>•</b> Codec</p>
+                <select id="codec" class="select-codec">
+                    <option value="libx265">H.265</option>
+                    <option value="libx264">H.264</option>
+                </select>
+                <br>
+                <p class="text-label"><b>•</b> <b>C</b>onstant <b>R</b>ate <b>F</b>actor [10..49]</p>
+                <input id="crf" type="number" min="10" max="49" value="32" onchange="if (this.value == '') this.value = 10; this.value = Math.trunc(this.value)" class="input-crf">
+                <br>
+                <button disabled class="btn" id="compress-button">Compress</button>
+            </div>
+
+            <div class="compressed-container" style="display: none;">
+                <p class="text-video">• Compressed Video</p>
+                <video id="video-compressed" controls src="{{ url_for('static',filename='video.mp4') }}"></video>
+            </div>
+        </div>
+
+    </body>
+</html>
+
