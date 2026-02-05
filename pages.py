@@ -97,7 +97,7 @@ def playlist():
 				with open("website/music.json", "w") as f:
 					json.dump(data_music, f, indent=4)
 				return {}, 200
-	return {}, 404
+	return {}, 400
 
 
 @app.route('/songs', methods=['POST'])
@@ -121,7 +121,7 @@ def songs():
 				with open("website/music.json", "w") as f:
 					json.dump(data_music, f, indent=4)
 				return {"indexNew":len(data_music[request.json["num"]]["songs"])}, 200
-	return {}, 404
+	return {}, 400
 
 # - Accounting
 @app.route('/pages/accounting')
@@ -159,7 +159,7 @@ def payments():
 			with open("website/accounting.json", "w") as f:
 				json.dump(data_accounting, f, indent=4)
 			return {}, 200
-	return {}, 404
+	return {}, 400
 
 # - Agenda
 @app.route('/pages/agenda')
@@ -184,7 +184,7 @@ def todo():
 			with open("website/agenda.json", "w") as f:
 				json.dump(data_agenda, f, indent=4)
 			return {}, 200
-	return {}, 404
+	return {}, 400
 
 @app.route('/note', methods=['POST'])
 def note():
@@ -199,7 +199,7 @@ def note():
 			with open("website/agenda.json", "w") as f:
 				json.dump(data_agenda, f, indent=4)
 			return {}, 200
-	return {}, 404
+	return {}, 400
 
 # - Settings
 @app.route('/pages/configs')
@@ -222,7 +222,7 @@ def loadConfigs():
 			config.clear()
 			config.update(config_data)
 			return {}, 200
-	return {}, 404
+	return {}, 400
 
 # - Compression
 @app.route('/pages/compression')
@@ -233,13 +233,17 @@ def compression():
 def compress_file():
 	if request.form and all(key in request.form for key in ["codec", "crf"]):
 		file = request.files.getlist('file')
-		print(file)
 		if file:
 			file[0].save(os.path.join(os.path.dirname(__file__), "website", "tempvideo.mp4"))
-		try:
-			os.system(f"ffmpeg -y -i website/tempvideo.mp4 -c:v {request.form['codec']} -crf {request.form['crf']} -preset medium website/video.mp4")
+		command = os.system(f"ffmpeg -y -i website/tempvideo.mp4 -c:v {request.form['codec']} -crf {request.form['crf']} -preset medium website/video.mp4 -loglevel quiet")
+		if command == 0:
 			os.remove(os.path.join(os.path.dirname(__file__), "website", "tempvideo.mp4"))
 			return {}, 200
-		except:
+		else: 
 			return {}, 500
-	return {}, 404
+	elif request.json and request.json.get("action", None) != None:
+		if os.path.exists(os.path.join(os.path.dirname(__file__), "website", "video.mp4")):
+			os.remove(os.path.join(os.path.dirname(__file__), "website", "video.mp4"))
+			return {}, 200
+		return {}, 404
+	return {}, 400

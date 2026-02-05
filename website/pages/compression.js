@@ -1,12 +1,13 @@
 /* --- Variables --- */
 const domEl = {
     compressButton: document.getElementById("compress-button"),
-    videoCompressedContainer: document.getElementById("compressed-container"),
-    videoCompressed: document.getElementById("video-compressed"),
+    clearButton: document.getElementById("clear-button"),
     videoFile: document.getElementById("video-file"),
     videoImg: document.getElementById("video-img"),
+    divCompressed: document.getElementById("compressed-container"),
     divUncompressed: document.getElementById("uncompressed-show"),
     videoUncompressed: document.getElementById("show-video"),
+    videoCompressed: document.getElementById("video-compressed"),
     dropdownCodec: document.getElementById("codec"),
     crtInput: document.getElementById("crf")
 }
@@ -55,13 +56,12 @@ domEl.videoFile.addEventListener('change', () => {
     const reader = new FileReader();
     reader.onload = (e) => domEl.videoUncompressed.src = e.target.result;
     reader.readAsDataURL(file);
-    domEl.videoUncompressed.style.display = "block";
     domEl.divUncompressed.style.display = "block";
     domEl.compressButton.disabled = false;
 });
 
 function compressFile() {
-    domEl.compressButton.disabled = domEl.videoImg.dataset.disabled = true;
+    domEl.clearButton.disabled = domEl.compressButton.disabled = domEl.videoImg.dataset.disabled = true;
     // Request
     const formData = new FormData();
     formData.append("codec", domEl.dropdownCodec.value);
@@ -77,8 +77,20 @@ function compressFile() {
     ).then((response) => {
         if (response.ok) {
             domEl.videoCompressed.load()
-            domEl.videoCompressedContainer.style.display = "block";
+            domEl.divCompressed.style.display = "block";
         }
-        domEl.compressButton.disabled = domEl.videoImg.dataset.disabled = false;
+        domEl.clearButton.disabled = domEl.compressButton.disabled = domEl.videoImg.dataset.disabled = false;
     });
+}
+
+async function clearVideos() {
+    let req = await fetch(endpoints.compression, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({action: "clear"}),
+    });
+    if (req.status == 200) {
+        domEl.divCompressed.style.display = domEl.divUncompressed.style.display = "none";
+        domEl.videoCompressed.src = domEl.videoUncompressed.src =  "";
+    }
 }
