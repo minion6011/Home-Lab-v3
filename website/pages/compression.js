@@ -4,6 +4,7 @@ const domEl = {
     videoCompressedContainer: document.getElementById("compressed-container"),
     videoCompressed: document.getElementById("video-compressed"),
     videoFile: document.getElementById("video-file"),
+    videoImg: document.getElementById("video-img"),
     divUncompressed: document.getElementById("uncompressed-show"),
     videoUncompressed: document.getElementById("show-video"),
     dropdownCodec: document.getElementById("codec"),
@@ -60,6 +61,8 @@ domEl.videoFile.addEventListener('change', () => {
 });
 
 function compressFile() {
+    domEl.compressButton.disabled = domEl.videoImg.dataset.disabled = true;
+    // Request
     const formData = new FormData();
     formData.append("codec", domEl.dropdownCodec.value);
     formData.append("crf", domEl.crtInput.value);
@@ -76,5 +79,6 @@ function compressFile() {
             domEl.videoCompressed.load()
             domEl.videoCompressedContainer.style.display = "block";
         }
+        domEl.compressButton.disabled = domEl.videoImg.dataset.disabled = false;
     });
 }

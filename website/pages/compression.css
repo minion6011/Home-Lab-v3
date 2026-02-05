@@ -4,7 +4,6 @@
         grid-template-rows: max-content max-content max-content max-content;
         grid-template-areas: "a" "b" "c" "d";}
     .video-insert {width: 300px; height: 300px; margin-left: 15px;}
-    .options-container, .compressed-container {margin-left: 25px;}
     .text {margin-top: 10px;}
 }
 @media (min-width: 1003px) { /* Schermo PC */
@@ -46,22 +45,23 @@ html:not(.not-iframe) .main-container {
     border-radius: 25px;
     width: 95%;
 }
+.main-container div {
+    margin-left: 25px;
+}
 /* Containers */
 .video-container {
     grid-area: a;
-    margin-left: 25px;
 }
 .uncompressed-container {
     grid-area: b;
-    margin-bottom: 20px;
-    margin-left: 25px;
+    margin-bottom: 10px;
 }
 .options-container {
     grid-area: c;
 }
 .compressed-container {
     grid-area: d;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 /* Generic */
 .title {
@@ -82,9 +82,14 @@ video {
 }
 /* Container 'a' */
 .video-insert {
-    border-radius: 15px;
-    cursor: pointer;
+    border-radius: 15px;  
     filter: invert(var(--img-invert-value));
+}
+.video-insert[data-disabled="true"] {
+    cursor: not-allowed;
+}
+.video-insert[data-disabled="false"] {
+    cursor: pointer;
 }
 /* Container 'c' */
 .select-codec {
