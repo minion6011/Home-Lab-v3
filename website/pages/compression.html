@@ -36,10 +36,10 @@
                 <p class="text-label"><b>•</b> <b>C</b>onstant <b>R</b>ate <b>F</b>actor [10..49]</p>
                 <input id="crf" type="number" min="10" max="49" value="32" onchange="if (this.value == '') this.value = 10; this.value = Math.trunc(this.value)" class="input-crf">
                 <br>
-                <button disabled class="btn" id="compress-button">Compress</button>
+                <button disabled onclick="compressFile()" class="btn" id="compress-button">Compress</button>
             </div>
 
-            <div class="compressed-container" style="display: none;">
+            <div id="compressed-container" class="compressed-container" style="display: none;">
                 <p class="text-video">• Compressed Video</p>
                 <video id="video-compressed" controls src="{{ url_for('static',filename='video.mp4') }}"></video>
             </div>

@@ -231,6 +231,15 @@ def compression():
 
 @app.route('/compress', methods=['POST'])
 def compress_file():
-	if request.form:
-		pass
+	if request.form and all(key in request.form for key in ["codec", "crf"]):
+		file = request.files.getlist('file')
+		print(file)
+		if file:
+			file[0].save(os.path.join(os.path.dirname(__file__), "website", "tempvideo.mp4"))
+		try:
+			os.system(f"ffmpeg -y -i website/tempvideo.mp4 -c:v {request.form['codec']} -crf {request.form['crf']} -preset medium website/video.mp4")
+			os.remove(os.path.join(os.path.dirname(__file__), "website", "tempvideo.mp4"))
+			return {}, 200
+		except:
+			return {}, 500
 	return {}, 404

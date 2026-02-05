@@ -1,10 +1,17 @@
 /* --- Variables --- */
 const domEl = {
     compressButton: document.getElementById("compress-button"),
+    videoCompressedContainer: document.getElementById("compressed-container"),
     videoCompressed: document.getElementById("video-compressed"),
     videoFile: document.getElementById("video-file"),
     divUncompressed: document.getElementById("uncompressed-show"),
     videoUncompressed: document.getElementById("show-video"),
+    dropdownCodec: document.getElementById("codec"),
+    crtInput: document.getElementById("crf")
+}
+
+const endpoints = {
+    compression: "/compress"
 }
 
 /* --- Functions --- */
@@ -51,3 +58,23 @@ domEl.videoFile.addEventListener('change', () => {
     domEl.divUncompressed.style.display = "block";
     domEl.compressButton.disabled = false;
 });
+
+function compressFile() {
+    const formData = new FormData();
+    formData.append("codec", domEl.dropdownCodec.value);
+    formData.append("crf", domEl.crtInput.value);
+    formData.append("file", domEl.videoFile.files[0]);
+    fetch(endpoints.compression, {
+        headers: {"Content-Type": domEl.videoFile.files[0].contentType},
+            mode: "no-cors",
+            method: "POST",
+            files: domEl.videoFile.files[0],
+            body: formData,
+        }
+    ).then((response) => {
+        if (response.ok) {
+            domEl.videoCompressed.load()
+            domEl.videoCompressedContainer.style.display = "block";
+        }
+    });
+}
