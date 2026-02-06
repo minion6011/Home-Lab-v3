@@ -15,9 +15,9 @@ This is the third version of the [Homelab](https://github.com/minion6011/Home-La
 - **Agenda** <br>
   Allows you to have a **to-do list** and **notes** within the site.
 - **Compression** <br>
-  Allows you to compress videos (`.mp4`) using the following codecs: *libx265, libx264, libopenh264*. <br>
-  To use this on **Windows** you need to install **[ffmpeg.exe](https://www.gyan.dev/ffmpeg/builds/)** and add it inside the `/website` folder. <br>
-  To use *libx265, libx264* on **linux** you need to install them, this operation varies depending on the distro you're using. **For Fedora** i suggest to [follow this tutorial](https://www.reddit.com/r/linuxadmin/comments/1mktzer/fedora_42_how_to_install_video_codecs_using_rpm/).
+  It allows you to compress **video** and **audio** using various codecs. <br>
+  To use this on **Windows** you need to install **[ffmpeg.exe](https://www.gyan.dev/ffmpeg/builds/)** and add it inside the folder where the homelab is located. <br>
+  Some codecs are not supported by default on **linux** so you need to install them, this operation varies depending on the distro you're using. **For Fedora** i suggest to [follow this tutorial](https://www.reddit.com/r/linuxadmin/comments/1mktzer/fedora_42_how_to_install_video_codecs_using_rpm/).
 - **Configs**
   It allows you to change the **colors of the two themes** (`themes.css`) of the site (*light and dark*), the configuration file (`config.json`) and to disconnect and/or see the **users connected to the site**.
 
