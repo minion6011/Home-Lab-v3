@@ -235,16 +235,19 @@ def compress_file():
 		file = request.files.getlist('file')
 		if file:
 			ext = file[0].filename.split(".")[-1]
-			file[0].save(os.path.join(os.path.dirname(__file__), "website", f"input.{ext}"))
-		res = os.system(f"ffmpeg -y -i website/input.{ext} -c:v {request.form['codec']} -crf {request.form['crf']} -b:a {request.form['bitrate']} -preset medium website/outuput.{ext} -loglevel quiet")
+			file[0].save(os.path.join(os.path.dirname(__file__), "website", "compression", f"input.{ext}"))
+		res = os.system(f"ffmpeg -y -i website/compression/input.{ext} -c:v {request.form['codec']} -crf {request.form['crf']} -b:a {request.form['bitrate']} -preset medium website/compression/outuput.{ext} -loglevel quiet")
 		if res == 0:
-			os.remove(os.path.join(os.path.dirname(__file__), "website", f"input.{ext}"))
-			return {"outfile": f"/website/outuput.{ext}"}, 200
+			os.remove(os.path.join(os.path.dirname(__file__), "website", "compression", f"input.{ext}"))
+			return {"outfile": f"/website/compression/outuput.{ext}"}, 200
 		return {}, 500
 	elif request.json and request.json.get("action", None) != None:
-		for file in os.listdir(os.path.join(os.path.dirname(__file__), "website")):
+		listDir = os.listdir(os.path.join(os.path.dirname(__file__), "website", "compression"))
+		finded = False # could be better
+		for file in listDir:
 			if file.startswith("outuput."):
-				os.remove(os.path.join(os.path.dirname(__file__), "website", file))
-				return {}, 200
+				os.remove(os.path.join(os.path.dirname(__file__), "website", "compression", file))
+				finded = True
+		if finded: return {}, 200
 		return {}, 404
 	return {}, 400

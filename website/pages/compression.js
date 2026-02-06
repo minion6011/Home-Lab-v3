@@ -56,6 +56,8 @@ domEl.dropdownType.addEventListener('change', () => {
     if (domEl.dropdownType.value == "audio") {
         domEl.dropdownCodec.innerHTML = `
         <option value="aac">AAC</option>
+        <option value="wavpack">WavPack</option>
+        <option value="flac">FLAC</option>
         `
         domEl.crtInput.disabled = true;
         domEl.crtInput.value = 0;
