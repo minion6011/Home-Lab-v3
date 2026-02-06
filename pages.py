@@ -231,19 +231,20 @@ def compression():
 
 @app.route('/compress', methods=['POST'])
 def compress_file():
-	if request.form and all(key in request.form for key in ["codec", "crf"]):
+	if request.form and all(key in request.form for key in ["codec", "bitrate", "crf"]):
 		file = request.files.getlist('file')
 		if file:
-			file[0].save(os.path.join(os.path.dirname(__file__), "website", "tempvideo.mp4"))
-		command = os.system(f"ffmpeg -y -i website/tempvideo.mp4 -c:v {request.form['codec']} -crf {request.form['crf']} -preset medium website/video.mp4 -loglevel quiet")
-		if command == 0:
-			os.remove(os.path.join(os.path.dirname(__file__), "website", "tempvideo.mp4"))
-			return {}, 200
-		else: 
-			return {}, 500
+			ext = file[0].filename.split(".")[-1]
+			file[0].save(os.path.join(os.path.dirname(__file__), "website", f"input.{ext}"))
+		res = os.system(f"ffmpeg -y -i website/input.{ext} -c:v {request.form['codec']} -crf {request.form['crf']} -b:a {request.form['bitrate']} -preset medium website/outuput.{ext} -loglevel quiet")
+		if res == 0:
+			os.remove(os.path.join(os.path.dirname(__file__), "website", f"input.{ext}"))
+			return {"outfile": f"/website/outuput.{ext}"}, 200
+		return {}, 500
 	elif request.json and request.json.get("action", None) != None:
-		if os.path.exists(os.path.join(os.path.dirname(__file__), "website", "video.mp4")):
-			os.remove(os.path.join(os.path.dirname(__file__), "website", "video.mp4"))
-			return {}, 200
+		for file in os.listdir(os.path.join(os.path.dirname(__file__), "website")):
+			if file.startswith("outuput."):
+				os.remove(os.path.join(os.path.dirname(__file__), "website", file))
+				return {}, 200
 		return {}, 404
 	return {}, 400

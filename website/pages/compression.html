@@ -15,35 +15,49 @@
             <div class="video-container">
                 <h1 class="title">Compression</h1>
                 <p class="text"><b>•</b> Please enter a video</p>
-                <input id="video-file" type="file" style="display: none;" accept="video/mp4">
+                <input id="video-file" type="file" style="display: none;" accept="video/*, audio/*">
                 <img id="video-img" data-disabled="false" onclick="if (this.dataset.disabled == 'false') document.getElementById('video-file').click()" class="video-insert" src="{{ url_for('static',filename='img/videoDefault-ico.webp') }}">
             </div>
 
             <div class="uncompressed-container" style="display: none;" id="uncompressed-show">
-                <p class="text-video">• Uncompressed Video</p>
+                <p class="text-video">• Uncompressed File</p>
                 <video controls id="show-video"></video>
             </div>
 
 
             <div class="options-container">
                 <h1 class="title">Options</h1>
-                <p class="text-label"><b>•</b> Codec</p>
-                <select id="codec" class="select-codec">
-                    <option value="libx265">H.265 (GPL)</option>
-                    <option value="libx264">H.264 (GPL)</option>
-                    <option value="libopenh264">H.264 (No GPL)</option>
+
+                <p class="text-label"><b>•</b> Encoder Type</p>
+                <select id="select-type" class="select-menu">
+                    <option value="video">Video Encoder</option>
+                    <option value="audio">Audio Encoder</option>
                 </select>
+                <div class="primary-container">
+                    <div class="secondary-container">
+                        <p class="text-label"><b>•</b> Codec</p>
+                        <select style="width: 100%;" id="codec" class="select-menu">
+                            <option value="libx265">H.265 (GPL)</option>
+                            <option value="libx264">H.264 (GPL)</option>
+                            <option value="libopenh264">H.264 (No GPL)</option>
+                        </select>
+                    </div>
+                    <div class="secondary-container">
+                        <p class="text-label"><b>•</b> Bitrate</p>
+                        <input style="width: 100%;" placeholder="78k" id="bitrate" type="text" class="input-data">
+                    </div>
+                </div>
                 <br>
                 <p class="text-label"><b>•</b> <b>C</b>onstant <b>R</b>ate <b>F</b>actor [0..24..51]</p>
-                <input id="crf" type="number" min="0" max="51" value="24" onchange="if (this.value == '') this.value = 0;" class="input-crf">
+                <input id="crf" type="number" min="0" max="51" value="24" onchange="if (this.value == '') this.value = 0;" class="input-data">
                 <br>
                 <button disabled onclick="compressFile()" class="btn" id="compress-button">Compress</button>
                 <button onclick="clearVideos()" class="btn" id="clear-button">Clear Files</button>
             </div>
 
             <div id="compressed-container" class="compressed-container" style="display: none;">
-                <p class="text-video">• Compressed Video</p>
-                <video id="video-compressed" controls src="{{ url_for('static',filename='video.mp4') }}"></video>
+                <p class="text-video">• Compressed File</p>
+                <video id="video-compressed" controls></video>
             </div>
         </div>
 

@@ -45,23 +45,22 @@ html:not(.not-iframe) .main-container {
     border-radius: 25px;
     width: 95%;
 }
-.main-container div {
-    margin-left: 25px;
-}
 /* Containers */
 .video-container {
     grid-area: a;
+    margin-left: 25px;
 }
 .uncompressed-container {
     grid-area: b;
-    margin-bottom: 10px;
+    margin-left: 25px; margin-bottom: 10px;
 }
 .options-container {
     grid-area: c;
+    margin-left: 25px;
 }
 .compressed-container {
     grid-area: d;
-    margin-bottom: 10px;
+    margin-left: 25px; margin-bottom: 10px;
 }
 /* Generic */
 .title {
@@ -92,7 +91,14 @@ video {
     cursor: pointer;
 }
 /* Container 'c' */
-.select-codec {
+.primary-container {
+    display: flex;
+    gap: 25px;
+}
+.primary-container .secondary-container {
+    width: 45%;
+}
+.select-menu {
     width: 45%;
     font-size: var(--small-font-size);
     color: var(--font-color);
@@ -104,13 +110,19 @@ video {
     margin: 12.5px 0 5px 0;
     font-size: var(--medium-font-size);
 }
-.input-crf {
+.input-data {
     font-size: var(--small-font-size);
-    width: 44.15%;
-    color: var(--font-color);
+    width: 42%;
+    
     background-color: var(--elm-hover-bg-color);
     border: solid 2px var(--translucent-bg-color); border-radius: 5px;
     padding: 5px;
+}
+.input-data:disabled {
+    color: var(--check-button-hover-color);
+}
+.input-data:not(:disabled) {
+    color: var(--font-color);
 }
 .btn {
     transition: all 0.25s ease;
