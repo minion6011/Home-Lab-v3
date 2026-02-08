@@ -94,14 +94,13 @@ def playlist():
 			playlist = dbCursor.execute("SELECT name, description, img FROM playlists WHERE id==?", (request.json["num"],)).fetchone()
 			songs = dbCursor.execute("SELECT idSong, name, artist, img, added, duration, urlPath FROM songs WHERE idPlaylist==?", (request.json["num"],)).fetchall()
 			return {"playlist": playlist, "songs": songs}, 200
-		elif request.json["type"] == "delete" and (request.json["num"] and request.json["num"] in data_music):
-			try:
-				for song in data_music[request.json["num"]]["songs"]:
-					os.remove(os.path.join(os.path.dirname(__file__), song["url_path"].lstrip("/")))
-			except: pass
-			del data_music[request.json["num"]]
-			with open("website/music.json", "w") as f:
-				json.dump(data_music, f, indent=4)
+		elif request.json["type"] == "delete" and request.json["num"]:
+			songs = dbCursor.execute("SELECT urlPath FROM songs WHERE idPlaylist==?", (request.json["num"],)).fetchall()
+			for song in songs:
+				try: os.remove(os.path.join(os.path.dirname(__file__), song[0].lstrip("/")))
+				except: pass
+			dbCursor.execute("DELETE FROM playlists WHERE id==?", (request.json["num"],))
+			db.commit()
 			return {}, 200
 	return {}, 400
 
@@ -122,8 +121,10 @@ def songs():
 			song = dbCursor.execute("SELECT name, artist, img, added, duration, urlPath FROM songs WHERE idSong==?", (request.json["index"],)).fetchone()
 			return {"song": song}, 200
 		elif request.json["type"] == "delete" and request.json["index"]:
+			# Removes the song audio file
 			song = dbCursor.execute("SELECT urlPath FROM songs WHERE idSong==?", (request.json["index"],)).fetchone()
 			os.remove(os.path.join(os.path.dirname(__file__), song[0].lstrip("/")))
+			# Removes the song from the DB
 			dbCursor.execute("DELETE FROM songs WHERE idSong==?", (request.json["index"],))
 			db.commit()
 			return {}, 200
