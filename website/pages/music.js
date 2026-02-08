@@ -311,19 +311,22 @@ async function PreloadSong(id) {
     else throw new Error("Getting a song (preload funct) returns a non-200 status code");
 }
 // Song Html
-function CreateSongHTML(index, values) { // da aggiungere il link nel onclick ------
+function CreateSongHTML(index, values) {
     let trElement = document.createElement("tr"); trElement.className = "songTcontainer";
-    trElement.setAttribute("onclick", `FetchSong(${index});`);
-    songName = values.name.substring(0,32); if (values.name.length>32) {songName+="..."}
+    trElement.setAttribute("onclick", `FetchSong(${values[0]});`);
+
+    songName = values[1].substring(0,32); if (values[1].length>32) {songName+="..."}
+
     trElement.innerHTML = `
+    <input type="hidden" value="${values[0]} id="songId">
     <td data-visible="0">${index + 1}</td>
     <td class="titleSong-column">
-        <img loading="lazy" src="${values.img}">
+        <img loading="lazy" src="${values[3]}">
         <p>${songName}</p>
     </td>
-    <td data-visible="0">${values.artist}</td>
-    <td data-visible="0">${values.added}</td>
-    <td data-visible="0">${values.duration}</td>
+    <td data-visible="0">${values[2]}</td>
+    <td data-visible="0">${values[4]}</td>
+    <td data-visible="0">${values[5]}</td>
     <td style="text-align: center;">
         <button onclick="event.stopPropagation(); DeleteSong(this)" class="songTable-delete">
             <img src="${endpoints.deleteIco}">
@@ -419,7 +422,12 @@ async function OpenPlaylist(item) {
     let data = await GetPlData(ItemPlId.value);
     if (data == null) throw new Error("Playlist data returned null (Code was not 200)")
     domElSongs.plDSId.value = ItemPlId.value;
-    domElSongs.plDsImg.src = data.img; domElSongs.plDsTitle.innerHTML = data.name; domElSongs.plDsDesc.innerHTML = `${data.description.replaceAll("\n", "<br>")}<br><br><i>Songs - ${data.songs.length}</i>`;
+
+    domElSongs.plDsImg.src = data.playlist[2];
+    domElSongs.plDsTitle.innerHTML = data.playlist[0];
+    // To Do: Check if data.playlist[1]==None then ""
+    domElSongs.plDsDesc.innerHTML = `${data.playlist[1].replaceAll("\n", "<br>")}<br><br><i>Songs - ${data.songs.length}</i>`;
+
     domElSongs.mainContainer.dataset.status = "1";
     domElSongs.songTableSongs.innerHTML = domElSongs.songTableSongs.children[0].children[0].innerHTML; // reset list
     data.songs.forEach((song, index) => {

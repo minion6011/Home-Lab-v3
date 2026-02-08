@@ -67,6 +67,8 @@ def music():
 
 @app.route('/playlist', methods=['POST'])
 def playlist():
+	db = get_db("music")
+	dbCursor = db.cursor()
 	if request.form: # create or edit
 		if request.form["type"] == "edit":
 			num = request.form["num"]
@@ -87,19 +89,26 @@ def playlist():
 		with open("website/music.json", "w") as f:
 			json.dump(data_music, f, indent=4)
 		return {"plName": request.form["name"], "plNum": num, "plSrc": f"/website/music/{num}.webp"}, 200
-	elif request.json and "type" in request.json: # get
-		if request.json["type"]:
-			if request.json["type"] == "get" and request.json["num"] and request.json["num"] in data_music:
-				return data_music[request.json["num"]], 200
-			elif request.json["type"] == "delete" and (request.json["num"] and request.json["num"] in data_music):
-				try:
-					for song in data_music[request.json["num"]]["songs"]:
-						os.remove(os.path.join(os.path.dirname(__file__), song["url_path"].lstrip("/")))
-				except: pass
-				del data_music[request.json["num"]]
-				with open("website/music.json", "w") as f:
-					json.dump(data_music, f, indent=4)
-				return {}, 200
+	elif request.json and request.json["type"]: # Get
+		if request.json["type"] == "get" and request.json["num"]:
+			playlist = dbCursor.execute(
+				"SELECT name, description, img FROM playlists WHERE id==?",
+				(request.json["num"],)
+			).fetchone()
+			songs = dbCursor.execute(
+				"SELECT idSong, name, artist, img, added, duration, urlPath FROM songs WHERE idPlaylist==?",
+				(request.json["num"],)
+			).fetchall()
+			return {"playlist": playlist, "songs": songs}, 200
+		elif request.json["type"] == "delete" and (request.json["num"] and request.json["num"] in data_music):
+			try:
+				for song in data_music[request.json["num"]]["songs"]:
+					os.remove(os.path.join(os.path.dirname(__file__), song["url_path"].lstrip("/")))
+			except: pass
+			del data_music[request.json["num"]]
+			with open("website/music.json", "w") as f:
+				json.dump(data_music, f, indent=4)
+			return {}, 200
 	return {}, 400
 
 
