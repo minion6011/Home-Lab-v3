@@ -114,6 +114,8 @@ def playlist():
 
 @app.route('/songs', methods=['POST'])
 def songs():
+	db = get_db("music")
+	dbCursor = db.cursor()
 	if request.json and "type" in request.json:
 		if request.json["type"] == "add" and (request.json["num"] and request.json["num"] in data_music) and request.json["sname"]:
 			nwSongs = downloadSong(request.json["sname"])
@@ -122,9 +124,12 @@ def songs():
 			with open("website/music.json", "w") as f:
 				json.dump(data_music, f, indent=4)
 			return {"nwSongs": nwSongs, "indexStart": iStart}, 200
-		elif request.json["type"] == "get" and (request.json["num"] and request.json["num"] in data_music):
-			if request.json["index"] != None and int(request.json["index"]) < len(data_music[request.json["num"]]["songs"]):
-				return {"song": data_music[request.json["num"]]["songs"][int(request.json["index"])]}, 200
+		elif request.json["type"] == "get" and request.json["index"]:
+			song = dbCursor.execute(
+				"SELECT name,artist,img,added,duration,urlPath FROM songs WHERE idSong==?",
+				(request.json["index"],)
+			).fetchone()
+			return {"song": song}, 200
 		elif request.json["type"] == "delete" and (request.json["num"] and request.json["num"] in data_music):
 			if request.json["index"] != None and int(request.json["index"]) < len(data_music[request.json["num"]]["songs"]):
 				song = data_music[request.json["num"]]["songs"][int(request.json["index"])]

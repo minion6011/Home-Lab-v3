@@ -205,15 +205,14 @@ function Seek(add, details) {
 
 async function FetchSong(sgId) {
     currentPl[0] = domElSongs.plDSId.value;
-    currentPl[1] = document.getElementsByClassName("songTcontainer").length-1;
     let req = await fetch(endpoints.songs, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({num: currentPl[0], type: "get", index: sgId}),
+        body: JSON.stringify({type: "get", index: sgId}),
     });
     if (req.status == 200) {
         let json = JSON.parse(await req.text());
-        PlaySong(json.song.url_path,json.song.name,json.song.artist, json.song.img, sgId)
+        PlaySong(json.song[5], json.song[0], json.song[1], json.song[2], sgId)
     }
     else throw new Error("Getting a song returns a non-200 status code");
 }
@@ -231,17 +230,17 @@ function RPCDiscord(name, artist, img, duration) {
     });
 }
 
-async function PlaySong(url, name, artist, img, index) {
+async function PlaySong(url, name, artist, img, songId) {
     if (domElSongs.mainContainer.dataset.play == "0") {
         domElSongs.mainContainer.dataset.play = "1"
     }
-    oldSong.push(index);
+    oldSong.push(songId); // idSong
     if (oldSong.length >= 3) {
         oldSong.splice(0, 1)
     }
     domElSongs.audioControll.src = url; 
     await domElSongs.audioControll.play(); navigator.mediaSession.playbackState = "playing";
-    domElSgPy.playerStateImg.src = endpoints.stopIco; PreloadSong(index); // Play and preload next song
+    domElSgPy.playerStateImg.src = endpoints.stopIco; PreloadSong(songId); // Play and preload next song
 
     domElSongs.audioControll.currentTime = 0;
     domElSgPy.playerRange.value = 0; domElSgPy.playerRange.max = domElSongs.audioControll.duration; domElSgPy.maxDuration.innerHTML = formatTime(domElSongs.audioControll.duration);
@@ -288,25 +287,33 @@ domElSongs.audioControll.addEventListener('ended', () => {
     PreloadSong(preloadData[4]);
 });
 
-async function PreloadSong(id) {
+async function PreloadSong(songId) { // id == idSong
+    // Song Id -> Elements Index
+    let id = domElSongs.songTableSongs.querySelector(`.songTcontainer[data-song-id="${songId}"]`).children[0].innerHTML - 1;
+
+    // Next Song (Elements Index)
     let i = id+1;
     let length = currentPl[1];
     if (shuffleState && length >= 1) {i = Math.floor(Math.random() * length)}
     if (i == id) { if (i+1>length) {i--} else {i++};} // Evita che appaia lo stesso numero
     if (i > length) {i = 0}; // Ricomincia
+
+    // Elements Index -> Song Id
+    let newSongId = domElSongs.songTableSongs.querySelectorAll(".songTcontainer")[i].dataset.songId
+    
     let req = await fetch(endpoints.songs, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             num: currentPl[0],
             type: "get",
-            index: i,
+            index: newSongId,
         }),
     })
     if (req.status == 200) {
         let json = JSON.parse(await req.text());
-        domElSongs.audioPreload.src = json.song.url_path; // Preload
-        preloadData = [json.song.url_path, json.song.name, json.song.artist, json.song.img, i]
+        domElSongs.audioPreload.src = json.song[5]; // Preload
+        preloadData = [json.song[5], json.song[0], json.song[1], json.song[2], newSongId]
     }
     else throw new Error("Getting a song (preload funct) returns a non-200 status code");
 }
@@ -314,11 +321,11 @@ async function PreloadSong(id) {
 function CreateSongHTML(index, values) {
     let trElement = document.createElement("tr"); trElement.className = "songTcontainer";
     trElement.setAttribute("onclick", `FetchSong(${values[0]});`);
+    trElement.dataset.songId = values[0];
 
     songName = values[1].substring(0,32); if (values[1].length>32) {songName+="..."}
 
     trElement.innerHTML = `
-    <input type="hidden" value="${values[0]} id="songId">
     <td data-visible="0">${index + 1}</td>
     <td class="titleSong-column">
         <img loading="lazy" src="${values[3]}">
@@ -430,6 +437,9 @@ async function OpenPlaylist(item) {
 
     domElSongs.mainContainer.dataset.status = "1";
     domElSongs.songTableSongs.innerHTML = domElSongs.songTableSongs.children[0].children[0].innerHTML; // reset list
+    
+    currentPl[1] = data.songs.length
+
     data.songs.forEach((song, index) => {
         CreateSongHTML(index, song);
     });
