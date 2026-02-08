@@ -90,11 +90,11 @@ async function AddPayment() {
     if (req.status == 200) {
         domEl.tableLength.innerText = Number(domEl.tableLength.innerText) + 1;
         let json = JSON.parse(await req.text());
-        AddPaymentHTML(dict["profit"], dict["loss"], dict["description"], json.date)
+        AddPaymentHTML(dict["profit"], dict["loss"], dict["description"], json.date, json.id)
     }
     else throw new Error("Adding a payment returns a non-200 status code");
 }
-function AddPaymentHTML(profit, loss, description, date) {
+function AddPaymentHTML(profit, loss, description, date, id) {
     // Update Financial Report
     domEl.balanceTot.innerText = Math.round((Number(domEl.balanceTot.innerText) + (profit - loss)) * 100) / 100; 
     domEl.lossTot.innerText = "-" + Math.round((Number(domEl.lossTot.innerText.slice(1)) + loss) * 100) / 100;
@@ -102,7 +102,7 @@ function AddPaymentHTML(profit, loss, description, date) {
     // Add Table element
     trElement = document.createElement("tr"); trElement.className = "payment-tr";
     trElement.innerHTML = `
-    <input id="index" type="hidden" value="0">
+    <input id="index" type="hidden" value="${id}">
     <th><code>${date}</code></th>
     <th class="profit">+${profit}</th>
     <th class="loss">-${loss}</th>
@@ -125,7 +125,7 @@ async function FunctionCell(event) {
     let target = e.target.parentNode || e.srcElement.parentNode;
     if (target.matches("tr") && target.className == "payment-tr") {
         let ls = domEl.paymentsTable.children[0].children;
-        let index = Math.round( Number(target.children[0].value)*100 ) / 100
+        let index = target.children[0].value
         // Request
         let req = await fetch(endpoints.payments, {
             method: "POST",
@@ -140,11 +140,7 @@ async function FunctionCell(event) {
             domEl.lossTot.innerText = "-" + Math.round( (Number(domEl.lossTot.innerText.slice(1)) - loss)*100 ) / 100;
             domEl.profitTot.innerText = "+" + Math.round( (Number(domEl.profitTot.innerText.slice(1)) - profit)*100 ) / 100;
             domEl.balanceTot.innerText = Math.round((Number(domEl.profitTot.innerText.slice(1)) - Number(domEl.lossTot.innerText.slice(1))) * 100) / 100; 
-            // x-1 form y
-            ls[index+1].remove()
-            for (let i = index+1; i < ls.length; i++) {
-                ls[i].children[0].value = Number(ls[i].children[0].value) - 1
-            }
+            target.remove();
         };
     }
 }
@@ -161,6 +157,6 @@ async function ResetTable() {
             domEl.paymentsTable.children[0].children[1].remove()
         }
         domEl.tableLength.innerText = "0";
-        domEl.balanceTot.innerText = "0"; domEl.lossTot.innerText = "0"; domEl.profitTot.innerText = "0";
+        domEl.balanceTot.innerText = "0"; domEl.lossTot.innerText = "-0"; domEl.profitTot.innerText = "+0";
     }
 }

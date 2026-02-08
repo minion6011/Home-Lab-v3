@@ -18,14 +18,14 @@
                 <div class="balance-container">
                     <p class="title">&#8227; Financial Report</p>
 
-                    <p class="balance-p"><b>&bull; Balance: <code id="balance">{{ (data_accounting["profits"] - data_accounting["losses"]) | round(2) }}</code> €</b></p>
+                    <p class="balance-p"><b>&bull; Balance: <code id="balance">{{ sums[1] - sums[0] | round(2)}}</code> €</b></p>
                     <div class="status-container">
                         <p class="ico">-</p>
-                        <p class="value">Loss <code id="loss">-{{ data_accounting["losses"] | round(2) }}</code> €</p>
+                        <p class="value">Loss <code id="loss">-{{ sums[0] | round(2)}}</code> €</p>
                     </div>
                     <div style="margin-top: 10px;" class="status-container">
                         <p class="ico">+</p>
-                        <p class="value">Profit <code id="profit">+{{ data_accounting["profits"] | round(2) }}</code> €</p>
+                        <p class="value">Profit <code id="profit">+{{ sums[1] | round(2)}}</code> €</p>
                     </div>
                 </div>
 
@@ -65,7 +65,7 @@
 
                     <div style="margin-top: 10px;" class="status-container">
                         <p class="ico">#</p>
-                        <p class="value">List of elements <code id="table-length">{{ data_accounting["table"] | length }}</code></p>
+                        <p class="value">List of elements <code id="table-length">{{ payments | length }}</code></p>
                     </div>
 
                     <button onclick="ResetTable()" class="main-button">Reset Table</button>
@@ -81,14 +81,14 @@
                         <th><b>Loss</b></th>
                         <th mobile="0"><b>Description</b></th>
                     </tr>
-                    {% for el in data_accounting["table"] %}
+                    {% for payment in payments %}
                     <tr class="payment-tr">
-                        <input id="index" type="hidden" value="{{ loop.index0 }}">
-                        <th><code>{{ el[0] }}</code></th>
-                        <th class="profit">+{{ el[1] }}</th>
-                        <th class="loss">-{{ el[2] }}</th>
+                        <input id="index" type="hidden" value="{{ payment[0] }}">
+                        <th><code>{{ payment[4] }}</code></th>
+                        <th class="profit">+{{ payment[1] }}</th>
+                        <th class="loss">-{{ payment[2] }}</th>
                         <th mobile="0">
-                            <span onclick="event.stopPropagation()">{{ el[3]}}</span>
+                            <span onclick="event.stopPropagation()">{{ payment[3]}}</span>
                         </th>
                     </tr>
                     {% endfor %}

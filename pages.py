@@ -6,13 +6,12 @@ from flask import render_template, request, session, g
 import psutil, os, json, time, sqlite3
 
 # -- Loads JSON files
-with open("website/accounting.json") as f:
-	data_accounting = json.load(f)
 with open("website/agenda.json") as f:
 	data_agenda = json.load(f)
 
 DATABASES = {
-	"music": "website/music.sqlite"
+	"music": "website/music.sqlite",
+	"accounting": "website/accounting.sqlite"
 }
 
 def get_db(name: str):
@@ -124,38 +123,29 @@ def songs():
 # - Accounting
 @app.route('/pages/accounting')
 def accounting():
-	return render_template("/pages/accounting.html", data_accounting=data_accounting)
+	dbCursor = get_db("accounting").cursor()
+	payments = dbCursor.execute("SELECT id, valueProfit, valueLoss, description, date FROM accounting").fetchall()
+	payments.reverse()
+	sums = dbCursor.execute("SELECT IFNULL(SUM(valueLoss), 0), IFNULL(SUM(valueProfit), 0) FROM accounting").fetchone()
+	return render_template("/pages/accounting.html", payments=payments, sums=sums)
 
 @app.route('/payments', methods=['POST'])
 def payments():
 	if request.json and "type" in request.json:
+		db = get_db("accounting")
+		dbCursor = get_db("accounting").cursor()
 		if request.json["type"] == "add" and all(key in request.json for key in ["profit", "loss", "description"]):
 			timeList = time.strftime("%d/%m/%Y", time.localtime())
-			adapted_list = [ # struct date(0), profit(1), loss(2), description(3)
-				timeList,
-				request.json["profit"],
-				request.json["loss"],
-				request.json["description"]
-			]
-			data_accounting["losses"] += request.json["loss"]
-			data_accounting["profits"] += request.json["profit"]
-			data_accounting["table"].insert(0, adapted_list)
-			with open("website/accounting.json", "w") as f:
-				json.dump(data_accounting, f, indent=4)
-			return {"date": timeList}, 200
-		elif request.json["type"] == "remove" and "index" in request.json:
-			data_accounting["profits"] -= data_accounting["table"][int(request.json["index"])][1]
-			data_accounting["losses"] -= data_accounting["table"][int(request.json["index"])][2]
-			data_accounting["table"].pop(int(request.json["index"]))
-			with open("website/accounting.json", "w") as f:
-				json.dump(data_accounting, f, indent=4)
+			id = dbCursor.execute("INSERT INTO accounting(valueProfit, valueLoss, description, date) VALUES(?, ?, ?, ?) RETURNING id", (request.json["profit"], request.json["loss"], request.json["description"], timeList)).fetchone()
+			db.commit()
+			return {"date": timeList, "id": id[0]}, 200
+		elif request.json["type"] == "remove" and request.json["index"]:
+			dbCursor.execute("DELETE FROM accounting WHERE id==?", (request.json["index"],))
+			db.commit()
 			return {}, 200
 		elif request.json["type"] == "reset":
-			data_accounting["profits"] = 0
-			data_accounting["losses"] = 0
-			data_accounting["table"] = []
-			with open("website/accounting.json", "w") as f:
-				json.dump(data_accounting, f, indent=4)
+			dbCursor.execute("DELETE FROM accounting")
+			db.commit()
 			return {}, 200
 	return {}, 400
 
