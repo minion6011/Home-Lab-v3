@@ -26,7 +26,7 @@ if spotify_check:
 				results = None
 		return song_names
 
-def downloadSong(name:str):
+def downloadSong(name:str, plId):
 	videos = []
 	if name.startswith("https://"):
 		if name.startswith("https://open.spotify.com/playlist/") and spotify_check:
@@ -36,14 +36,15 @@ def downloadSong(name:str):
 						fileName = uuid.uuid4().hex
 						video = Search(f"{song} {name}").videos[0]
 						min, sec = divmod(video.length, 60)
-						videos.append({
-							"name": video.title,
-							"artist": video.author,
-							"img": video.thumbnail_url,
-							"added": time.strftime("%d/%m/%Y", time.localtime()),
-							"duration": str(min) + ":" + str(sec).rjust(2, "0"),
-							"url_path": f"/website/music/{fileName}.mp3"
-						})
+						videos.append((
+							plId,
+							video.title,
+							video.author,
+							video.thumbnail_url,
+							time.strftime("%d/%m/%Y", time.localtime()),
+							str(min) + ":" + str(sec).rjust(2, "0"),
+							f"/website/music/{fileName}.mp3"
+						))
 						video.streams.get_audio_only().download(output_path="./website/music", filename=fileName+".mp3")
 					except Exception as e:
 						print(f"[DEBUG] Error, Spotify Playlist Single\n{e}")
@@ -52,18 +53,19 @@ def downloadSong(name:str):
 		else:
 			pl = Playlist(name)
 			try:
-				for video in pl.videos: # first test
+				for video in pl.videos:
 					try:
 						fileName = uuid.uuid4().hex
 						min, sec = divmod(video.length, 60)
-						videos.append({
-							"name": video.title,
-							"artist": video.author,
-							"img": video.thumbnail_url,
-							"added": time.strftime("%d/%m/%Y", time.localtime()),
-							"duration": str(min) + ":" + str(sec).rjust(2, "0"),
-							"url_path": f"/website/music/{fileName}.mp3"
-						})
+						videos.append((
+							plId,
+							video.title,
+							video.author,
+							video.thumbnail_url,
+							time.strftime("%d/%m/%Y", time.localtime()),
+							str(min) + ":" + str(sec).rjust(2, "0"),
+							f"/website/music/{fileName}.mp3"
+						))
 						video.streams.get_audio_only().download(output_path="./website/music", filename=fileName+".mp3")
 					except Exception as e:
 						print(f"[DEBUG] Error, YT Playlist Single\n{e}")
@@ -72,26 +74,28 @@ def downloadSong(name:str):
 				if name.startswith("https://youtu.be/"): name = name.replace("https://youtu.be/", "https://youtube.com/watch?v=")
 				video = YouTube(name, on_progress_callback = on_progress)
 				min, sec = divmod(video.length, 60)
-				videos.append({
-					"name": video.title,
-					"artist": video.author,
-					"img": video.thumbnail_url,
-					"added": time.strftime("%d/%m/%Y", time.localtime()),
-					"duration": str(min) + ":" + str(sec).rjust(2, "0"),
-					"url_path": f"/website/music/{fileName}.mp3"
-				})
+				videos.append((
+					plId,
+					video.title,
+					video.author,
+					video.thumbnail_url,
+					time.strftime("%d/%m/%Y", time.localtime()),
+					str(min) + ":" + str(sec).rjust(2, "0"),
+					f"/website/music/{fileName}.mp3"
+				))
 				video.streams.get_audio_only().download(output_path="./website/music", filename=fileName+".mp3")
 	else:
 		fileName = uuid.uuid4().hex
 		video = Search(name).videos[0]
 		min, sec = divmod(video.length, 60)
-		videos.append({
-			"name": video.title,
-			"artist": video.author, 
-			"img": video.thumbnail_url, 
-			"added": time.strftime("%d/%m/%Y", time.localtime()),
-			"duration": str(min) + ":" + str(sec).rjust(2, "0"),
-			"url_path": f"/website/music/{fileName}.mp3"
-		})
+		videos.append((
+			plId,
+			video.title,
+			video.author, 
+			video.thumbnail_url, 
+			time.strftime("%d/%m/%Y", time.localtime()),
+			str(min) + ":" + str(sec).rjust(2, "0"),
+			f"/website/music/{fileName}.mp3"
+		))
 		video.streams.get_audio_only().download(output_path="./website/music", filename=fileName+".mp3")
 	return videos

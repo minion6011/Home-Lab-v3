@@ -117,16 +117,19 @@ def songs():
 	db = get_db("music")
 	dbCursor = db.cursor()
 	if request.json and "type" in request.json:
-		if request.json["type"] == "add" and (request.json["num"] and request.json["num"] in data_music) and request.json["sname"]:
-			nwSongs = downloadSong(request.json["sname"])
-			iStart = len(data_music[request.json["num"]]["songs"])
-			data_music[request.json["num"]]["songs"].extend(nwSongs)
-			with open("website/music.json", "w") as f:
-				json.dump(data_music, f, indent=4)
-			return {"nwSongs": nwSongs, "indexStart": iStart}, 200
+		if request.json["type"] == "add" and request.json["num"] and request.json["sname"]:
+			nwSongs = []
+			for row in downloadSong(request.json["sname"], request.json["num"]):
+				res = dbCursor.execute(
+					"INSERT INTO songs(idPlaylist, name, artist, img, added, duration, urlPath) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING idSong, name, artist, img, added, duration, urlPath",
+					row
+				)
+				nwSongs.append(res.fetchone())
+			db.commit()
+			return {"nwSongs": nwSongs}, 200
 		elif request.json["type"] == "get" and request.json["index"]:
 			song = dbCursor.execute(
-				"SELECT name,artist,img,added,duration,urlPath FROM songs WHERE idSong==?",
+				"SELECT name, artist, img, added, duration, urlPath FROM songs WHERE idSong==?",
 				(request.json["index"],)
 			).fetchone()
 			return {"song": song}, 200

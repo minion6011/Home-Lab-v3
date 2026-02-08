@@ -320,7 +320,7 @@ async function PreloadSong(songId) { // id == idSong
 // Song Html
 function CreateSongHTML(index, values) {
     let trElement = document.createElement("tr"); trElement.className = "songTcontainer";
-    trElement.setAttribute("onclick", `FetchSong(${values[0]});`);
+    trElement.setAttribute("onclick", `FetchSong(this.dataset.songId);`);
     trElement.dataset.songId = values[0];
 
     songName = values[1].substring(0,32); if (values[1].length>32) {songName+="..."}
@@ -354,18 +354,23 @@ async function AddSong() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({num: startPl, type: "add", sname: songName}),
     });
-    // domElSongs.addsongInput.disabled = false; 
+
+    // Update Download Placeholder
     nDownload -= 1
     if (nDownload == 0) domElSongs.addsongInput.placeholder = "YT name/link...";
     else domElSongs.addsongInput.placeholder = `Downloading - ${nDownload}...`;
+
     if (req.status == 200) {
+        indexStart = domElSongs.songTableSongs.querySelectorAll(".songTcontainer").length
+
         if (domElSongs.plDSId.value == currentPl[0]) currentPl[1] += 1
+
         let json = JSON.parse(await req.text());
         if (startPl == domElSongs.plDSId.value) {
             json.nwSongs.forEach((song, index) => {
-                CreateSongHTML(json.indexStart+index, song)
+                CreateSongHTML(indexStart+index, song)
             });
-            domElSongs.plDsDesc.innerHTML = domElSongs.plDsDesc.innerHTML.replace(/( - )(.*?)(<\/i>)/, "$1" + (Number(json.indexStart)+Number(json.nwSongs.length)) + "$3");
+            domElSongs.plDsDesc.innerHTML = domElSongs.plDsDesc.innerHTML.replace(/( - )(.*?)(<\/i>)/, "$1" + (Number(indexStart)+Number(json.nwSongs.length)) + "$3");
         }
     }
     else throw new Error("Adding a song returns a non-200 status code");
