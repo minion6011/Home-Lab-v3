@@ -91,14 +91,8 @@ def playlist():
 		return {"plName": request.form["name"], "plNum": num, "plSrc": f"/website/music/{num}.webp"}, 200
 	elif request.json and request.json["type"]: # Get
 		if request.json["type"] == "get" and request.json["num"]:
-			playlist = dbCursor.execute(
-				"SELECT name, description, img FROM playlists WHERE id==?",
-				(request.json["num"],)
-			).fetchone()
-			songs = dbCursor.execute(
-				"SELECT idSong, name, artist, img, added, duration, urlPath FROM songs WHERE idPlaylist==?",
-				(request.json["num"],)
-			).fetchall()
+			playlist = dbCursor.execute("SELECT name, description, img FROM playlists WHERE id==?", (request.json["num"],)).fetchone()
+			songs = dbCursor.execute("SELECT idSong, name, artist, img, added, duration, urlPath FROM songs WHERE idPlaylist==?", (request.json["num"],)).fetchall()
 			return {"playlist": playlist, "songs": songs}, 200
 		elif request.json["type"] == "delete" and (request.json["num"] and request.json["num"] in data_music):
 			try:
@@ -120,27 +114,19 @@ def songs():
 		if request.json["type"] == "add" and request.json["num"] and request.json["sname"]:
 			nwSongs = []
 			for row in downloadSong(request.json["sname"], request.json["num"]):
-				res = dbCursor.execute(
-					"INSERT INTO songs(idPlaylist, name, artist, img, added, duration, urlPath) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING idSong, name, artist, img, added, duration, urlPath",
-					row
-				)
-				nwSongs.append(res.fetchone())
+				songs_return = dbCursor.execute("INSERT INTO songs(idPlaylist, name, artist, img, added, duration, urlPath) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING idSong, name, artist, img, added, duration, urlPath", row)
+				nwSongs.append(songs_return.fetchone())
 			db.commit()
 			return {"nwSongs": nwSongs}, 200
 		elif request.json["type"] == "get" and request.json["index"]:
-			song = dbCursor.execute(
-				"SELECT name, artist, img, added, duration, urlPath FROM songs WHERE idSong==?",
-				(request.json["index"],)
-			).fetchone()
+			song = dbCursor.execute("SELECT name, artist, img, added, duration, urlPath FROM songs WHERE idSong==?", (request.json["index"],)).fetchone()
 			return {"song": song}, 200
-		elif request.json["type"] == "delete" and (request.json["num"] and request.json["num"] in data_music):
-			if request.json["index"] != None and int(request.json["index"]) < len(data_music[request.json["num"]]["songs"]):
-				song = data_music[request.json["num"]]["songs"][int(request.json["index"])]
-				os.remove(os.path.join(os.path.dirname(__file__), song["url_path"].lstrip("/")))
-				data_music[request.json["num"]]["songs"].remove(song)
-				with open("website/music.json", "w") as f:
-					json.dump(data_music, f, indent=4)
-				return {"indexNew":len(data_music[request.json["num"]]["songs"])}, 200
+		elif request.json["type"] == "delete" and request.json["index"]:
+			song = dbCursor.execute("SELECT urlPath FROM songs WHERE idSong==?", (request.json["index"],)).fetchone()
+			os.remove(os.path.join(os.path.dirname(__file__), song[0].lstrip("/")))
+			dbCursor.execute("DELETE FROM songs WHERE idSong==?", (request.json["index"],))
+			db.commit()
+			return {}, 200
 	return {}, 400
 
 # - Accounting

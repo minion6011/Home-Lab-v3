@@ -109,7 +109,8 @@ if (window.self === window.top) {
 
 // Songs Player
 async function DeleteSong(value) {
-    let id = value.parentElement.parentElement.children[0].innerText;
+    let idSong = value.parentElement.parentElement.dataset.songId;
+    let index = value.parentElement.parentElement.children[0].innerText;
     if (value.parentElement.parentElement.children[1].children[1].innerText.substring(0,30) == domElSgPy.playerSongTitle.innerText.substring(0,30)) {
         domElSongs.mainContainer.dataset.play = "0";
         if (domElSongs.audioControll.playing) StartStopAudio();
@@ -118,21 +119,18 @@ async function DeleteSong(value) {
     let req = await fetch(endpoints.songs, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({num: domElSongs.plDSId.value, type: "delete", index: id-1}),
+        body: JSON.stringify({type: "delete", index: idSong}),
     });
     if (req.status == 200) {
-        let json = JSON.parse(await req.text());
         if (domElSongs.plDSId.value == currentPl[0]) currentPl[1] -= 1;
-        if (preloadData[4]+1 == id) PreloadSong(id);
+        if (preloadData[4] == idSong) preloadData = ["", "", "", "", 0];
         value.parentElement.parentElement.parentElement.removeChild(value.parentElement.parentElement);
         let ls = domElSongs.songTableSongs.getElementsByClassName("songTcontainer")
         for (let i = 0; i < ls.length; i++) {
-            if (Number(ls[i].children[0].innerText)>Number(id)) {
+            if (Number(ls[i].children[0].innerText)>Number(index)) 
                 ls[i].children[0].innerText = (Number(ls[i].children[0].innerText) - 1).toString()
-                ls[i].setAttribute("onclick", `FetchSong(${Number(ls[i].children[0].innerText) - 1});`);
-            }
         };
-        domElSongs.plDsDesc.innerHTML = domElSongs.plDsDesc.innerHTML.replace(/( - )(.*?)(<\/i>)/, "$1" + Number(json.indexNew) + "$3");
+        domElSongs.plDsDesc.innerHTML = domElSongs.plDsDesc.innerHTML.replace(/( - )(.*?)(<\/i>)/, "$1" + Number(domElSongs.songTableSongs.querySelectorAll(".songTcontainer").length) + "$3");
     }
     else throw new Error("Getting a song returns a non-200 status code");
 }
@@ -443,7 +441,7 @@ async function OpenPlaylist(item) {
     domElSongs.mainContainer.dataset.status = "1";
     domElSongs.songTableSongs.innerHTML = domElSongs.songTableSongs.children[0].children[0].innerHTML; // reset list
     
-    currentPl[1] = data.songs.length
+    currentPl[1] = data.songs.length - 1;
 
     data.songs.forEach((song, index) => {
         CreateSongHTML(index, song);
