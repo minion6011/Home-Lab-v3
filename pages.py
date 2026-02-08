@@ -6,8 +6,6 @@ from flask import render_template, request, session, g
 import psutil, os, json, time, sqlite3
 
 # -- Loads JSON files
-with open("website/music.json") as f: 
-	data_music = json.load(f)
 with open("website/accounting.json") as f:
 	data_accounting = json.load(f)
 with open("website/agenda.json") as f:
@@ -72,22 +70,15 @@ def playlist():
 	if request.form: # create or edit
 		if request.form["type"] == "edit":
 			num = request.form["num"]
-			playlist = data_music[request.form["num"]]
+			dbCursor.execute("UPDATE playlists SET name=?, description=? WHERE id==?", (request.form["name"], request.form["description"].replace("\r",""), num))
 		else:
-			if len(data_music) != 0: num = str( int( list(data_music.keys())[-1] )+1 )
-			else: num = "0"
-
-			data_music[num] = {}
-			playlist = data_music[num]
-			playlist["songs"] = []
-		playlist["name"] = request.form["name"]
-		playlist["description"] = request.form["description"].replace("\r","")
+			num = dbCursor.execute("INSERT INTO playlists(name, description, img) VALUES(?, ?, ?) RETURNING id", (request.form["name"], request.form["description"].replace("\r",""), "")).fetchone()[0]
+		# Add Image to DB + Save image
+		dbCursor.execute("UPDATE playlists SET img=? WHERE id==?", (f"/website/music/{num}.webp", num))
+		db.commit()
 		file = request.files.getlist('img')
 		if file:
 			file[0].save(os.path.join(os.path.dirname(__file__), "website","music", f"{num}.webp"))
-		playlist["img"] = f"/website/music/{num}.webp"
-		with open("website/music.json", "w") as f:
-			json.dump(data_music, f, indent=4)
 		return {"plName": request.form["name"], "plNum": num, "plSrc": f"/website/music/{num}.webp"}, 200
 	elif request.json and request.json["type"]: # Get
 		if request.json["type"] == "get" and request.json["num"]:
