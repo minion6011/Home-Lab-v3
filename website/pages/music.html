@@ -36,11 +36,11 @@
                 </div>
 
                 <div class="playlists-grid" id="playlists-container">
-                    {% for el in data_music %}
+                    {% for playlist in playlists %}
                         <div class="pl-item" onclick="OpenPlaylist(this)">
-                            <img src='{{ data_music[el]["img"] }}' class="pl-img">
-                            <p class="pl-text">{{ data_music[el]["name"] }}</p>
-                            <input type="hidden" class="pl-id" value="{{ el }}">
+                            <img src='{{ playlist[2] }}' class="pl-img">
+                            <p class="pl-text">{{ playlist[1] }}</p>
+                            <input type="hidden" class="pl-id" value="{{ playlist[0] }}">
                         </div>
                     {% endfor %}
                 </div>

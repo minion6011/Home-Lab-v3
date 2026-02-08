@@ -1,34 +1,36 @@
 from __main__ import app, config
 
 from music import downloadSong
-from flask import render_template, request, session
+from flask import render_template, request, session, g
 
-import psutil, os, json, time
+import psutil, os, json, time, sqlite3
 
 # -- Loads JSON files
-def loadMusic():
-	with open("website/music.json") as f: data = json.load(f)
-	lastkey = -1 # - Sort Playlists
-	dataCopy = data.copy()
-	for key in data:
-		lastkey += 1
-		if lastkey != int(key):
-			dataCopy[str(lastkey)] = data[key]
-			dataCopy[str(lastkey)]["img"] = f"/website/music/{lastkey}.webp"
-			if os.path.exists(os.path.join(os.path.dirname(__file__), "website","music", f"{lastkey}.webp")):
-				os.remove(os.path.join(os.path.dirname(__file__), "website","music", f"{lastkey}.webp"))
-			os.rename(
-				os.path.join(os.path.dirname(__file__), "website","music", f"{key}.webp"),
-				os.path.join(os.path.dirname(__file__), "website","music", f"{lastkey}.webp")
-			)
-			del dataCopy[key]
-	with open("website/music.json", "w") as f: json.dump(dataCopy, f, indent=4)
-	return dataCopy # - Send Sorted Playlists
-data_music = loadMusic()
+with open("website/music.json") as f: 
+	data_music = json.load(f)
 with open("website/accounting.json") as f:
 	data_accounting = json.load(f)
 with open("website/agenda.json") as f:
 	data_agenda = json.load(f)
+
+DATABASES = {
+	"music": "music.sqlite"
+}
+
+def get_db(name: str):
+	if 'db' not in g:
+		g.db = {}
+
+	if name not in g.db:
+		g.db[name] = sqlite3.connect(DATABASES[name])
+		g.db[name].cursor().execute("PRAGMA foreign_keys = ON") # Enables foreign_keys
+	return g.db[name]
+
+@app.teardown_appcontext
+def close_db(exception=None):
+	dbs = g.pop('db', {})
+	for db in dbs.values():
+		db.close()
 
 # - Home
 startedTime = time.time()
@@ -59,7 +61,8 @@ def home_terminal():
 # - Music
 @app.route('/pages/music')
 def music():
-	return render_template("/pages/music.html", data_music=data_music)
+	playlists = get_db("music").cursor().execute("SELECT id, name, img FROM playlists").fetchall()
+	return render_template("/pages/music.html", playlists=playlists)
 
 
 @app.route('/playlist', methods=['POST'])
