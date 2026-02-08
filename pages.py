@@ -12,7 +12,7 @@ with open("website/agenda.json") as f:
 	data_agenda = json.load(f)
 
 DATABASES = {
-	"music": "music.sqlite"
+	"music": "website/music.sqlite"
 }
 
 def get_db(name: str):
