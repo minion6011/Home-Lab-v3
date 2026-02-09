@@ -15,18 +15,27 @@ def get_client_ip():
     else: 
         return request.remote_addr
 
-def checkRatelimit():
+def checkRatelimit(path):
+    if path.endswith(".webp"):
+        return False
+    now = time.time()
     clientIp = get_client_ip()
-    if not clientIp in ratelimitData or time.time() > ratelimitData[clientIp]["time"]:
-        ratelimitData[clientIp] = {"time": time.time() + 60, "requests": 1}
-    else:
-        if ratelimitData[clientIp]["requests"] >= config["requestPerMinute"]:
-            return True
-        ratelimitData[clientIp]["requests"] += 1
+    # Add new IP
+    if not clientIp in ratelimitData or now > ratelimitData[clientIp]["time"]:
+        ratelimitData[clientIp] = {"time": round(now) + 60, "requests": 1}
+        return False
+    # Requests += 
+    ratelimitData[clientIp]["requests"] += 1
+    # Return Code 429 (if reqs > x)
+    if ratelimitData[clientIp]["requests"] > config["requestPerMinute"]:
+        return True
+    # - CleanUp
+    for ip in list(ratelimitData.keys()):
+        if now > ratelimitData[ip]["time"]: del ratelimitData[ip]
 
 @app.before_request
 def usercheck_before_request():
-    if checkRatelimit(): return {"error": "too many request"}, 429
+    if checkRatelimit(request.path): return {"error": "too many request"}, 429
     if all(el not in request.path for el in excludedLogin):
         if not session.get("expires_at") or session["expires_at"] < time.time():
             if not request.method == "POST":
