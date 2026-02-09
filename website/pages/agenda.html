@@ -21,12 +21,12 @@
                 </div>
 
                 <div id="check-list">
-                    {% for i in range(todoList | length) %}
+                    {% for todo in todoList %}
                         <div class="to_do-elements">
                             <div onclick="switchTodo(this)" class="to_do-container">
-                                <input id="todoIndex" type="hidden" value="{{ i }}">
-                                <input id="todoState" type="checkbox" {{ todoList[i][1] }}>
-                                <p id="todoText" class="text">{{ todoList[i][0] }}</p>
+                                <input id="todoIndex" type="hidden" value="{{ todo[0] }}">
+                                <input id="todoState" type="checkbox" {{ todo[2] }}>
+                                <p id="todoText" class="text">{{ todo[1] }}</p>
                                 <span class="checkmark"></span>
                             </div>
                             <span onclick="deleteTodo(this)" class="close">&#x2715;</span>
@@ -45,10 +45,10 @@
                 </div>
 
                 <div class="notes-elements" id="notes-list">
-                    {% for i in range(agendaList | length) %}
+                    {% for note in notesList %}
                         <div class="note">
-                            <input type="hidden" value="{{ i }}">
-                            <span>{{ agendaList[i] }}</span>
+                            <input type="hidden" value="{{ note[0] }}">
+                            <span>{{ note[1] }}</span>
                             <span onclick="removeNote(this)" class="close">&#x2715;</span>
                         </div>
                     {% endfor %}

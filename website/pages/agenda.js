@@ -51,8 +51,8 @@ if (window.self === window.top) {
 // Todo
 async function switchTodo(element) {
     element.children[1].checked = !element.children[1].checked;
-    let dict = {type: "switch", index: element.children[0].value, state: ""}
-    if (element.children[1].checked) {dict.state = "checked"};
+    let dict = {type: "switch", index: element.children[0].value, state: ''}
+    if (element.children[1].checked) {dict.state = 'checked'};
 
     let req = await fetch(endpoints.todo, {
         method: "POST",
@@ -86,19 +86,17 @@ async function addTodo() {
         body: JSON.stringify({type: "add", text: domEl.TodoAddInput.value}),
     });
     if (req.status == 200) {
+        let json = JSON.parse(await req.text());
         let mainDiv = document.createElement("div"); mainDiv.className = "to_do-elements";
         mainDiv.innerHTML = `
         <label onclick="switchTodo(this)" class="to_do-container">
-            <input id="todoIndex" type="hidden" value="0">
+            <input id="todoIndex" type="hidden" value="${json.id}">
             <input id="todoState" type="checkbox">
             <p id="todoText" class="text">${domEl.TodoAddInput.value}</p>
             <span class="checkmark"></span>
         </label>
         <span onclick="deleteTodo(this)" class="close">&#x2715;</span>
         `;
-        for (let i = 0; i < domEl.checkListTodo.children.length; i++) {
-            domEl.checkListTodo.children[i].children[0].children[0].value = Number(domEl.checkListTodo.children[i].children[0].children[0].value) + 1;
-        };
         domEl.checkListTodo.insertBefore(mainDiv, domEl.checkListTodo.firstChild);
         domEl.TodoAddInput.value = "";
         domEl.TodoAddButton.disabled = true;
@@ -114,9 +112,10 @@ async function addNote() {
         body: JSON.stringify({type: "add", text: domEl.NotesAddInput.value}),
     });
     if (req.status == 200) {
+        let json = JSON.parse(await req.text());
         let mainDiv = document.createElement("div"); mainDiv.className = "note";
         mainDiv.innerHTML = `
-        <input type="hidden" value="0">
+        <input type="hidden" value="${json.id}">
         <span>${domEl.NotesAddInput.value}</span>
         <span onclick="removeNote(this)" class="close">&#x2715;</span>
         `;

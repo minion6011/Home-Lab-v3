@@ -5,15 +5,13 @@ from flask import render_template, request, session, g
 
 import psutil, os, json, time, sqlite3
 
-# -- Loads JSON files
-with open("website/agenda.json") as f:
-	data_agenda = json.load(f)
-
 DATABASES = {
 	"music": "website/music.sqlite",
-	"accounting": "website/accounting.sqlite"
+	"accounting": "website/accounting.sqlite",
+	"agenda": "website/agenda.sqlite"
 }
 
+# - Database Functions
 def get_db(name: str):
 	if 'db' not in g:
 		g.db = {}
@@ -124,8 +122,7 @@ def songs():
 @app.route('/pages/accounting')
 def accounting():
 	dbCursor = get_db("accounting").cursor()
-	payments = dbCursor.execute("SELECT id, valueProfit, valueLoss, description, date FROM accounting").fetchall()
-	payments.reverse()
+	payments = dbCursor.execute("SELECT id, valueProfit, valueLoss, description, date FROM accounting ORDER BY id DESC").fetchall()
 	sums = dbCursor.execute("SELECT IFNULL(SUM(valueLoss), 0), IFNULL(SUM(valueProfit), 0) FROM accounting").fetchone()
 	return render_template("/pages/accounting.html", payments=payments, sums=sums)
 
@@ -152,40 +149,44 @@ def payments():
 # - Agenda
 @app.route('/pages/agenda')
 def agenda():
-	return render_template("/pages/agenda.html", todoList=data_agenda["todo"], agendaList=data_agenda["notes"])
+	dbCursor = get_db("agenda").cursor()
+	return render_template(
+		"/pages/agenda.html",
+		todoList=dbCursor.execute("SELECT * FROM todo ORDER BY id DESC").fetchall(),
+		notesList=dbCursor.execute("SELECT * FROM notes ORDER BY id DESC").fetchall()
+	)
 
 @app.route('/todo', methods=['POST'])
 def todo():
+	db = get_db("agenda")
+	dbCursor = db.cursor()
 	if request.json and "type" in request.json:
-		if request.json["type"] == "remove" and "index" in request.json:
-			del data_agenda["todo"][int(request.json["index"])]
-			with open("website/agenda.json", "w") as f:
-				json.dump(data_agenda, f, indent=4)
+		if request.json["type"] == "remove" and request.json["index"]:
+			dbCursor.execute("DELETE FROM todo WHERE id=?", (request.json["index"],))
+			db.commit()
 			return {}, 200
-		if request.json["type"] == "switch" and "index" in request.json and "state" in request.json:
-			data_agenda["todo"][int(request.json["index"])][1] = request.json["state"]
-			with open("website/agenda.json", "w") as f:
-				json.dump(data_agenda, f, indent=4)
+		if request.json["type"] == "switch" and request.json["index"] and "state" in request.json:
+			dbCursor.execute("UPDATE todo SET state=? WHERE id==?", (request.json["state"], request.json["index"]))
+			db.commit()
 			return {}, 200
-		elif request.json["type"] == "add" and "text" in request.json:
-			data_agenda["todo"].insert(0, [request.json["text"], ""])
-			with open("website/agenda.json", "w") as f:
-				json.dump(data_agenda, f, indent=4)
-			return {}, 200
+		elif request.json["type"] == "add" and request.json["text"]:
+			id = dbCursor.execute("INSERT INTO todo(todo) VALUES(?) RETURNING id", (request.json["text"],)).fetchone()[0]
+			db.commit()
+			return {"id": id}, 200
 	return {}, 400
 
 @app.route('/note', methods=['POST'])
 def note():
+	db = get_db("agenda")
+	dbCursor = db.cursor()
 	if request.json and "type" in request.json:
-		if request.json["type"] == "add" and "text" in request.json:
-			data_agenda["notes"].insert(0, request.json["text"])
-			with open("website/agenda.json", "w") as f:
-				json.dump(data_agenda, f, indent=4)
-			return {}, 200
-		elif request.json["type"] == "remove" and "index" in request.json:
-			del data_agenda["notes"][int(request.json["index"])]
-			with open("website/agenda.json", "w") as f:
-				json.dump(data_agenda, f, indent=4)
+		if request.json["type"] == "add" and request.json["text"]:
+			id = dbCursor.execute("INSERT INTO notes(note) VALUES(?) RETURNING id", (request.json["text"],)).fetchone()[0]
+			db.commit()
+			return {"id": id}, 200
+		elif request.json["type"] == "remove" and request.json["index"]:
+			dbCursor.execute("DELETE FROM notes WHERE id=?", (request.json["index"],))
+			db.commit()
 			return {}, 200
 	return {}, 400
 

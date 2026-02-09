@@ -124,7 +124,6 @@ async function FunctionCell(event) {
     let e = event || window.event;
     let target = e.target.parentNode || e.srcElement.parentNode;
     if (target.matches("tr") && target.className == "payment-tr") {
-        let ls = domEl.paymentsTable.children[0].children;
         let index = target.children[0].value
         // Request
         let req = await fetch(endpoints.payments, {
