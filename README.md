@@ -33,7 +33,7 @@ This is the third version of the [Homelab](https://github.com/minion6011/Home-La
 - **Image icon**: From *plDefault.webm* by **Superndre** – [Flaticon](https://www.flaticon.com/)
 - **Shuffle icon**: Icon by **Pixel perfect** – [Flaticon](https://www.flaticon.com/)
 - **Pencil icon**: Icon by **Anggara** – [Flaticon](https://www.flaticon.com/)
-- **Delete icon**: Icon by **bqlqn** – [Flaticon](https://www.flaticon.com/)
+- **Delete icon**: Icon by **Ilham Fitrotul Hayat** – [Flaticon](https://www.flaticon.com/)
 - **Add songs icon**: Icon by **bsd** – [Flaticon](https://www.flaticon.com/)
 - **Next song icon**: Icon by **Abdul Allib** – [Flaticon](https://www.flaticon.com/)
 - **Mute volume icon**: Icon by **meaicon** – [Flaticon](https://www.flaticon.com/)

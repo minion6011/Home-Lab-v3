@@ -1,6 +1,6 @@
 @media (max-width: 1003px) { /* Schermo Telefono */
     .main-container[data-status="1"] .library-container {display: none;}
-    .main-container[data-play="1"] {grid-template-rows: 1fr max-content;} /* Row1 + Row2 (player) */
+    .main-container[data-play="1"] {grid-template-rows: 1fr 0.135fr;} /* Row1 + Row2 (player) */
     html:not(.not-iframe) .main-container {row-gap: 1.5%;}
 
     .main-container {grid-template-columns: 1fr}
@@ -57,7 +57,7 @@
     .songTable-delete img {width: 29px; height: 32px;}
 
     .up .song-details {display: flex;}
-    .up .music-buttons button img, .player-container .volume-slider img {width: 28px; height: 28px;}
+    .up .music-buttons button img, .player-container .volume-slider img {width: 32px; height: 32px;}
     .player-container .up {justify-content: space-between;}
     .player-container .up .volume-slider {display: flex; align-items: center;}
     .player-container .down #playerRange::-webkit-slider-runnable-track, .player-container .down #playerRange {height: 5.25px;}
@@ -131,7 +131,7 @@ html.not-iframe .main-container[data-play="1"] .player-container {margin: 0px 20
 .main-container[data-play="0"] .player-container {display: none;}
 .main-container[data-play="1"] .player-container {display: grid; row-gap: 5px;}
 .player-container {
-    height: max-content;
+    min-height: max-content;
     border-radius: 25px;
     background-color: var(--secondary-bg-color);
     padding: 12.5px;
@@ -285,11 +285,14 @@ html.not-iframe .song-container {margin: 20px}
     font-size: var(--small-font-size);
 }
 .songTable-delete {
-    background-color: var(--ver-hover-bg-color);
+    background-color: #ffffff00;
     border: 0;
     border-radius: 10px;
     padding: 2.5px 5.5px 2.5px 5.5px;
     cursor: pointer;
+}
+.songTable-delete:hover {
+    background-color: var(--ver-hover-bg-color);
 }
 .songTable-delete img {
     filter: invert(var(--img-invert-value));
