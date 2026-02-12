@@ -144,6 +144,7 @@ input[type="number"] {appearance: textfield;}
 }
 
 .table-container {
+    min-height: max-content;
     border-radius: 25px;
     background-color: var(--secondary-bg-color);
     padding: 17.5px;
