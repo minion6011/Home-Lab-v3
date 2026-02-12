@@ -113,7 +113,10 @@ async function DeleteSong(value) {
     let index = value.parentElement.parentElement.children[0].innerText;
     if (value.parentElement.parentElement.children[1].children[1].innerText.substring(0,30) == domElSgPy.playerSongTitle.innerText.substring(0,30)) {
         domElSongs.mainContainer.dataset.play = "0";
-        if (domElSongs.audioControll.playing) StartStopAudio();
+        if (domElSongs.audioControll.playing) {
+            await domElSongs.audioControll.pause();
+            UpdateMSBtn();
+        }
         domElSongs.audioControll.src = "";
     }
     let req = await fetch(endpoints.songs, {
@@ -139,15 +142,19 @@ function formatTime(seconds) {
     const secs = Math.floor(seconds % 60);
     return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
 }
-function StartStopAudio() {
-    if (domElSongs.audioControll.paused) {
+function StartStopAudio() { // Pause Button
+    if (domElSongs.audioControll.paused)
+        domElSongs.audioControll.play()
+    else 
+        domElSongs.audioControll.pause()
+}
+function UpdateMSBtn() { // Update Media Session Button
+    if (!domElSongs.audioControll.paused) {
         navigator.mediaSession.playbackState = "playing";
-        domElSongs.audioControll.play();
         domElSgPy.playerStateImg.src = endpoints.stopIco;
     }
     else {
         navigator.mediaSession.playbackState = "paused";
-        domElSongs.audioControll.pause();
         domElSgPy.playerStateImg.src = endpoints.playIco;
     };
 }
@@ -186,8 +193,8 @@ async function setPWA(title, artist, img) {
                 { src: img, sizes: "512x512", type: "image/png" }
             ],
         });
-        navigator.mediaSession.setActionHandler('play', () => {StartStopAudio()});  
-        navigator.mediaSession.setActionHandler('pause', () => {StartStopAudio()});
+        navigator.mediaSession.setActionHandler('play', () => {domElSongs.audioControll.play()});  
+        navigator.mediaSession.setActionHandler('pause', () => {domElSongs.audioControll.pause()});
         navigator.mediaSession.setActionHandler('nexttrack', async () => {await NextSong()});
         navigator.mediaSession.setActionHandler('previoustrack', async () => {FetchSong(oldSong[0]); oldSong.splice(1, 1)})
         navigator.mediaSession.setActionHandler("seekbackward", (details) => {Seek(false, details)});
@@ -237,7 +244,7 @@ async function PlaySong(url, name, artist, img, songId) {
         oldSong.splice(0, 1)
     }
     domElSongs.audioControll.src = url; 
-    await domElSongs.audioControll.play(); navigator.mediaSession.playbackState = "playing";
+    await domElSongs.audioControll.play();
     domElSgPy.playerStateImg.src = endpoints.stopIco; PreloadSong(songId); // Play and preload next song
 
     domElSongs.audioControll.currentTime = 0;
@@ -253,8 +260,8 @@ async function PlaySong(url, name, artist, img, songId) {
 }
 
 // Media Session
-domElSongs.audioControll.addEventListener("play", updatePositionState);
-domElSongs.audioControll.addEventListener("pause", updatePositionState);
+domElSongs.audioControll.addEventListener("play", () => {UpdateMSBtn(); updatePositionState()});
+domElSongs.audioControll.addEventListener("pause", () => {UpdateMSBtn(); updatePositionState()});
 domElSongs.audioControll.addEventListener("seeking", updatePositionState);
 
 domElSongs.audioControll.addEventListener("ratechange", updatePositionState);
