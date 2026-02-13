@@ -51,7 +51,6 @@ This is the third version of the [Homelab](https://github.com/minion6011/Home-La
   
 </details>
 
-<br>
 
 ## • Credits
 ### Images & Icons
