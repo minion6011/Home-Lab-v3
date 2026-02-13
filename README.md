@@ -21,6 +21,38 @@ This is the third version of the [Homelab](https://github.com/minion6011/Home-La
 - **Configs**
   It allows you to change the **colors of the two themes** (`themes.css`) of the site (*light and dark*), the configuration file (`config.json`) and to disconnect and/or see the **users connected to the site**.
 
+
+# 💻 How to install
+<details>
+<summary><b>Install the Homelab ⚙️</b></summary>
+
+  To install the **HomeLab** you need to follow these steps:
+
+  1. Clone the Repository
+  2. Install Python (Tested with `Python 3.11`)
+  3. Install all the requirements
+  4. Setup the `config.json`
+   
+  - Install [Node.js](https://nodejs.org/en/download) *(necessary for the Music section)*
+  - Install [ffmpeg.exe](https://www.gyan.dev/ffmpeg/builds/) *(necessary for the Compression section on Windows)*
+</details>
+
+<details>
+<summary><b>Use Discord RPC 🔊</b></summary>
+
+  To use **Discord RPC** for the **Homelab** *Music section* you need to follow these steps:
+
+  1. Install Python (Tested with `Python 3.11`)
+  2. Install all the requirements
+  3. Open [Discord Developer Portal](https://discord.com/developers/applications) and create an App for the Homelab
+  4. Add the App Id inside main.py
+
+  > The files needed to use **Discord RPC** are located in the `/RPC` folder.
+  
+</details>
+
+<br>
+
 ## • Credits
 ### Images & Icons
 - **Login background image**: Image by **[Freepik](https://microsoft.github.io/monaco-editor/)**
@@ -45,3 +77,4 @@ This is the third version of the [Homelab](https://github.com/minion6011/Home-La
 - **[flask](https://flask.palletsprojects.com/en/stable/)** – License: BSD-3-Clause
 - **[psutil](https://github.com/giampaolo/psutil)** - License: BSD-3-Clause
 - **[spotipy](https://spotipy.readthedocs.io/)** - License: MIT
+- **[ffmpeg](https://www.ffmpeg.org/)** - License: GNU
