@@ -113,10 +113,8 @@ async function DeleteSong(value) {
     let index = value.parentElement.parentElement.children[0].innerText;
     if (value.parentElement.parentElement.children[1].children[1].innerText.substring(0,30) == domElSgPy.playerSongTitle.innerText.substring(0,30)) {
         domElSongs.mainContainer.dataset.play = "0";
-        if (domElSongs.audioControll.playing) {
+        if (domElSongs.audioControll.playing)
             await domElSongs.audioControll.pause();
-            UpdateMSBtn();
-        }
         domElSongs.audioControll.src = "";
     }
     let req = await fetch(endpoints.songs, {
@@ -295,17 +293,15 @@ domElSongs.audioControll.addEventListener('ended', () => {
 async function PreloadSong(songId) { // id == idSong
     // Song Id -> Elements Index
     let id = domElSongs.songTableSongs.querySelector(`.songTcontainer[data-song-id="${songId}"]`).children[0].innerHTML - 1;
-
     // Next Song (Elements Index)
     let i = id+1;
     let length = currentPl[1];
     if (shuffleState && length >= 1) {i = Math.floor(Math.random() * length)}
     if (i == id) { if (i+1>length) {i--} else {i++};} // Evita che appaia lo stesso numero
-    if (i > length) {i = 0}; // Ricomincia
-
+    if (i+1 > length) {i = 0}; // Ricomincia
     // Elements Index -> Song Id
     let newSongId = domElSongs.songTableSongs.querySelectorAll(".songTcontainer")[i].dataset.songId
-    
+
     let req = await fetch(endpoints.songs, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -352,7 +348,7 @@ function CreateSongHTML(index, values) {
 async function AddSong() {
     nDownload += 1;
     let songName = domElSongs.addsongInput.value; domElSongs.addsongInput.value = ""; domElSongs.addsongInput.placeholder = `Downloading - ${nDownload}...`
-    let startPl = domElSongs.plDSId.value
+    let startPl = domElSongs.plDSId.value;
     // domElSongs.addsongInput.disabled = true;
     let req = await fetch(endpoints.songs, {
         method: "POST",
@@ -369,12 +365,12 @@ async function AddSong() {
         indexStart = domElSongs.songTableSongs.querySelectorAll(".songTcontainer").length
 
         if (domElSongs.plDSId.value == currentPl[0]) currentPl[1] += 1
-
         let json = JSON.parse(await req.text());
         if (startPl == domElSongs.plDSId.value) {
             json.nwSongs.forEach((song, index) => {
                 CreateSongHTML(indexStart+index, song)
             });
+            if (preloadData[4] == '1') PreloadSong(oldSong[oldSong.length-1]);
             domElSongs.plDsDesc.innerHTML = domElSongs.plDsDesc.innerHTML.replace(/( - )(.*?)(<\/i>)/, "$1" + (Number(indexStart)+Number(json.nwSongs.length)) + "$3");
         }
     }
@@ -422,6 +418,7 @@ async function deletePl() {
 // Shuffle Button
 function TurnShuffle() {
     shuffleState = !shuffleState;
+    PreloadSong(oldSong[1]); 
     domElSgPy.playerShuffleBtn.classList.toggle("on", shuffleState);
 }
 

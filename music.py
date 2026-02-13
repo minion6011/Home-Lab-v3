@@ -72,7 +72,7 @@ def downloadSong(name:str, plId):
 			except:
 				fileName = uuid.uuid4().hex
 				if name.startswith("https://youtu.be/"): name = name.replace("https://youtu.be/", "https://youtube.com/watch?v=")
-				video = YouTube(name, on_progress_callback = on_progress)
+				video = YouTube(name, client='WEB', on_progress_callback = on_progress)
 				min, sec = divmod(video.length, 60)
 				videos.append((
 					plId,
