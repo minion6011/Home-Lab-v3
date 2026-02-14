@@ -298,10 +298,9 @@ async function PreloadSong(songId) { // id == idSong
     let length = currentPl[1];
     if (shuffleState && length >= 1) {i = Math.floor(Math.random() * length)}
     if (i == id) { if (i+1>length) {i--} else {i++};} // Evita che appaia lo stesso numero
-    if (i+1 > length) {i = 0}; // Ricomincia
+    if (i > length) {i = 0}; // Ricomincia
     // Elements Index -> Song Id
     let newSongId = domElSongs.songTableSongs.querySelectorAll(".songTcontainer")[i].dataset.songId
-
     let req = await fetch(endpoints.songs, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
