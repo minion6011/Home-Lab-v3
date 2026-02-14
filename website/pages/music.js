@@ -327,9 +327,11 @@ function CreateSongHTML(index, values) {
 
     trElement.innerHTML = `
     <td data-visible="0">${index + 1}</td>
-    <td class="titleSong-column">
-        <img loading="lazy" src="${values[3]}">
-        <p>${songName}</p>
+    <td>
+        <div class="titleSong-column">
+            <img loading="lazy" src="${values[3]}">
+            <p>${songName}</p>
+        </div>
     </td>
     <td data-visible="0">${values[2]}</td>
     <td data-visible="0">${values[4]}</td>
