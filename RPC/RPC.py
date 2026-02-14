@@ -12,7 +12,7 @@ taskReset = None
 
 def cancelRPC():
     try: rpc.clear()
-    except: pass
+    except: rpc.close()
 
 def setRPC(title: str, artist: str, img: str, duration: float):
     try:
@@ -28,7 +28,7 @@ def setRPC(title: str, artist: str, img: str, duration: float):
         if taskReset:
             taskReset.cancel()
 
-        taskReset = threading.Timer(duration-2.5, cancelRPC)
+        taskReset = threading.Timer(duration-1, cancelRPC)
         taskReset.start()
         return True
     except Exception as e:
