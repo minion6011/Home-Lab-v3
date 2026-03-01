@@ -419,7 +419,7 @@ async function deletePl() {
 // Shuffle Button
 function TurnShuffle() {
     shuffleState = !shuffleState;
-    PreloadSong(oldSong[1]); 
+    PreloadSong(oldSong[oldSong.length - 1]); 
     domElSgPy.playerShuffleBtn.classList.toggle("on", shuffleState);
 }
 
@@ -484,18 +484,15 @@ function PlaylistModal(arg) {
         domElPlaylist.fileInput.files[0] = null;
         domElPlaylist.imgView.src = domElSongs.plDsImg.src; domElPlaylist.plNameIn.value = domElSongs.plDsTitle.innerText; domElPlaylist.plDescIn.value = domElSongs.plDsDesc.innerText.substring(0, domElSongs.plDsDesc.innerText.lastIndexOf("\n\n"));
         domElPlaylist.buttonModal.setAttribute("onClick", `CreateEditPlaylist('edit', ${domElSongs.plDSId.value})`); domElPlaylist.playlistModalTitle.innerText = "Edit Playlist";
-        domElPlaylist.playlistModal.style.display = "block";
     }
     else if (arg === "new") {
         domElPlaylist.fileInput.value = null; // Reset
         modalState = [false,false];
         domElPlaylist.plNameIn.value = ""; domElPlaylist.plDescIn.value = ""; domElPlaylist.buttonModal.disabled = true;
         domElPlaylist.buttonModal.setAttribute("onClick", "CreateEditPlaylist()"); domElPlaylist.playlistModalTitle.innerText = "Create Playlist";
-        domElPlaylist.playlistModal.style.display = "block";
     }
-    else if (arg === "close") {
-        domElPlaylist.playlistModal.style.display = "none";
-    }
+    // condition ? true : false
+    domElPlaylist.playlistModal.style.display = arg === "close" ? "none" : "flex";
 }
 
 domElPlaylist.fileInput.addEventListener('change', () => {

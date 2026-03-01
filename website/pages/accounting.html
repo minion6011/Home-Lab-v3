@@ -31,30 +31,32 @@
 
                 <div class="add-payment">
                     <p class="title">&#8227; Add Payment</p>
-
-                    <div class="status-container">
-                        <p class="ico">€</p>
-                        <input id="selected-number" class="value-input" type="number" min="0" placeholder="....." oninput="optionsSelect[0]=this.value != ''; CheckAddPayment()" onkeydown="if (event.key === 'Enter' && this.value != '') domEl.selectedDesc.focus()">
-                    </div>
-
-                    <div style="margin-top: 10px;" class="status-container">
-                        <p class="ico">%</p>
-
-                        <div class="custom-select">
-                            <button onclick="event.stopPropagation(); OpenCloseCsSelect()" class="select-button">
-                                <p id="selected-value" class="selected-value">Select Operation Type</p>
-                                <p class="arrow">▼</p>
-                            </button>
-                            <ul onclick="SelectOption(event)" id="select-options" class="select-options hidden">
-                                <li class="profit">+ Profit</li>
-                                <li class="loss">- Loss</li>
-                            </ul>
+                    
+                    <div>
+                        <div class="status-container">
+                            <p class="ico">€</p>
+                            <input id="selected-number" class="value-input" type="number" min="0" placeholder="....." oninput="optionsSelect[0]=this.value != ''; CheckAddPayment()" onkeydown="if (event.key === 'Enter' && this.value != '') domEl.selectedDesc.focus()">
                         </div>
-                    </div>
 
-                    <div style="margin-top: 10px;" class="status-container">
-                        <p class="ico">~</p>
-                        <input id="selected-description" class="value-input" type="text" placeholder="Description..." onkeydown="if (event.key === 'Enter' && this.value != '' && optionsSelect[0] + optionsSelect[1] == 2) AddPayment()">
+                        <div style="margin-top: 10px;" class="status-container">
+                            <p class="ico">%</p>
+
+                            <div class="custom-select">
+                                <button onclick="event.stopPropagation(); OpenCloseCsSelect()" class="select-button">
+                                    <p id="selected-value" class="selected-value">Select Operation Type</p>
+                                    <p class="arrow">▼</p>
+                                </button>
+                                <ul onclick="SelectOption(event)" id="select-options" class="select-options hidden">
+                                    <li class="profit">+ Profit</li>
+                                    <li class="loss">- Loss</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 10px;" class="status-container">
+                            <p class="ico">~</p>
+                            <input id="selected-description" class="value-input" type="text" placeholder="Description..." onkeydown="if (event.key === 'Enter' && this.value != '' && optionsSelect[0] + optionsSelect[1] == 2) AddPayment()">
+                        </div>
                     </div>
 
                     <button onclick="AddPayment()" class="main-button" id="payment-button" disabled>+ Add Payment</button>

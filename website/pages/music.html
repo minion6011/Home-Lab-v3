@@ -95,7 +95,7 @@
                     </div>
 
                     <div class="music-buttons">
-                        <button id="shuffle-btn" onclick="TurnShuffle()">
+                        <button id="shuffle-btn" onclick="TurnShuffle()" switch>
                             <img src="{{ url_for('static',filename='img/shuffle-ico.webp') }}">
                         </button>
                         <button onclick="FetchSong(oldSong[0]); oldSong.splice(1, 1)">
@@ -107,7 +107,7 @@
                         <button onclick="NextSong()">
                             <img src="{{ url_for('static',filename='img/next-ico.webp') }}">
                         </button>
-                        <button id="loop-btn" onclick="LoopToogle()">
+                        <button id="loop-btn" onclick="LoopToogle()" switch>
                             <img src="{{ url_for('static',filename='img/loop-ico.webp') }}">
                         </button>
                     </div>
@@ -138,8 +138,8 @@
                             <img id="modal-pl-img" onclick="document.getElementById('img-file').click()" src="{{ url_for('static',filename='img/plDefault-ico.webp') }}" class="img-insert">
                         </div>
                         <div class="inputs">
-                            <input id="pl-name" type="text" placeholder="Playlist Name" maxlength="25" class="input-field">
-                            <textarea id="pl-desc" placeholder="Playlist Description" class="textarea-field" maxlength="100"></textarea>
+                            <input id="pl-name" type="text" placeholder="Playlist Name" maxlength="25">
+                            <textarea id="pl-desc" placeholder="Playlist Description" maxlength="100"></textarea>
                         </div>
                     </div>
                     <button class="button" disabled onclick="CreateEditPlaylist()" id="pl-btn">Save</button>

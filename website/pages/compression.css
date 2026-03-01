@@ -1,18 +1,23 @@
-@media (max-width: 1003px) { /* Schermo Telefono */
-    .main-container {
-        grid-template-columns: 1fr; 
-        grid-template-rows: max-content max-content max-content max-content;
-        grid-template-areas: "a" "b" "c" "d";}
+@media (hover: none) and (pointer: coarse) { /* Schermo Telefono */
     .video-insert {width: 300px; height: 300px; margin-left: 15px;}
     .text {margin-top: 10px;}
 }
-@media (min-width: 1003px) { /* Schermo PC */
+@media (max-width: 1003px) { /* Telefono - Screen Adaptation */
+    .main-container {
+        grid-template-columns: 1fr; 
+        grid-template-rows: max-content max-content max-content max-content;
+        grid-template-areas: "a" "b" "c" "d";
+    }
+}
+@media (hover: hover) and (pointer: fine) { /* Schermo PC */
+    .video-insert {width: 175px; height: 175px; margin-left: 5px;}
+}
+@media (min-width: 1003px) { /* PC - Screen Adaptation */
     .main-container {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr;
         grid-template-areas: "a c" "b d";
     }
-    .video-insert {width: 175px; height: 175px; margin-left: 5px;}
 }
 
 body {

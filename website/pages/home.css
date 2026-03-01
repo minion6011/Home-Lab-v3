@@ -1,12 +1,8 @@
-@media (max-width: 1003px) { /* Schermo Telefono */
-    .info-container .ico {width: 37px; height: 37px;}
-    .logout-btn-ico {width: 56px; height: 58px; margin: 45px 25px 0 0;}
+@media ((hover: hover) and (pointer: fine) and (max-width: 1010px)) {
     .main-container {grid-template-columns: 1fr; grid-template-rows: 1fr 1fr 1fr;}
     .custom-br {margin-top: 7.5%;}
 }
-@media (min-width: 1003px) { /* Schermo PC */
-    .info-container .ico {width: 18.5px; height: 18.5px;}
-    .logout-btn-ico {width: 24px; height: 26px; margin: 17.5px 17.5px 0 0;}
+@media ((hover: hover) and (pointer: fine) and (min-width: 1010px)) { /* Schermo PC piccolo */
     .main-container {grid-template-columns: 1fr 1fr; grid-template-rows: 40% 40%;}
 }
 
@@ -46,6 +42,7 @@ html:not(.not-iframe) .main-container {
     border-radius: 15px;
     height: 100%;
     margin: 7.5%;
+    min-width: 405px;
 }
 .info-container .title {
     font-size: var(--medium-font-size);
@@ -78,10 +75,15 @@ html:not(.not-iframe) .main-container {
     font-size: var(--small-font-size);
 }
 .info-container .ico {
+    width: calc(18.5px * var(--multiple-factor));
+    aspect-ratio: 1 / 1;
     filter: invert(var(--img-invert-value));
 }
 
 .logout-btn-ico {
+    width: calc(24px + 32px * (var(--multiple-factor) - 1)); height: calc(26px + 32px * (var(--multiple-factor) - 1));
+    margin-top: calc(17.5px + 27.5px * (var(--multiple-factor) - 1)); margin-right: calc(17.5px + 7.5px * (var(--multiple-factor) - 1));
+
     position: absolute;
     right: 0;
     cursor: pointer;
