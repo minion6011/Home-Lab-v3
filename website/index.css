@@ -1,4 +1,4 @@
-@media (max-width: 1003px) { /* Schermo Telefono */
+@media (hover: none) and (pointer: coarse) { /* Schermo Telefono */
     .main-container {
         will-change: grid-template-rows;
         transition: grid-template-rows 0.4s ease-in-out;
@@ -12,7 +12,7 @@
     .iframe-container iframe {height: 97.5%;}
     .button .ico {width: 37px; height: 37px;}
 }
-@media (min-width: 1003px) { /* Schermo PC */
+@media (hover: hover) and (pointer: fine) { /* Schermo PC */
     .main-container {
         grid-template-areas: "switcher switcher header" "sidebar main main";
         grid-template-columns: minmax(min-content,var(--nav-width)) auto 1fr;

@@ -1,4 +1,4 @@
-@media (max-width: 1003px) { /* Schermo Telefono */
+@media (hover: none) and (pointer: coarse) { /* Schermo Telefono */
     .main-container[data-status="1"] .library-container {display: none;}
     .main-container[data-play="1"] {grid-template-rows: 1fr 0.125fr;} /* Row1 + Row2 (player) */
     html:not(.not-iframe) .main-container {row-gap: 1.5%;}
@@ -35,7 +35,7 @@
         background-color: var(--font-color);
     }
 }
-@media (min-width: 1003px) { /* Schermo PC */
+@media (hover: hover) and (pointer: fine) { /* Schermo PC */
     .main-container[data-status="1"] {grid-template-columns: 35% 65%} /* Library + Player */
     .main-container[data-status="0"] {grid-template-columns: 100% 0%} /* Library */
     .main-container[data-play="1"] {grid-template-rows: 1fr 0.2fr;} /* Row1 + Row2 (player) */
@@ -404,13 +404,16 @@ html.not-iframe .song-container {margin: 20px}
     opacity: 0;
     margin-left: 2%;
     background-color: var(--ver-hover-bg-color);
-    border-radius: 5px;
-    border: none;
-    padding: 1%;
-    height: 70%;
+    border: none; border-radius: calc(6.5px * var(--device-multiplier));
+    padding: 6.25px;
+    height: calc(25px * var(--device-multiplier));
     color: var(--font-color);
     font-size: var(--small-font-size);
     min-width: 0;
+}
+.songs-input:focus {
+    outline: none;
+    box-shadow: none;
 }
 .songs-input:disabled {
     cursor: not-allowed;
@@ -445,59 +448,56 @@ html:not(.not-iframe) .modal-playlist {
     transform: translate(-50%, -50%);
     height: 100%;
     background-color: var(--translucent-bg-color);
+    
+    align-items: center; justify-content: center;
 }
 .modal-playlist .card {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     background-color: var(--secondary-bg-color);
-    padding: 15px;
+    padding: calc(20px * var(--device-multiplier));
     border-radius: 15px;
     display: flex;
     flex-direction: column;
+    row-gap: calc(12.5px * var(--device-multiplier));
 }
 .card .title {
     display: flex;
     align-items: center;
     justify-content: space-between;
     font-size: var(--medium-font-size);
-    margin-bottom: 15px;
 } .card .title p {margin: 0; font-weight: bold;}
+
 .card .items {
-    display: grid;
-    grid-template-columns: 0.7fr 1fr;
-    gap: 10px;
+    display: flex;
+    justify-content: center;
+    column-gap: 20px;
 }
 .items .img-insert {
     border-radius: 15px;
     cursor: pointer;
-    filter: invert(var(--img-invert-value));
-}
+    
+} .img-insert[data-state="0"] {filter: invert(var(--img-invert-value));}
 .inputs {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    row-gap: 15px;
+    width: 100%;
+    overflow: auto;
 }
-.inputs .input-field {
+.inputs input, .inputs textarea {
     background-color: var(--ver-hover-bg-color);
     border: none;
     color: var(--font-color);
     font-size: calc(var(--small-font-size) - 3.5px);
     border-radius: 5px;
-    width: 87.5%;
     padding: 10px;
 }
-.inputs .textarea-field {
-    background-color: var(--ver-hover-bg-color);
-    border: none;
-    color: var(--font-color);
-    font-size: calc(var(--small-font-size) - 3.5px);
-    border-radius: 5px;
-    width: 87.5%;
-    padding: 10px;
+.inputs textarea {
     resize: none;
-    height: 57.5%;
+    height: 100%;
+}
+.inputs input:focus, .inputs textarea:focus {
+    outline: none;
+    box-shadow: none;
 }
 .containerDs-butttons {
     display: flex;
@@ -514,7 +514,6 @@ html:not(.not-iframe) .modal-playlist {
     border-radius: 50px;
     cursor: pointer;
     font-weight: bold;
-    margin-right: 15px;
 }
 .card .button:disabled {
     background-color: var(--elm-font-color);
