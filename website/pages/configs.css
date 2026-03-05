@@ -1,11 +1,11 @@
-@media (max-width: 1003px) { /* Schermo Telefono */
+@media (hover: none) and (pointer: coarse) { /* Schermo Telefono */
     .editor {min-height: 400px;}
     input[type="checkbox"] {
         scale: 2;
         margin-right: 10px;
     }
 }
-@media (min-width: 1003px) { /* Schermo PC */
+@media (hover: hover) and (pointer: fine) { /* Schermo PC */
     .editor {min-height: 200px;}
     input[type="checkbox"] {margin-left: 0;}
 }

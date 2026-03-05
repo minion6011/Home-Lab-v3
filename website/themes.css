@@ -1,10 +1,5 @@
 :root {
-<<<<<<< HEAD
     --device-multiplier: 1;
-=======
-    --multiple-factor: 1; /* To adapt the size to the phones */
->>>>>>> 33b92bbcd7dfeb06b3854b1abddd9da523175862
-
     --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     --mini-font-size: 15px;
     --small-font-size: 16px;
@@ -87,15 +82,9 @@
     --check-button-hover-color: #bcbcbc7a;
 }
 
-<<<<<<< HEAD
-@media (hover: none) and (pointer: coarse) { /* Mobile */
-    :root {
-        --device-multiplier: 2;
-=======
 @media (hover: none) and (pointer: coarse) {
     :root {
         --multiple-factor: 2; /* To adapt the size to the phones */
->>>>>>> 33b92bbcd7dfeb06b3854b1abddd9da523175862
 
         --mini-font-size: 30px;
         --small-font-size: 40px;
