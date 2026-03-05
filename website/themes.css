@@ -84,7 +84,7 @@
 
 @media (hover: none) and (pointer: coarse) {
     :root {
-        --multiple-factor: 2; /* To adapt the size to the phones */
+        --device-multiplier: 2; /* To adapt the size to the phones */
 
         --mini-font-size: 30px;
         --small-font-size: 40px;
