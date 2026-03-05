@@ -1,12 +1,8 @@
-@media (max-width: 1003px) { /* Schermo Telefono */
-    .info-container .ico {width: 37px; height: 37px;}
-    .logout-btn-ico {width: 56px; height: 58px; margin: 45px 25px 0 0;}
+@media ((hover: none) and (pointer: coarse)) or (max-width: 980px) { /* Schermo Telefono */
     .main-container {grid-template-columns: 1fr; grid-template-rows: 1fr 1fr 1fr;}
     .custom-br {margin-top: 7.5%;}
 }
-@media (min-width: 1003px) { /* Schermo PC */
-    .info-container .ico {width: 18.5px; height: 18.5px;}
-    .logout-btn-ico {width: 24px; height: 26px; margin: 17.5px 17.5px 0 0;}
+@media ((hover: hover) and (pointer: fine)) and (min-width: 980px) { /* Schermo PC */
     .main-container {grid-template-columns: 1fr 1fr; grid-template-rows: 40% 40%;}
 }
 
@@ -78,10 +74,21 @@ html:not(.not-iframe) .main-container {
     font-size: var(--small-font-size);
 }
 .info-container .ico {
+    width: calc(18.5px * var(--device-multiplier));
+    aspect-ratio: 1/1;
     filter: invert(var(--img-invert-value));
 }
 
+.logout-container {
+    display: flex;
+    align-items: flex-end;
+}
 .logout-btn-ico {
+    width: calc(24px * var(--device-multiplier));
+    height: calc(26px * var(--device-multiplier));
+
+    padding-right: 1rem;
+
     position: absolute;
     right: 0;
     cursor: pointer;

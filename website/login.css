@@ -9,7 +9,7 @@
 }
 
 
-@media (max-width: 1003px) { /* Schermo Telefono */
+@media (hover: none) and (pointer: coarse) { /* Schermo Telefono */
     :root {
         --title_font-size: 42px;
         --elemets_font-size: 28px;
@@ -28,7 +28,7 @@
         background-color: #29282859
     }
 }
-@media (min-width: 1003px) { /* Schermo PC */
+@media (hover: hover) and (pointer: fine) { /* Schermo PC */
     .login-card {
         min-width: 460px;
         box-shadow: 0 0 9px 2px var(--box-shadow-color);

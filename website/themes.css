@@ -1,4 +1,6 @@
 :root {
+    --device-multiplier: 1;
+
     --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     --mini-font-size: 15px;
     --small-font-size: 16px;
@@ -81,8 +83,10 @@
     --check-button-hover-color: #bcbcbc7a;
 }
 
-@media (max-width: 1003px) {
+@media (hover: none) and (pointer: coarse) { /* Mobile */
     :root {
+        --device-multiplier: 2;
+
         --mini-font-size: 30px;
         --small-font-size: 40px;
         --smedium-font-size: 35px;
