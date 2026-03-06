@@ -14,7 +14,7 @@
 /* Schermo PC */
 @media ((hover: hover) and (pointer: fine)) and (max-width: 890px) {
     html.not-iframe .main-container .summary-container {margin: 20px;}
-    .table-container  {max-height: 600px;}
+    .table-container  {max-height: 600px;} .table-container {margin-top: 25px;}
 }
 @media ((hover: hover) and (pointer: fine)) and (min-width: 890px) {
     html.not-iframe .main-container .summary-container {margin: 20px 0 20px 20px;}
@@ -22,10 +22,10 @@
         grid-template-columns: 45% 55%;
         height: 100%;
     }
+    html:not(.not-iframe) .main-container .table-container {margin-left: 20px;}
 }
 @media ((hover: hover) and (pointer: fine)) {
     .summary-container {grid-template-rows: 1fr 1.2fr 0.8fr; row-gap: 20px;}
-    html:not(.not-iframe) .main-container .table-container {margin-left: 20px;}
     .select-options {border-radius: 5px;}
     .main-button {padding: 7.5px;}
 }
