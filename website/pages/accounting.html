@@ -18,7 +18,7 @@
                 <div class="balance-container">
                     <p class="title">&#8227; Financial Report</p>
 
-                    <p class="balance-p"><b>&bull; Balance: <code id="balance">{{ sums[1] - sums[0] | round(2)}}</code> €</b></p>
+                    <p class="balance-p"><b>&bull; Balance: <code id="balance">{{ (sums[1] - sums[0]) | round(2)}}</code> €</b></p>
                     <div class="status-container">
                         <p class="ico">-</p>
                         <p class="value">Loss <code id="loss">-{{ sums[0] | round(2)}}</code> €</p>
