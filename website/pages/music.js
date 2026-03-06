@@ -243,11 +243,12 @@ async function PlaySong(url, name, artist, img, songId) {
     }
     domElSongs.audioControll.src = url; 
     await domElSongs.audioControll.play();
+    setPWA(name, artist, img);
+    
     domElSgPy.playerStateImg.src = endpoints.stopIco; PreloadSong(songId); // Play and preload next song
 
     domElSongs.audioControll.currentTime = 0;
     domElSgPy.playerRange.value = 0; domElSgPy.playerRange.max = domElSongs.audioControll.duration; domElSgPy.maxDuration.innerHTML = formatTime(domElSongs.audioControll.duration);
-    setPWA(name, artist, img);
     if (domElSgPy.playerRange.disabled) domElSgPy.playerRange.disabled = false;
     // Player Setup
     let SongReduc = name.substring(0,40); if (name.length>40) {SongReduc+="..."}
