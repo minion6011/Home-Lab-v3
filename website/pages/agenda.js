@@ -88,15 +88,18 @@ async function addTodo() {
     if (req.status == 200) {
         let json = JSON.parse(await req.text());
         let mainDiv = document.createElement("div"); mainDiv.className = "to_do-elements";
+        // New To-Do Element
         mainDiv.innerHTML = `
         <label onclick="switchTodo(this)" class="to_do-container">
             <input id="todoIndex" type="hidden" value="${json.id}">
             <input id="todoState" type="checkbox">
-            <p id="todoText" class="text">${domEl.TodoAddInput.value}</p>
+            <p id="todoText" class="text"></p>
             <span class="checkmark"></span>
         </label>
         <span onclick="deleteTodo(this)" class="close">&#x2715;</span>
         `;
+        mainDiv.children[0].children[2].innerText = domEl.TodoAddInput.value;
+
         domEl.checkListTodo.insertBefore(mainDiv, domEl.checkListTodo.firstChild);
         domEl.TodoAddInput.value = "";
         domEl.TodoAddButton.disabled = true;
@@ -114,11 +117,13 @@ async function addNote() {
     if (req.status == 200) {
         let json = JSON.parse(await req.text());
         let mainDiv = document.createElement("div"); mainDiv.className = "note";
+        // New Note Element
         mainDiv.innerHTML = `
         <input type="hidden" value="${json.id}">
-        <span>${domEl.NotesAddInput.value}</span>
+        <span></span>
         <span onclick="removeNote(this)" class="close">&#x2715;</span>
         `;
+        mainDiv.children[1].innerText = domEl.NotesAddInput.value
         for (let i = 0; i < domEl.checkListNotes.children.length; i++) {
             domEl.checkListNotes.children[i].children[0].value = Number(domEl.checkListNotes.children[i].children[0].value) + 1;
         };
