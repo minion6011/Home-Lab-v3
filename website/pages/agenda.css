@@ -1,18 +1,13 @@
-@media (max-width: 1003px) { /* Schermo Telefono */
+@media ((hover: none) and (pointer: coarse)) or (max-width: 950px) { /* Schermo Telefono */
 	.main-container {grid-template-rows: 50% 50%;} /* Options + Table */
 	html.not-iframe .main-container .to_do_list-container {margin: 20px;}
 	.notes-container {margin-top: 25px;} th[mobile="0"] {display: none;}
-	.to_do-container .checkmark {scale: 2;}
-	.to_do-container .text {margin: 0 0 0 15px;}
-	.to_do-input-container.notes-input-ct {margin-bottom: 20px;}
-	.notes-elements {margin-top: 15px;} .notes-elements:has(.note) {padding: 20px; gap: 17.5px;}
+	.notes-elements {margin-top: 15px;} 
 }
-@media (min-width: 1003px) { /* Schermo PC */
+@media ((hover: hover) and (pointer: fine)) and (min-width: 950px) { /* Schermo PC */
 	.main-container {grid-template-columns: 45% 55%} /* Options + Table */
 	html.not-iframe .main-container .to_do_list-container {margin: 20px 0 20px 20px;}
 	html:not(.not-iframe) .main-container .notes-container {margin-left: 20px;}
-	.to_do-container .text {margin: 0;}
-	.notes-elements:has(.note) {padding: 10px; gap: 7.5px;}
 }
 *::-webkit-scrollbar {
 	display: none;
@@ -106,12 +101,19 @@ html.not-iframe .main-container .notes-container {margin: 20px}
 	width: 0;
 }
 .to_do-container .checkmark {
+	scale: var(--device-multiplier);
 	position: absolute;
 	left: 0;
-	height: 25px; width: 25px;
+	width: 25px; aspect-ratio: 1 / 1;
 	border-radius: 6.5px;
+	margin-left: calc(15px * (var(--device-multiplier)  - 1));
 	background-color: var(--check-button-color);
 }
+.to_do-container .text {
+	margin-top: 0; margin-bottom: 0; margin-right: 0;
+	margin-left: calc(30px * (var(--device-multiplier) - 1)); /* 30px Mobile, 0px PC */
+}
+
 .to_do-container:hover input[type="checkbox"] ~ .checkmark {background-color: var(--check-button-hover-color);}
 
 .to_do-container input[type="checkbox"]:checked ~ .checkmark {background-color: var(--selected-theme-bg-color);}
@@ -154,6 +156,10 @@ html.not-iframe .main-container .notes-container {margin: 20px}
 	display: flex;
 	flex: 1 1 max-content;
 	justify-content: space-between;
+}
+.notes-elements:has(.note) {
+	padding: calc(10px * var(--device-multiplier)); 
+	gap: calc(7.5px + 10px * (var(--device-multiplier) - 1));
 }
 
 /* --- */
