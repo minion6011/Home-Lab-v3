@@ -138,6 +138,7 @@ html.not-iframe .main-container[data-play="1"] .player-container {margin: 0px 20
     border: 0;
     background-color: #ffffff00;
     transition: none;
+    margin-top: calc(30px * (var(--device-multiplier) - 1)); /* 30px Mobile, 0px PC */
 }
 .up .music-buttons button.on {
     border-radius: 5px;
