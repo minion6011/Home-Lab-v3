@@ -556,7 +556,7 @@ html:not(.not-iframe) .modal-playlist {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    width: max-content;
+    width: min-content;
     cursor: pointer;
 }
 .pl-item {
