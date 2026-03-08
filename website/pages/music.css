@@ -141,10 +141,16 @@ html.not-iframe .main-container[data-play="1"] .player-container {margin: 0px 20
     background-color: #ffffff00;
     transition: none;
 }
-.up .music-buttons button.on {
-    border-radius: 5px;
-    border: 1.75px solid var(--font-color);
+.up .music-buttons button:focus {outline: none; box-shadow: none;}
+
+#loop-btn.on, #shuffle-btn.on {border-radius: 5px;}
+#loop-btn:not(.on), #shuffle-btn:not(.on) {
+    border: 1.75px solid #ffffff00;
 }
+.up .music-buttons button.on {
+    border: 1.75px solid var(--font-color);
+}a
+
 .up .music-buttons button img, .player-container .volume-slider img {
     width: calc(32px + 36px * (var(--device-multiplier) - 1)); /* 32px PC, 68px Mobile */
     aspect-ratio: 1/1;
