@@ -121,33 +121,27 @@ function openSettings() {
     }
 }
 
-document.addEventListener('click', (event) => {
-    if (!window.matchMedia("(max-width: 1003px)").matches) {
-        if (domEl.settingMenu.style.display == "block" && !domEl.settingMenu.contains(event.target)) {
+document.addEventListener('click', (event) => closeThemeMenu(event.target));
+window.addEventListener('blur', () => closeThemeMenu(null));
 
-            domEl.settingMenu.classList.add("hide");
-            domEl.settingMenu.classList.remove("show");
+function closeThemeMenu(target) {
+    if (window.matchMedia("(hover: hover) and (pointer: fine)").matches)
+        closeTarget = domEl.settingMenu
+    else
+        closeTarget = domEl.settingMenuSidebar
 
-            domEl.settingMenu.addEventListener('animationend', function handler() {
-                domEl.settingMenu.style.display = "none";
-                domEl.settingMenu.classList.remove("hide");
-                domEl.settingMenu.removeEventListener('animationend', handler);
-            });
-        }
+    if (closeTarget.style.display == "block" && !closeTarget.contains(target)) {
+        closeTarget.classList.add("hide");
+        closeTarget.classList.remove("show");
+
+        closeTarget.addEventListener('animationend', function handler() {
+            closeTarget.style.display = "none";
+            closeTarget.classList.remove("hide");
+            closeTarget.removeEventListener('animationend', handler);
+        });
     }
-    else {
-        if (domEl.settingMenuSidebar.style.display == "block" && !domEl.settingMenuSidebar.contains(event.target)) {
-            domEl.settingMenuSidebar.classList.add("hide");
-            domEl.settingMenuSidebar.classList.remove("show");
-
-            domEl.settingMenuSidebar.addEventListener('animationend', function handler() {
-                domEl.settingMenuSidebar.style.display = "none";
-                domEl.settingMenuSidebar.classList.remove("hide");
-                domEl.settingMenuSidebar.removeEventListener('animationend', handler);
-            });
-        }
-    }
-});
+    
+}
 
 /* --- */
 
