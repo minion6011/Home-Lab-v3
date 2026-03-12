@@ -117,6 +117,7 @@ video {
     border: solid 2px var(--translucent-bg-color); border-radius: 5px;
     padding: 5px;
 }
+.input-data #bitrate {margin-right: 10px;}
 .input-data:disabled {
     color: var(--check-button-hover-color);
 }
