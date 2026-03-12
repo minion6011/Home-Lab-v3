@@ -29,13 +29,10 @@ body, html {
     background-color: var(--secondary-bg-color);
     margin: auto;
 }
-html.not-iframe .main-container {
+html .main-container {
     height: 100%;
 }
-html:not(.not-iframe) .main-container {
-    border-radius: 25px;
-    width: 95%;
-}
+
 
 .info-container {
     background-color: var(--menu-bg-color);

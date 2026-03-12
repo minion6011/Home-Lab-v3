@@ -41,15 +41,13 @@ body, html {
     margin: 0;
 }
 
-html.not-iframe .main-container {width: 100%; row-gap: 0;}
-html:not(.not-iframe) .main-container {width: 95%; border-radius: 25px;}
-
 html.not-iframe .main-container .table-container {margin: 20px}
 
 .main-container {
     display: grid;
     background-color: var(--containers-bg-color);
     margin: auto;
+    width: 100%;
 }
 
 .summary-container {

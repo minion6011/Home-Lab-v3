@@ -28,20 +28,12 @@ body, html {
     row-gap: 7.5%;
     overflow: auto;
 
-    height: 100%;
+    width: 100%; height: 100%;
     background-color: var(--secondary-bg-color);
     margin: auto;
 }
-html.not-iframe .main-container {
-    height: 100%;
-}
-html:not(.not-iframe) .main-container {
-    border-radius: 25px;
-    width: 95%;
-}
 .main-container .setting-container {
     margin: 2%;
-    
 }
 *:not(.editor):not(.editor *) {
     transition: all 0.25s ease;

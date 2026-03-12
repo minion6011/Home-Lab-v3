@@ -86,7 +86,7 @@ body, html {
     overflow: auto;
 
     display: grid;
-    height: 100%;
+    height: 100%; width: 100%;
     background-color: var(--containers-bg-color);
     margin: auto;
 }
@@ -94,14 +94,6 @@ body, html {
     grid-template-rows: 1fr 0fr;
 }
 
-html.not-iframe .main-container {
-    width: 100%;
-    row-gap: 0;
-}
-html:not(.not-iframe) .main-container {
-    width: 95%;
-    border-radius: 25px;
-}
 /* Grid 1 */
 html.not-iframe .main-container[data-status="0"] .library-container {margin: 20px;}
 html.not-iframe .main-container[data-status="1"] .library-container {margin: 20px 0 20px 20px;}
@@ -149,7 +141,7 @@ html.not-iframe .main-container[data-play="1"] .player-container {margin: 0px 20
 }
 .up .music-buttons button.on {
     border: 1.75px solid var(--font-color);
-}a
+}
 
 .up .music-buttons button img, .player-container .volume-slider img {
     width: calc(32px + 36px * (var(--device-multiplier) - 1)); /* 32px PC, 68px Mobile */
@@ -446,7 +438,7 @@ html.not-iframe .modal-playlist {
     width: 100%;
 }
 html:not(.not-iframe) .modal-playlist {
-    width: 95%; border-radius: 25px;
+    width: 100%; border-radius: 25px;
 }
 .modal-playlist {
     display: none;

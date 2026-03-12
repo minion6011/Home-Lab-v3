@@ -21,9 +21,6 @@ body, html {
 	margin: 0;
 }
 
-html.not-iframe .main-container {width: 100%; row-gap: 0;}
-html:not(.not-iframe) .main-container {width: 95%; border-radius: 25px;}
-
 html.not-iframe .main-container .notes-container {margin: 20px}
 
 .main-container {
