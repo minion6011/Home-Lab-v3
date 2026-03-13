@@ -3,10 +3,12 @@
     <head>
         <title>Home</title>
         <meta charset="UTF-8">
+        <link rel="icon" type="image/ico" href="{{ url_for('static',filename='img/favicon.ico') }}"/>
         <link rel="stylesheet" href="{{ url_for('static',filename='themes.css') }}">
+        <script src="{{ url_for('static',filename='pages/default.js') }}" type="text/javascript" defer></script>
+
         <link rel="stylesheet" href="{{ url_for('static',filename='pages/home.css') }}">
         <script src="{{ url_for('static',filename='pages/home.js') }}" type="text/javascript" defer></script>
-        <link rel="icon" type="image/ico" href="{{ url_for('static',filename='img/favicon.ico') }}"/>
     </head>
 
     <body>
