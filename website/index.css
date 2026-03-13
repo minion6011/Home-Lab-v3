@@ -7,7 +7,7 @@
         /* grid-template-rows: 1fr max-content; */
     }
     .title-container, .navbar-container, .header-container {display: none;}
-    .iframe-container {text-align: center; margin-top: 40px}
+    .iframe-container {text-align: center; margin: 40px auto 0 auto; width: 93%;}
     .sidebar-container {display: flex;}
     .iframe-container iframe {height: 97.5%;}
 }
@@ -20,6 +20,7 @@
     .header-container {display: flex;} .iframe-container {grid-area: main;} .navbar-container {grid-area: sidebar;}
     .navbar-container .sidebar-header, .sidebar-container {display: none;}
     .iframe-container iframe {height: 93.25%;}
+    .iframe-container {padding: 0 4.5rem 0 3.25rem;}
 }
 
 
@@ -48,6 +49,7 @@ a {
     background-color: var(--containers-bg-color);
     font-size: var(--small-font-size);
     padding:  0 1.5rem 0 1.5rem;
+    overflow: auto;
 }
 .navbar-container .version {
     transition: all 0.25s ease;
@@ -197,7 +199,6 @@ a {
 .iframe-container {
     transition: all 0.25s ease;
     background-color: var(--containers-bg-color);
-    padding: 0 4.5rem 0 3.25rem;
 }
 .iframe-container iframe {
     width: 100%; /* Must be the same of the header-container */
