@@ -21,11 +21,11 @@
     }
 }
 /* PC */
-@media ((hover: hover) and (pointer: fine)) and (max-width: 890px) {
+@media ((hover: hover) and (pointer: fine)) and (max-width: 1000px) {
     .main-container[data-status="1"] {grid-template-columns: 100% 0%}
     .main-container[data-status="1"] .library-container, .up .song-details, .up .volume-slider, *[data-visible="0"] {display: none;}
 }
-@media ((hover: hover) and (pointer: fine)) and (min-width: 890px) {
+@media ((hover: hover) and (pointer: fine)) and (min-width: 1000px) {
     .main-container[data-status="1"] {grid-template-columns: 35% 65%} /* Library + Player */
     .song-container {margin-left: 20px;}
     .up .song-details, .up .volume-slider {display: flex;}
@@ -64,6 +64,10 @@
 
 * {
     transition: all 0.25s ease;
+}
+input:focus, textarea:focus, button:focus {
+    outline: none;
+    box-shadow: none;
 }
 
 body {
@@ -133,7 +137,6 @@ html.not-iframe .main-container[data-play="1"] .player-container {margin: 0px 20
     background-color: #ffffff00;
     transition: none;
 }
-.up .music-buttons button:focus {outline: none; box-shadow: none;}
 
 #loop-btn.on, #shuffle-btn.on {border-radius: 5px;}
 #loop-btn:not(.on), #shuffle-btn:not(.on) {
@@ -402,18 +405,15 @@ html.not-iframe .song-container {margin: 20px}
 /* Add Songs */
 .songs-input {
     opacity: 0;
-    margin-left: 2%;
-    background-color: var(--ver-hover-bg-color);
+    margin-left: 1.25%;
+    
     border: none; border-radius: calc(6.5px * var(--device-multiplier)); 
     padding: 6.25px;
-    height: calc(25px * var(--device-multiplier));
+    min-width: 0; height: calc(25px * var(--device-multiplier));
+
+    background-color: var(--ver-hover-bg-color);
     color: var(--font-color);
     font-size: var(--small-font-size);
-    min-width: 0;
-}
-.songs-input:focus {
-    outline: none;
-    box-shadow: none;
 }
 .songs-input:disabled {
     cursor: not-allowed;
@@ -496,10 +496,6 @@ html:not(.not-iframe) .modal-playlist {
 .inputs textarea {
     resize: none;
     height: 100%;
-}
-.inputs input:focus, .inputs textarea:focus {
-    outline: none;
-    box-shadow: none;
 }
 .containerDs-butttons {
     display: flex;

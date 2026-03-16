@@ -255,6 +255,7 @@ domElSongs.audioControll.addEventListener('ended', () => {
 
 async function PreloadSong(songId) { // id == idSong
     // Song Id -> Elements Index
+    console.log(songId)
     let id = domElSongs.songTableSongs.querySelector(`.songTcontainer[data-song-id="${songId}"]`).children[0].innerHTML - 1;
     // Next Song (Elements Index)
     let i = id+1;
@@ -340,17 +341,38 @@ async function AddSong() {
     }
     else throw new Error("Adding a song returns a non-200 status code");
 }
-function SongAddInput() {
-    if (domElSongs.addsongInput.style.display == "block") { // Fade Out
+
+menuStateCode = 0 // 0 Closed - 1 Open Add Song - 2 Open Search
+function MenuAction() {
+    if (menuStateCode == 1)
+        AddSong()
+    else if (menuStateCode == 2) {
+        window.find(
+            domElSongs.addsongInput.value,
+            false, false, true, false, true, true
+        )
+    }
+}
+function OpenMenu(code) {
+    domElSongs.addsongInput.value = '';
+    if (menuStateCode == code) { // Fade Out
+        code = 0;
         domElSongs.addsongInput.classList.add("animate", "out");
         domElSongs.addsongInput.addEventListener("animationend", () => {
             domElSongs.addsongInput.classList.remove("animate", "out");
             domElSongs.addsongInput.style.display = "none";
         }, { once: true });
-
     } else if (domElSongs.addsongInput.style.display == "none" && !domElSongs.addsongInput.classList.contains("animate")) { // Fade In
         domElSongs.addsongInput.style.display = "block";
         domElSongs.addsongInput.classList.add("animate");
+    }
+    menuStateCode = code
+
+    if (code == 1) { // Open Song
+        if (nDownload == 0) domElSongs.addsongInput.placeholder = "YT name/link...";
+        else domElSongs.addsongInput.placeholder = `Downloading - ${nDownload}...`;
+    } else if (code == 2) {
+        domElSongs.addsongInput.placeholder = "Press Enter to search"
     }
 }
 
@@ -382,7 +404,7 @@ async function deletePl() {
 // Shuffle Button
 function TurnShuffle() {
     shuffleState = !shuffleState;
-    PreloadSong(oldSong[1]); 
+    PreloadSong(oldSong[oldSong.length-1]); 
     domElSgPy.playerShuffleBtn.classList.toggle("on", shuffleState);
 }
 
