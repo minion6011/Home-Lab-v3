@@ -255,7 +255,6 @@ domElSongs.audioControll.addEventListener('ended', () => {
 
 async function PreloadSong(songId) { // id == idSong
     // Song Id -> Elements Index
-    console.log(songId)
     let id = domElSongs.songTableSongs.querySelector(`.songTcontainer[data-song-id="${songId}"]`).children[0].innerHTML - 1;
     // Next Song (Elements Index)
     let i = id+1;
@@ -351,6 +350,13 @@ function MenuAction() {
             domElSongs.addsongInput.value,
             false, false, true, false, true, true
         )
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+            selection.getRangeAt(0).startContainer.parentElement.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+        }
     }
 }
 function OpenMenu(code) {
