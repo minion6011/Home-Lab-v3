@@ -6,7 +6,7 @@
         <link rel="stylesheet" href="{{ url_for('static',filename='themes.css') }}">
         <link rel="stylesheet" href="{{ url_for('static',filename='index.css') }}">
         <script src="{{ url_for('static',filename='index.js') }}" type="text/javascript" defer></script>
-        <link rel="icon" type="image/ico" href="{{ url_for('static',filename='img/favicon.ico') }}"/>
+        <link rel="icon" href="{{ url_for('static',filename='img/favicon.svg') }}"/>
     </head>
 
     <body>
@@ -16,7 +16,7 @@
 
             <div class="header-container">
                 <div id="open-setting-bt" class="button" onclick="event.stopPropagation(); openSettings()">
-                    <img src="{{ url_for('static',filename='/img/setting-ico.webp') }}" class="ico">
+                    <img src="{{ url_for('static',filename='/img/setting-ico.svg') }}" class="ico">
                     <p>Settings</p>
                 </div>
                 <div class="dropdown-menu" id="setting-menu">
@@ -57,12 +57,12 @@
 
             <div class="sidebar-container">
                 <div id="open-navbar" class="button" onclick="openPagesSidebar()">
-                    <img src="{{ url_for('static',filename='/img/system-ico.webp') }}" class="ico">
+                    <img src="{{ url_for('static',filename='/img/system-ico.svg') }}" class="ico">
                     <p>Pages</p>
                 </div>
 
                 <div id="open-navbar" class="button" id="open-setting-bt-sidebar" onclick="event.stopPropagation(); openSettings()">
-                    <img src="{{ url_for('static',filename='/img/setting-ico.webp') }}" class="ico">
+                    <img src="{{ url_for('static',filename='/img/setting-ico.svg') }}" class="ico">
                     <p>Settings</p>
                 </div>
                 <div class="dropdown-menu-sidebar" id="setting-menu-sidebar">

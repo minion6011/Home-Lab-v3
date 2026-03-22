@@ -3,7 +3,7 @@
     <head>
         <title>Music Player</title>
         <meta charset="UTF-8">
-        <link rel="icon" type="image/ico" href="{{ url_for('static',filename='img/favicon.ico') }}"/>
+        <link rel="icon" href="{{ url_for('static',filename='img/favicon.svg') }}"/>
         <link rel="stylesheet" href="{{ url_for('static',filename='themes.css') }}">
         <script src="{{ url_for('static',filename='pages/default.js') }}" type="text/javascript" defer></script>
 
@@ -23,14 +23,14 @@
                     <p class="title">Your Library</p>
 
                     <button class="button" onclick="PlaylistModal('new')">
-                        <img src="{{ url_for('static',filename='img/add-ico.webp')}}" class="ico-small"> Create Playlist
+                        <img src="{{ url_for('static',filename='img/add-ico.svg')}}" class="ico-small"> Create Playlist
                     </button>
 
                     <div class="dropdown">
                         <button class="dropbtn">Display As &#9662;</button>
                         <div class="dropdown-content">
-                            <a onclick="GridChangePlaylist('playlists-details')" data-sort="list"><img src="{{ url_for('static',filename='img/details.webp') }}" class="ico-small"> Detailed List</a>
-                            <a onclick="GridChangePlaylist('playlists-grid')" data-sort="grid"><img src="{{ url_for('static',filename='img/grid.webp') }}" class="ico-small"> Detailed Grid</a>
+                            <a onclick="GridChangePlaylist('playlists-details')" data-sort="list"><img src="{{ url_for('static',filename='img/details.svg') }}" class="ico-small"> Detailed List</a>
+                            <a onclick="GridChangePlaylist('playlists-grid')" data-sort="grid"><img src="{{ url_for('static',filename='img/grid.svg') }}" class="ico-small"> Detailed Grid</a>
                         </div>
                     </div>
 
@@ -53,7 +53,7 @@
                 <div class="playlist-songs">
                     <div class="playlist-info">
                         <input type="hidden" id="plDs-id" value="">
-                        <img class="image" id="plDs-img" src="{{ url_for('static',filename='img/plDefault-ico.webp') }}">
+                        <img class="image" id="plDs-img" src="{{ url_for('static',filename='img/plDefault-ico.svg') }}">
                         <div class="text">
                             <div class="title-sep"> 
                                 <p id="plDs-title">Playlist Name</p>
@@ -65,16 +65,16 @@
                     <hr>
                     <div class="containerDs-butttons">
                         <button class="song-btn" onclick="PlaylistModal('edit')">
-                            <img src="{{ url_for('static',filename='img/pencil-ico.webp') }}">
+                            <img src="{{ url_for('static',filename='img/pencil-ico.svg') }}">
                         </button>
                         <button class="song-btn" onclick="deleteChangeState()" id="del-pl-btn">
-                            <img src="{{ url_for('static',filename='img/delete-ico.webp') }}">
+                            <img src="{{ url_for('static',filename='img/delete-ico.svg') }}">
                         </button>
                         <button class="song-btn" onclick="OpenMenu(2)">
-                            <img src="{{ url_for('static',filename='img/search-ico.webp') }}">
+                            <img src="{{ url_for('static',filename='img/search-ico.svg') }}">
                         </button>
                         <button class="song-btn" onclick="OpenMenu(1)">
-                            <img src="{{ url_for('static',filename='img/mAdd-ico.webp') }}">
+                            <img src="{{ url_for('static',filename='img/mAdd-ico.svg') }}">
                         </button>
                         <input id="songs-input" class="songs-input" onkeydown="if (event.key === 'Enter' && this.value != '') MenuAction()" style="display: none;">
                     </div>
@@ -100,24 +100,24 @@
 
                     <div class="music-buttons">
                         <button id="shuffle-btn" onclick="TurnShuffle()">
-                            <img src="{{ url_for('static',filename='img/shuffle-ico.webp') }}">
+                            <img src="{{ url_for('static',filename='img/shuffle-ico.svg') }}">
                         </button>
                         <button onclick="FetchSong(oldSong[0]); oldSong.splice(1, 1)">
-                            <img src="{{ url_for('static',filename='img/prev-ico.webp') }}">
+                            <img src="{{ url_for('static',filename='img/prev-ico.svg') }}">
                         </button>
                         <button onclick="StartStopAudio();">
-                            <img id="play-stop-img" src="{{ url_for('static',filename='img/stop-ico.webp') }}">
+                            <img id="play-stop-img" src="{{ url_for('static',filename='img/stop-ico.svg') }}">
                         </button>
                         <button onclick="NextSong()">
-                            <img src="{{ url_for('static',filename='img/next-ico.webp') }}">
+                            <img src="{{ url_for('static',filename='img/next-ico.svg') }}">
                         </button>
                         <button id="loop-btn" onclick="LoopToogle()">
-                            <img src="{{ url_for('static',filename='img/loop-ico.webp') }}">
+                            <img src="{{ url_for('static',filename='img/loop-ico.svg') }}">
                         </button>
                     </div>
 
                     <div class="volume-slider">
-                        <img id="mute-img" onclick="ChangeVolume(true, 0)" data-muted=0 src="{{ url_for('static',filename='img/volume-ico.webp') }}">
+                        <img id="mute-img" onclick="ChangeVolume(true, 0)" data-muted=0 src="{{ url_for('static',filename='img/volume-ico.svg') }}">
                         <input id="volumeRange" oninput="ChangeVolume(false, this.value)" type="range" max="1" step="0.1" value="1">
                     </div>
                 </div>
@@ -139,7 +139,7 @@
                     <div class="items">
                         <div style="display: flex; justify-content: center;">
                             <input id="img-file" type="file" style="display: none;" accept="image/png, image/jpeg, image/webm, image/jpg, image/avif">
-                            <img id="modal-pl-img" onclick="document.getElementById('img-file').click()" src="{{ url_for('static',filename='img/plDefault-ico.webp') }}" class="img-insert" data-state="0">
+                            <img id="modal-pl-img" onclick="document.getElementById('img-file').click()" src="{{ url_for('static',filename='img/plDefault-ico.svg') }}" class="img-insert" data-state="0">
                         </div>
                         <div class="inputs">
                             <input id="pl-name" type="text" placeholder="Playlist Name" maxlength="25">

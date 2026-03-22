@@ -68,6 +68,7 @@ This is the third version of the [Homelab](https://github.com/minion6011/Home-La
 - **Next song icon**: Icon by **Abdul Allib** – [Flaticon](https://www.flaticon.com/)
 - **Mute volume icon**, **Search icon**: Icon by **meaicon** – [Flaticon](https://www.flaticon.com/)
 - **Volume icon**: Icon by **apien** – [Flaticon](https://www.flaticon.com/)
+-  The images that were converted to *.svg* were converted by **D'axel**
 
 ### Libraries & Tools
 - **[Monaco Editor](https://microsoft.github.io/monaco-editor/)** - License: MIT

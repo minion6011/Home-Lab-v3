@@ -3,7 +3,7 @@
     <head>
         <title>Home</title>
         <meta charset="UTF-8">
-        <link rel="icon" type="image/ico" href="{{ url_for('static',filename='img/favicon.ico') }}"/>
+        <link rel="icon" href="{{ url_for('static',filename='img/favicon.svg') }}"/>
         <link rel="stylesheet" href="{{ url_for('static',filename='themes.css') }}">
         <script src="{{ url_for('static',filename='pages/default.js') }}" type="text/javascript" defer></script>
 
@@ -25,25 +25,25 @@
         <div class="main-container">
             <div class="info-container" style="position: relative;">
                 <div class="logout-container">
-                    <p class="title"><img src="{{ url_for('static',filename='/img/account-ico.webp') }}" class="ico"> Account Name</p>
-                    <img onclick="window.parent.location.href='/logout'" class="logout-btn-ico" src="{{ url_for('static',filename='/img/logout-ico.webp') }}">
+                    <p class="title"><img src="{{ url_for('static',filename='/img/account-ico.svg') }}" class="ico"> Account Name</p>
+                    <img onclick="window.parent.location.href='/logout'" class="logout-btn-ico" src="{{ url_for('static',filename='/img/logout-ico.svg') }}">
                 </div>
                 <p class="info-value">{{ name }}</p>
-                <p class="title"><img src="{{ url_for('static',filename='/img/time-ico.webp') }}" class="ico"> Logged In Until</p>
+                <p class="title"><img src="{{ url_for('static',filename='/img/time-ico.svg') }}" class="ico"> Logged In Until</p>
                 <p class="info-value" id="logged-until">00/00/0000</p>
-                <p class="title"><img src="{{ url_for('static',filename='/img/power-ico.webp') }}" class="ico"> Website Online Since</p>
+                <p class="title"><img src="{{ url_for('static',filename='/img/power-ico.svg') }}" class="ico"> Website Online Since</p>
                 <p class="info-value" id="started-since">00/00/0000</p>
             </div>
 
             <div class="info-container">
-                <p class="title-XL"><img src="{{ url_for('static',filename='/img/system-ico.webp') }}" class="ico"> System Stats</p>
-                <p class="percentage"><img src="{{ url_for('static',filename='/img/ram-ico.webp') }}" class="ico"> RAM {{ stats[0] }}</p>
-                <p class="percentage"><img src="{{ url_for('static',filename='/img/cpu-ico.webp') }}" class="ico"> CPU {{ stats[1] }}</p>
-                <p class="percentage"><img src="{{ url_for('static',filename='/img/ssd-ico.webp') }}" class="ico"> SSD {{ stats[2] }}</p>
+                <p class="title-XL"><img src="{{ url_for('static',filename='/img/system-ico.svg') }}" class="ico"> System Stats</p>
+                <p class="percentage"><img src="{{ url_for('static',filename='/img/ram-ico.svg') }}" class="ico"> RAM {{ stats[0] }}</p>
+                <p class="percentage"><img src="{{ url_for('static',filename='/img/cpu-ico.svg') }}" class="ico"> CPU {{ stats[1] }}</p>
+                <p class="percentage"><img src="{{ url_for('static',filename='/img/ssd-ico.svg') }}" class="ico"> SSD {{ stats[2] }}</p>
             </div>
 
             <div class="info-container">
-                <p class="title-XL"><img src="{{ url_for('static',filename='/img/terminal-ico.webp') }}" class="ico"> Remote Terminal</p>
+                <p class="title-XL"><img src="{{ url_for('static',filename='/img/terminal-ico.svg') }}" class="ico"> Remote Terminal</p>
                 <p class="info-value">Command</p>
                 <input class="text-input" placeholder="sudo reboot" onkeydown="if (event.key === 'Enter') {SendCommand()}" id="terminal-input">
             </div>

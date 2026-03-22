@@ -61,11 +61,11 @@ const endpoints = {
     songs: "/songs",
     playlist: "/playlist",
     
-    playIco: "/website/img/play-ico.webp",
-    stopIco: "/website/img/stop-ico.webp",
-    muteIco: "/website/img/mute-ico.webp",
-    volumeIco: "/website/img/volume-ico.webp",
-    deleteIco: "/website/img/delete-ico.webp"
+    playIco: "/website/img/play-ico.svg",
+    stopIco: "/website/img/stop-ico.svg",
+    muteIco: "/website/img/mute-ico.svg",
+    volumeIco: "/website/img/volume-ico.svg",
+    deleteIco: "/website/img/delete-ico.svg"
 }
 
 /* --- Functions --- */

@@ -16,7 +16,7 @@ def get_client_ip():
         return request.remote_addr
 
 def checkRatelimit(path):
-    if path.endswith(".webp"):
+    if path.endswith(".webp") or path.endswith(".svg"):
         return False
     now = time.time()
     clientIp = get_client_ip()
