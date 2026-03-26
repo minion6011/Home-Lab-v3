@@ -45,7 +45,7 @@ This is the third version of the [Homelab](https://github.com/minion6011/Home-La
   1. Install Python (Tested with `Python 3.11`)
   2. Install all the requirements
   3. Open [Discord Developer Portal](https://discord.com/developers/applications) and create an App for the Homelab
-  4. Add the App Id inside main.py
+  4. Add the App Id inside RPC.py
 
   > The files needed to use **Discord RPC** are located in the `/RPC` folder.
   
