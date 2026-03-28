@@ -361,7 +361,7 @@ function MenuAction() {
 }
 function OpenMenu(code) {
     domElSongs.addsongInput.value = '';
-    if (menuStateCode == code) { // Fade Out
+    if (menuStateCode == code && domElSongs.addsongInput.style.display != "none") { // Fade Out
         code = 0;
         domElSongs.addsongInput.classList.add("animate", "out");
         domElSongs.addsongInput.addEventListener("animationend", () => {
