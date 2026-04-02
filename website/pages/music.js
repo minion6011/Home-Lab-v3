@@ -58,6 +58,8 @@ const domElPlaylist = { // Playlist Elements
     delPlButton: document.getElementById("del-pl-btn"),
 }
 const endpoints = {
+    discordRPC: "http://127.0.0.1:8765/rpc",
+
     songs: "/songs",
     playlist: "/playlist",
     
@@ -183,7 +185,7 @@ async function FetchSong(sgId) {
 }
 
 function RPCDiscord(name, artist, img, duration) {
-    fetch("http://127.0.0.1:8765/rpc", {
+    fetch(endpoints.discordRPC, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -213,8 +215,7 @@ async function PlaySong(url, name, artist, img, songId) {
     domElSgPy.playerRange.value = 0; domElSgPy.playerRange.max = domElSongs.audioControll.duration; domElSgPy.maxDuration.innerHTML = formatTime(domElSongs.audioControll.duration);
     if (domElSgPy.playerRange.disabled) domElSgPy.playerRange.disabled = false;
     // Player Setup
-    let SongReduc = name.substring(0,40); if (name.length>40) {SongReduc+="..."}
-    domElSgPy.playerSongImg.src = img; domElSgPy.playerSongTitle.innerText = SongReduc;
+    domElSgPy.playerSongImg.src = img; domElSgPy.playerSongTitle.innerText = name;
     // Loads DiscordRPC
     if (RPCEnabled)
         RPCDiscord(name, artist, img, domElSongs.audioControll.duration)
@@ -255,7 +256,7 @@ domElSongs.audioControll.addEventListener('ended', () => {
 
 async function PreloadSong(songId) { // id == idSong
     // Song Id -> Elements Index
-    let id = domElSongs.songTableSongs.querySelector(`.songTcontainer[data-song-id="${songId}"]`).children[0].innerHTML - 1;
+    let id = domElSongs.songTableSongs.querySelector(`.songTcontainer[data-song-id="${songId}"]`).children[0].children[0].innerHTML - 1;
     // Next Song (Elements Index)
     let i = id+1;
     let length = currentPl[1];
@@ -263,7 +264,7 @@ async function PreloadSong(songId) { // id == idSong
     if (i == id) { if (i+1>length) {i--} else {i++};} // Evita che appaia lo stesso numero
     if (i > length) {i = 0}; // Ricomincia
     // Elements Index -> Song Id
-    let newSongId = domElSongs.songTableSongs.querySelectorAll(".songTcontainer")[i].dataset.songId
+    let newSongId = domElSongs.songTableSongs.querySelectorAll(".songTcontainer")[i].dataset.songId;
     let req = await fetch(endpoints.songs, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -286,19 +287,27 @@ function CreateSongHTML(index, values) {
     trElement.setAttribute("onclick", `FetchSong(this.dataset.songId);`);
     trElement.dataset.songId = values[0];
 
-    songName = values[1].substring(0,32); if (values[1].length>32) {songName+="..."}
+    songName = values[1]
 
     trElement.innerHTML = `
-    <td data-visible="0">${index + 1}</td>
+    <td data-visible="0">
+        <p>${index + 1}</p>
+    </td>
     <td>
         <div class="titleSong-column">
             <img loading="lazy" src="${values[3]}">
             <p>${songName}</p>
         </div>
     </td>
-    <td data-visible="0">${values[2]}</td>
-    <td data-visible="0">${values[4]}</td>
-    <td data-visible="0">${values[5]}</td>
+    <td data-visible="0">
+        <p>${values[2]}</p>
+    </td>
+    <td data-visible="0">
+        <p>${values[4]}</p>
+    </td>
+    <td data-visible="0">
+        <p>${values[5]}</p>
+    </td>
     <td style="text-align: center;">
         <button onclick="event.stopPropagation(); DeleteSong(this)" class="songTable-delete">
             <img src="${endpoints.deleteIco}">
@@ -435,7 +444,7 @@ async function OpenPlaylist(item) {
     domElSongs.plDsDesc.innerHTML = `${data.playlist[1].replaceAll("\n", "<br>")}<br><br><i>Songs - ${data.songs.length}</i>`;
 
     domElSongs.mainContainer.dataset.status = "1";
-    domElSongs.songTableSongs.innerHTML = domElSongs.songTableSongs.children[0].children[0].innerHTML; // reset list
+    domElSongs.songTableSongs.innerHTML = null; // reset list
     
     currentPl[1] = data.songs.length - 1;
 
