@@ -1,0 +1,81 @@
+@media ((hover: none) and (pointer: coarse)) or (max-width: 980px) { /* Schermo Telefono */
+    .main-container {grid-template-columns: 1fr; grid-template-rows: 1fr 1fr 1fr;}
+    .custom-br {margin-top: 7.5%;}
+}
+@media ((hover: hover) and (pointer: fine)) and (min-width: 980px) { /* Schermo PC */
+    .main-container {grid-template-columns: 1fr 1fr; grid-template-rows: 40% 40%;}
+}
+
+body {
+    background-color: #ffffff00;
+}
+body, html {
+    height: 100%;
+    font-family: var(--font-family);
+    color: var(--font-color);
+    margin: 0;
+}
+*::-webkit-scrollbar {
+    display: none;
+}
+
+.main-container {
+    overflow: auto;
+
+    transition: all 0.25s ease;
+    height: 100%;
+    background-color: var(--secondary-bg-color);
+    margin: auto;
+}
+
+
+
+#canvas-el {
+    height: 100%; width: 100%;
+    display: block; 
+    background-color: #ffffff;
+}
+
+.buttons-container  {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+
+    padding: 7.5px;
+    position: fixed;
+    top: 0;
+    right: 0;
+}
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border: 1px solid var(--elm-font-color);
+    padding: 5px;
+}
+
+input[type="color"] {
+    width: 35px; height: auto;
+    aspect-ratio: 1 / 1;
+    display: inline-block;
+    box-sizing: border-box;
+    
+    appearance: none; 
+    border: 1.5px solid #000; border-radius: 50%; 
+    padding: 4px;
+    background-color: #ffffff00;
+
+    cursor: pointer;
+}
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+#selectedColorFiller {
+    border-radius: 100%;
+}

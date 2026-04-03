@@ -240,3 +240,8 @@ def compress_file():
 		if finded: return {}, 200
 		return {}, 404
 	return {}, 400
+
+# - Compression
+@app.route('/pages/canvas')
+def canvas():
+	return render_template("/pages/canvas.html")

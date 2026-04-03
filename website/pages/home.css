@@ -29,10 +29,6 @@ body, html {
     background-color: var(--secondary-bg-color);
     margin: auto;
 }
-html .main-container {
-    height: 100%;
-}
-
 
 .info-container {
     background-color: var(--menu-bg-color);

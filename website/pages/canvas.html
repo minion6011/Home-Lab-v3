@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+        <title>Canvas</title>
+        <meta charset="UTF-8">
+        <link rel="icon" href="{{ url_for('static',filename='img/favicon.svg') }}"/>
+        <link rel="stylesheet" href="{{ url_for('static',filename='themes.css') }}">
+        <script src="{{ url_for('static',filename='pages/default.js') }}" type="text/javascript" defer></script>
+
+        <link rel="stylesheet" href="{{ url_for('static',filename='pages/canvas.css') }}">
+        <script src="{{ url_for('static',filename='pages/canvas.js') }}" type="text/javascript" defer></script>
+    </head>
+
+    <body>
+        <div class="main-container">
+            <div class="buttons-container">
+                <div class="button">
+                    Cancella
+                </div>
+                <div class="button">
+                    <input type="color" id="selectedColor" value="#ff0000">
+                </div>
+            </div>
+            <canvas id="canvas-el"></canvas>
+        </div>
+    </body>
+</html>
+
