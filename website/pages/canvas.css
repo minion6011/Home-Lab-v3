@@ -57,7 +57,7 @@ body, html {
 }
 
 input[type="color"] {
-    width: 35px; height: auto;
+    width: 32.5px; height: auto;
     aspect-ratio: 1 / 1;
     display: inline-block;
     box-sizing: border-box;
