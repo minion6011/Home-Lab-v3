@@ -3,6 +3,8 @@ const domEl = {
     canvasObj: document.getElementById("canvas-el"),
 
     selColorObj: document.getElementById("selectedColor"),
+
+    selectBtnObj: document.getElementById("selectBtn"),
     cancelBtnObj: document.getElementById("cancellBtn")
 }
 
@@ -92,13 +94,14 @@ canvasResize(); // First page Load size fix
 });
 
 
-window.addEventListener("keydown", undoAction);
-function undoAction(e) {
-    if ((e.ctrlKey || e.metaKey) && e.key == "z") {
-        if (lines.length > 0) {
-            lines.pop()
-            drawAllLines();
-        }
+window.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key == "z") 
+        undoAction()
+});
+function undoAction() {
+    if (lines.length > 0) {
+        lines.pop()
+        drawAllLines();
     }
 }
 function drawAllLines() {
@@ -116,12 +119,16 @@ function drawAllLines() {
 }
 
 
-domEl.selColorObj.addEventListener("click", () => {
+domEl.selectBtnObj.addEventListener("click", () => {
     isErasing = false;
-    // add change style...
+    // CSS
+    domEl.selectBtnObj.classList.toggle("on", !isErasing)
+    domEl.cancelBtnObj.classList.toggle("on", isErasing)
 })
 
 domEl.cancelBtnObj.addEventListener("click", () => {
     isErasing = true;
-    // add change style...
+    // CSS
+    domEl.selectBtnObj.classList.toggle("on", !isErasing)
+    domEl.cancelBtnObj.classList.toggle("on", isErasing)
 })
