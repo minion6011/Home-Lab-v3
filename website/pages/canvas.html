@@ -12,13 +12,34 @@
     </head>
 
     <body>
+        <div id="eraseCursor"></div>
+
+        <input type="file" id="uploadObj" accept=".csd">
+
         <div class="main-container">
-            <div class="buttons-container">
-                <div class="button" id="cancellBtn">
-                    Cancella
+
+            <div class="buttons-container top-left">
+                <div class="button" id="newpageBtn" title="New canvas">
+                    <img src="{{ url_for('static',filename='img/add-ico.svg') }}">
                 </div>
-                <div class="button" id="selectBtn on">
+                <div class="button" id="downloadBtn" title="Download canvas">
+                    <img src="{{ url_for('static',filename='img/download-ico.png') }}">
+                </div>
+                <div class="button" id="uploadBtn" title="Upload and load a canvas">
+                    <img src="{{ url_for('static',filename='img/upload-ico.png') }}">
+                </div>
+                <div class="button" id="undoBtn" title="Undo">
+                    <img src="{{ url_for('static',filename='img/undo-ico.png') }}">
+                </div>
+            </div>
+
+            <div class="buttons-container top-right">
+                <div class="button" id="cancelBtn" title="Cancel">
+                    <img src="{{ url_for('static',filename='img/eraser-ico.png') }}">
+                </div>
+                <div class="button on" id="selectBtn" title="Draw and Choose color">
                     <input type="color" id="selectedColor" value="#ff0000">
+                    <img id="selectImg" src="{{ url_for('static',filename='img/ink-ico.png') }}">
                 </div>
             </div>
             <canvas id="canvas-el"></canvas>

@@ -68,6 +68,9 @@ This is the third version of the [Homelab](https://github.com/minion6011/Home-La
 - **Next song icon**: Icon by **Abdul Allib** – [Flaticon](https://www.flaticon.com/)
 - **Mute volume icon**, **Search icon**: Icon by **meaicon** – [Flaticon](https://www.flaticon.com/)
 - **Volume icon**: Icon by **apien** – [Flaticon](https://www.flaticon.com/)
+- **[Eraser](https://icons8.com/icon/78855/eraser), [Download](https://icons8.com/icon/83159/download), [Upload](https://icons8.com/icon/83225/upload), [Undo](https://icons8.com/icon/ObZ2Yd2lQLTL/undo) icon** – [Icons8](https://icons8.com)
+- **Droplet/Ink icon**: Icon by **yaicon** – [Freepik](https://www.freepik.com/)
+
 -  The images that were converted to *.svg* were converted by **D'axel**
 
 ### Libraries & Tools

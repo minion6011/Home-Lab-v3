@@ -5,11 +5,8 @@
 }
 
 @media ((hover: none) and (pointer: coarse)) or (max-width: 980px) { /* Schermo Telefono */
-    .main-container {grid-template-columns: 1fr; grid-template-rows: 1fr 1fr 1fr;}
-    .custom-br {margin-top: 7.5%;}
 }
 @media ((hover: hover) and (pointer: fine)) and (min-width: 980px) { /* Schermo PC */
-    .main-container {grid-template-columns: 1fr 1fr; grid-template-rows: 40% 40%;}
 }
 
 body {
@@ -20,8 +17,9 @@ body, html {
     font-family: var(--font-family);
     color: var(--font-color);
     margin: 0;
+    overscroll-behavior: none;
 }
-*::-webkit-scrollbar {
+*::-webkit-scrollbar, #uploadObj {
     display: none;
 }
 
@@ -34,6 +32,19 @@ body, html {
     margin: auto;
 }
 
+#eraseCursor {
+  width: 20px; /* Must be the same as cursor width */
+  aspect-ratio: 1 / 1;
+  border-radius: 100%;
+  background-color: #ffffff00;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: .3;
+}
+#eraseCursor.active {
+    background-color: #000000;
+}
 
 
 #canvas-el {
@@ -45,38 +56,54 @@ body, html {
 .buttons-container  {
     display: grid;
     grid-auto-flow: column;
-    grid-template-columns: 1fr 1fr;
     gap: 10px;
 
-    padding: 7.5px;
+    margin: 7.5px;
     position: fixed;
-    top: 0;
-    right: 0;
 }
+.buttons-container.top-right {
+    top: 0; right: 0;
+}
+.buttons-container.top-left {
+    top: 0; left: 0;
+}
+
 .button {
+    width: 40px;
+    aspect-ratio: 1 / 1;
+
     display: flex;
     justify-content: center;
     align-items: center;
     
     background-color: var(--btn-color);
-    border: 1px solid var(--elm-font-color);
-    padding: 5px;
+    margin: 5px;
+    border-radius: 50%;
+
+    cursor: pointer;
+}
+.buttons-container.top-left .button {
+    border: 1.75px dashed black;
 }
 .button.on {
     background-color: var(--btn-on-color);
 }
-input[type="color"] {
-    width: 32.5px; height: auto;
+.button img {
+    position: absolute;
+    pointer-events: none;
     aspect-ratio: 1 / 1;
-    display: inline-block;
+    width: 25px;
+    filter: invert(1);
+}
+input[type="color"] {
     box-sizing: border-box;
+    width: 40px; height: auto;
+    aspect-ratio: 1 / 1;
     
     appearance: none; 
     border: none; 
     padding: 0;
     background-color: #ffffff00;
-
-    cursor: pointer;
 }
 input[type="color"]::-webkit-color-swatch-wrapper {
     padding: 0;
@@ -84,7 +111,4 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 input[type="color"]::-webkit-color-swatch {
     border: none;
     border-radius: 50%;
-}
-#selectedColorFiller {
-    border-radius: 100%;
 }

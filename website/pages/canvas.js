@@ -2,15 +2,20 @@
 const domEl = {
     canvasObj: document.getElementById("canvas-el"),
 
+    uploadObj: document.getElementById("uploadObj"),
     selColorObj: document.getElementById("selectedColor"),
+    selectImgObj: document.getElementById("selectImg"),
 
     selectBtnObj: document.getElementById("selectBtn"),
-    cancelBtnObj: document.getElementById("cancellBtn")
-}
+    cancelBtnObj: document.getElementById("cancelBtn"),
+    undoBtnObj: document.getElementById("undoBtn"),
+    newpageBtn: document.getElementById("newpageBtn"),
 
-const endpoints = {
-    default: "/default"
-}
+    uploadBtn: document.getElementById("uploadBtn"),
+    downloadBtn: document.getElementById("downloadBtn"),
+
+    eraseCursor: document.getElementById("eraseCursor")
+};
 
 /* --- Functions --- */
 let ctx = domEl.canvasObj.getContext("2d");
@@ -18,11 +23,15 @@ let ctx = domEl.canvasObj.getContext("2d");
 let isPressed = false;
 let isErasing = false;
 let lastX = 0; let lastY = 0;
-let lines = [] // []<list>
-let currentLines = [] // []<dict>
+let lines = []; // []<list>
+let currentLines = []; // []<dict>
 
-ctx.lineCap = "round";
-ctx.lineJoin = "round";
+
+document.addEventListener("DOMContentLoaded", () => {
+    domEl.selectImgObj.style.filter = `invert(${calcY(domEl.selColorObj.value) >= 190 ? 1 : 0})`;
+    canvasResize();
+});
+
 
 function getPointerPosition(canvas, event) {
     const rect = canvas.getBoundingClientRect();
@@ -34,18 +43,21 @@ function getPointerPosition(canvas, event) {
     } else { // PC
         x = event.clientX - rect.left;
         y = event.clientY - rect.top;
-    }
+    };
 
     return [x, y];
-}
+};
 
 function canvasResize() {
     domEl.canvasObj.width = domEl.canvasObj.offsetWidth;
     domEl.canvasObj.height = domEl.canvasObj.offsetHeight;
-    drawAllLines() // testing
-}
+
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    drawAllLines();
+};
 window.addEventListener("resize", canvasResize);
-canvasResize(); // First page Load size fix
 
 
 ["mousedown", "touchstart"].forEach(eventName => {
@@ -63,18 +75,20 @@ canvasResize(); // First page Load size fix
     });
 });
 
-["mousemove", "touchmove"].forEach(eventName => {
+// Draw, Erase
+// Moving [i2] - Click [i2]
+["mousemove", "touchmove", "mousedown", "touchstart"].forEach(eventName => {
     domEl.canvasObj.addEventListener(eventName, (e) => {
         if (!isPressed) return;
 
         const [x, y] = getPointerPosition(domEl.canvasObj, e);
         if (isErasing) {
             ctx.strokeStyle = "#ffffff";
-            ctx.lineWidth = 10;
+            ctx.lineWidth = 20; // Width in px
         } else {
             ctx.strokeStyle = domEl.selColorObj.value;
             ctx.lineWidth = 1;
-        }
+        };
         ctx.beginPath();
         ctx.moveTo(lastX, lastY);
         ctx.lineTo(x, y);
@@ -86,24 +100,43 @@ canvasResize(); // First page Load size fix
                color:  ctx.strokeStyle,
                width: ctx.lineWidth
             }
-        )
+        );
 
         lastX = x;
         lastY = y;
     });
 });
 
-
-window.addEventListener("keydown", (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key == "z") 
-        undoAction()
+// Erase <cursor>
+["mousemove", "touchmove"].forEach(eventName => {
+    document.addEventListener(eventName, (e) => {
+        if (e.touches && e.touches.length > 0) { // Mobile
+            domEl.eraseCursor.style.left = e.touches[0].clientX + 'px';
+            domEl.eraseCursor.style.top = e.touches[0].clientY + 'px';
+        } else { // PC
+            domEl.eraseCursor.style.left = e.clientX + 'px';
+            domEl.eraseCursor.style.top = e.clientY + 'px';
+        };
+    });
 });
+
+document.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key == "z") 
+        undoAction();
+});
+domEl.undoBtnObj.addEventListener("click", undoAction);
 function undoAction() {
     if (lines.length > 0) {
-        lines.pop()
+        lines.pop();
         drawAllLines();
-    }
-}
+    };
+};
+
+domEl.newpageBtn.addEventListener("click", () => {
+    lines.length = 0; currentLines.length = 0;
+    ctx.clearRect(0, 0, domEl.canvasObj.width, domEl.canvasObj.height);
+});
+
 function drawAllLines() {
     ctx.clearRect(0, 0, domEl.canvasObj.width, domEl.canvasObj.height); // Clear canva
     for (const lineList of lines) { 
@@ -116,19 +149,68 @@ function drawAllLines() {
             ctx.stroke();
         }
   }
+};
+
+function calcY(hex) { // Y = Brightness
+    if (!hex.startsWith("#"))
+        return 0 // error
+    hex = hex.replace("#","");
+    let r = parseInt(hex.slice(0, 2), 16);
+    let g = parseInt(hex.slice(2, 4), 16);
+    let b = parseInt(hex.slice(4, 6), 16);
+
+    const y = (0.299 * r + 0.587 * g + 0.114 * b);
+    return y;
 }
 
+domEl.selColorObj.addEventListener("input", () => {
+    const y = calcY(domEl.selColorObj.value);
+    domEl.selectImgObj.style.filter = `invert(${y >= 190 ? 1 : 0})`;
+});
 
 domEl.selectBtnObj.addEventListener("click", () => {
     isErasing = false;
-    // CSS
-    domEl.selectBtnObj.classList.toggle("on", !isErasing)
-    domEl.cancelBtnObj.classList.toggle("on", isErasing)
-})
-
+    changeTrigger();
+});
 domEl.cancelBtnObj.addEventListener("click", () => {
     isErasing = true;
-    // CSS
-    domEl.selectBtnObj.classList.toggle("on", !isErasing)
-    domEl.cancelBtnObj.classList.toggle("on", isErasing)
-})
+    changeTrigger();
+});
+function changeTrigger() {
+    domEl.selectBtnObj.classList.toggle("on", !isErasing);
+    domEl.cancelBtnObj.classList.toggle("on", isErasing);
+
+    domEl.eraseCursor.classList.toggle("active", isErasing);
+}
+
+
+function downloadFile() {
+    if (lines.length > 0) {
+        let element = document.createElement('a');
+        element.style.display = 'none';
+
+        const value = JSON.stringify(lines, null, 0);
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(value));
+        element.setAttribute('download', "canvas.csd"); // .csd Canva Save Data
+        
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
+}
+domEl.downloadBtn.addEventListener("click", downloadFile)
+
+domEl.uploadBtn.addEventListener("click", () => {
+    uploadObj.click()
+});
+domEl.uploadObj.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file || !file.name.endsWith(".csd"))
+        return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        lines = JSON.parse(e.target.result);
+        drawAllLines();
+    };
+    reader.readAsText(file);
+});
