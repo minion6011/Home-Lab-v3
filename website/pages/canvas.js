@@ -30,6 +30,13 @@ let currentLines = []; // []<dict>
 document.addEventListener("DOMContentLoaded", () => {
     domEl.selectImgObj.style.filter = `invert(${calcY(domEl.selColorObj.value) >= 190 ? 1 : 0})`;
     canvasResize();
+
+    ["dragover", "dragleave"].forEach(eventName => {
+        window.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    });
 });
 
 
@@ -94,7 +101,7 @@ window.addEventListener("resize", canvasResize);
             ctx.lineWidth = 20; // Width in px
         } else {
             ctx.strokeStyle = domEl.selColorObj.value;
-            ctx.lineWidth = 1;
+            ctx.lineWidth = 1.25;
         };
         ctx.beginPath();
         ctx.moveTo(lastX, lastY);
@@ -207,11 +214,20 @@ function downloadFile() {
 }
 domEl.downloadBtn.addEventListener("click", downloadFile)
 
+window.addEventListener('drop', (e) => {
+    e.preventDefault(); e.stopPropagation();
+    const dt = e.dataTransfer;
+    const file = dt.files[0];
+    loadFile(file);
+});
 domEl.uploadBtn.addEventListener("click", () => {
-    uploadObj.click()
+    uploadObj.click();
 });
 domEl.uploadObj.addEventListener("change", (e) => {
     const file = e.target.files[0];
+    loadFile(file);
+});
+function loadFile(file) {
     if (!file || !file.name.endsWith(".csd"))
         return;
     const reader = new FileReader();
@@ -220,4 +236,4 @@ domEl.uploadObj.addEventListener("change", (e) => {
         drawAllLines();
     };
     reader.readAsText(file);
-});
+};
