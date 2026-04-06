@@ -241,7 +241,7 @@ def compress_file():
 		return {}, 404
 	return {}, 400
 
-# - Compression
+# - Canva
 @app.route('/pages/canvas')
 def canvas():
 	return render_template("/pages/canvas.html")
