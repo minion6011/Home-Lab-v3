@@ -49,14 +49,21 @@ function getPointerPosition(canvas, event) {
 };
 
 function canvasResize() {
-    domEl.canvasObj.width = domEl.canvasObj.offsetWidth;
-    domEl.canvasObj.height = domEl.canvasObj.offsetHeight;
+    const dpr = window.devicePixelRatio || 1;
+
+    const rect = domEl.canvasObj.getBoundingClientRect();
+
+    domEl.canvasObj.width = rect.width * dpr;
+    domEl.canvasObj.height = rect.height * dpr;
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(dpr, dpr);
 
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
 
     drawAllLines();
-};
+}
 window.addEventListener("resize", canvasResize);
 
 
