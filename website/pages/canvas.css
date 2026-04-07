@@ -4,11 +4,6 @@
     --canva-bg-color: #fff;
 }
 
-@media ((hover: none) and (pointer: coarse)) or (max-width: 980px) { /* Schermo Telefono */
-}
-@media ((hover: hover) and (pointer: fine)) and (min-width: 980px) { /* Schermo PC */
-}
-
 body {
     background-color: #ffffff00;
 }
@@ -69,7 +64,7 @@ body, html {
 }
 
 .button {
-    width: 40px;
+    width: calc(40px * var(--device-multiplier));
     aspect-ratio: 1 / 1;
 
     display: flex;
@@ -92,12 +87,12 @@ body, html {
     position: absolute;
     pointer-events: none;
     aspect-ratio: 1 / 1;
-    width: 25px;
+    width: calc(25px * var(--device-multiplier));
     filter: invert(1);
 }
 input[type="color"] {
     box-sizing: border-box;
-    width: 40px; height: auto;
+    width: calc(40px * var(--device-multiplier)); height: auto;
     aspect-ratio: 1 / 1;
     
     appearance: none; 
