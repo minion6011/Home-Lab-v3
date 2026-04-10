@@ -73,9 +73,13 @@ const endpoints = {
 /* --- Functions --- */
 // Songs Player
 async function DeleteSong(value) {
-    let idSong = value.parentElement.parentElement.dataset.songId;
-    let index = value.parentElement.parentElement.children[0].innerText;
-    if (value.parentElement.parentElement.children[1].children[0].children[1].innerText.substring(0,30) == domElSgPy.playerSongTitle.innerText.substring(0,30)) {
+    const songContainer = value.parentElement.parentElement
+    
+    let idSong = songContainer.dataset.songId;
+    let index = songContainer.children[0].innerText;
+
+    if (idSong == oldSong[oldSong.length-1]) {
+        oldSong.pop();
         domElSongs.mainContainer.dataset.play = "0";
         if (domElSongs.audioControll.playing)
             await domElSongs.audioControll.pause();
@@ -87,13 +91,18 @@ async function DeleteSong(value) {
         body: JSON.stringify({type: "delete", index: idSong}),
     });
     if (req.status == 200) {
-        if (domElSongs.plDSId.value == currentPl[0]) currentPl[1] -= 1;
-        if (preloadData[4] == idSong) preloadData = ["", "", "", "", 0];
-        value.parentElement.parentElement.parentElement.removeChild(value.parentElement.parentElement);
+        if (domElSongs.plDSId.value == currentPl[0]) // Decrease the playlist songs number (if the song deleted is into the current open playlist)
+            currentPl[1] -= 1;
+        if (preloadData[4] == idSong) // Resets Preload data (if the song deleted was the next song that needed to be played)
+            preloadData = ["", "", "", "", 0];
+
+        songContainer.parentElement.removeChild(songContainer);
+
+        // Decreases by one the indexes higher than the index of the deleted song
         let ls = domElSongs.songTableSongs.getElementsByClassName("songTcontainer")
         for (let i = 0; i < ls.length; i++) {
-            if (Number(ls[i].children[0].innerText)>Number(index)) 
-                ls[i].children[0].innerText = (Number(ls[i].children[0].innerText) - 1).toString()
+            if (Number(ls[i].children[0].children[0].innerText)>Number(index)) 
+                ls[i].children[0].children[0].innerText = (Number(ls[i].children[0].innerText) - 1).toString()
         };
         domElSongs.plDsDesc.innerHTML = domElSongs.plDsDesc.innerHTML.replace(/( - )(.*?)(<\/i>)/, "$1" + Number(domElSongs.songTableSongs.querySelectorAll(".songTcontainer").length) + "$3");
     }
@@ -404,6 +413,15 @@ function deleteChangeState(fstate=null) {
     deleteTimeout = setTimeout(() => {deleteChangeState(false)}, 5000); // after 5 seconds
 }
 async function deletePl() {
+    if (currentPl[0] == domElSongs.plDSId.value) {
+        // Reset Music Player
+        domElSongs.mainContainer.dataset.play = "0";
+        if (domElSongs.audioControll.playing)
+            await domElSongs.audioControll.pause();
+        domElSongs.audioControll.src = "";
+        // Resets Values
+        preloadData = ["", "", "", "", 0]; currentPl = [null, null]; oldSong = [];
+    }
     let req = await fetch(endpoints.playlist, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -451,6 +469,7 @@ async function OpenPlaylist(item) {
     data.songs.forEach((song, index) => {
         CreateSongHTML(index, song);
     });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 
