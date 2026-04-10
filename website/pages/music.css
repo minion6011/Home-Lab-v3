@@ -21,11 +21,11 @@
     }
 }
 /* PC */
-@media ((hover: hover) and (pointer: fine)) and (max-width: 1000px) {
+@media ((hover: hover) and (pointer: fine)) and (max-width: 1035px) {
     .main-container[data-status="1"] {grid-template-columns: 100% 0%}
     .main-container[data-status="1"] .library-container, .up .song-details, .up .volume-slider, *[data-visible="0"] {display: none;}
 }
-@media ((hover: hover) and (pointer: fine)) and (min-width: 1000px) {
+@media ((hover: hover) and (pointer: fine)) and (min-width: 1035px) {
     .main-container[data-status="1"] {grid-template-columns: 35% 65%} /* Library + Player */
     .song-container {margin-left: 20px;}
     .up .song-details, .up .volume-slider {display: flex;}
@@ -197,7 +197,7 @@ html.not-iframe .song-container {margin: 20px}
     border-radius: 25px;
     background-color: var(--secondary-bg-color);
     padding: 17.5px;
-    overflow: auto; 
+    overflow-x: hidden; overflow-y: auto;
 }
 
 .song-btn {
