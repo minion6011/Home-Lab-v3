@@ -470,7 +470,7 @@ async function OpenPlaylist(item) {
     data.songs.forEach((song, index) => {
         CreateSongHTML(index, song);
     });
-    songContainer.scrollTo({ top: 0, behavior: 'smooth' });
+    domElSongs.songContainer.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 
