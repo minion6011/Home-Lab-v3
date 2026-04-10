@@ -219,6 +219,7 @@ html.not-iframe .song-container {margin: 20px}
     background-color: var(--menu-bg-color);
     border-radius: 15px;
     padding: 12.5px;
+    overflow: auto;
 }
 .playlist-songs .playlist-info {
     display: flex;
@@ -254,13 +255,16 @@ html.not-iframe .song-container {margin: 20px}
 .songs-table {
     margin-top: calc(20px * (var(--device-multiplier) - 1)); /* 0px PC, 20px Mobile */
     border-collapse: collapse;
-    width: 100%;
+    table-layout: fixed; min-width: 100%; max-width: 100%;
     font-size: var(--small-font-size);
 }
 .songs-table th {border-bottom: 1px solid var(--menu-bg-color);}
 .songs-table td, th {
     text-align: left;
     padding: 8px;
+
+    width: min-content;
+    word-wrap: break-word;
 }
 
 .songs-table tr:last-child td:first-child {border-bottom-left-radius: 10px;} 
