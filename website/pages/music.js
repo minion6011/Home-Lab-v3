@@ -29,6 +29,7 @@ const domElSgPy = { // Song Player Elements
 }
 const domElSongs = { // Songs Elements
     mainContainer: document.getElementById("mainContainer"),
+    songContainer: document.getElementById("songCtn"),
 
     audioControll: document.getElementById("AudioControll"),
     audioPreload: document.getElementById("AudioPreload"),
@@ -469,7 +470,7 @@ async function OpenPlaylist(item) {
     data.songs.forEach((song, index) => {
         CreateSongHTML(index, song);
     });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    songContainer.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 
