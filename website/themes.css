@@ -1,4 +1,5 @@
 :root {
+    /* -- General Variables --*/
     --device-multiplier: 1;
     --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     --mini-font-size: 15px;
@@ -11,7 +12,13 @@
     --XL-font-size: 25px;
     --XXL-font-size: 30px;
 
-    /* Theme Variables */
+    /* - Accounting - */
+    --balance-color: #2962FF;
+    --profit-color: #00C853;
+    --loss-color: #D32F2F;
+
+
+    /* -- Theme Variables -- */
     --font-color: #fff;
     --inv-color: #000000;
 
@@ -31,20 +38,17 @@
         --selected-theme-bg-color: #0062ff;
         --menu-bg-color: #2b2b2b;
     
-    /* -- Index Elements */
-    --secondary-bg-color: #252525;
+        /* -- Index Elements */
+        --secondary-bg-color: #252525;
     
-    /* - Music - */
+    /* - Music.html - */
     --del-bg-color: #ff00009e;
     --del-hover-bg-color: #d30b0b85;
 
-    /* - Accounting - */
-    --balance-color: #2962FF;
-    --profit-color: #00C853;
-    --loss-color: #D32F2F;
+    /* - Accounting.html - */
     --border-color: #191919;
     
-    /* - Agenda - */
+    /* - Agenda.html - */
     --check-button-color: #404040;
     --check-button-hover-color: #4b4b4b7a;
 }
@@ -55,6 +59,7 @@
     --img-invert-value: 1;
     --containers-bg-color: #ededed;
     --translucent-bg-color: #c2c2c27a;
+
     /* - Index.html */
         /* Navbar Colors */
         --tit-font-color: #000000;
@@ -67,17 +72,17 @@
         --selected-theme-bg-color: #0088ff;
         --menu-bg-color: #f7f7f7;
 
-    /* -- Index Elements */
-    --secondary-bg-color: #ffffff;
+        /* -- Index Elements */
+        --secondary-bg-color: #ffffff;
 
-    /* - Music - */
+    /* - Music.html - */
     --del-bg-color: #ff00009e;
     --del-hover-bg-color: #ff0000b4;
 
-    /* - Accounting - */
+    /* - Accounting.html - */
     --border-color: #ffffff;
 
-    /* - Agenda - */
+    /* - Agenda.html - */
     --check-button-color: #eaeaea;
     --check-button-hover-color: #bcbcbc7a;
 }
