@@ -251,51 +251,59 @@ html.not-iframe .song-container {margin: 20px}
     margin: 2px 0 0 0;
     font-size: var(--mini-font-size);
 }
-
+/* Table Layout */
 .songs-table {
+    width: 100%;
+    border-collapse: collapse; table-layout: fixed;
     margin-top: calc(20px * (var(--device-multiplier) - 1)); /* 0px PC, 20px Mobile */
-    border-collapse: collapse;
-    table-layout: fixed; min-width: 100%; max-width: 100%;
+
     font-size: var(--small-font-size);
 }
-.songs-table th {border-bottom: 1px solid var(--menu-bg-color);}
-.songs-table td, th {
+.songs-table th, .songs-table td {
+    padding: 7.5px;
     text-align: left;
-    padding: 8px;
-
-    width: min-content;
-    word-wrap: break-word;
 }
+.songs-table th:nth-child(1) {width: 3.5%;}
+.songs-table th:nth-child(2) {width: 32.5%;}
+.songs-table th:nth-child(5) {width: 10%;}
+.songs-table th:nth-child(6) {width: 7.5%;}
 
-.songs-table tr:last-child td:first-child {border-bottom-left-radius: 10px;} 
-.songs-table tr:last-child td:last-child {border-bottom-right-radius: 10px;}
-.songs-table .songTcontainer {cursor: pointer;}
-.songs-table .songTcontainer:hover {background-color: var(--menu-bg-color)}
+.songs-table td:nth-child(1) p {direction: rtl;} /* Reverse ... in index 3012 => ..12 */
+.songs-table p {
+    margin: 0;
+    min-width: 0; max-width: 32ch;
+    font-size: var(--small-font-size);
 
-.songs-table .songTcontainer :nth-child(3) {line-break: anywhere}
-
+    overflow: hidden;
+    
+    display: -webkit-box; 
+    -webkit-line-clamp: 2; line-clamp: 2;
+    -webkit-box-orient: vertical; 
+    
+    white-space: normal; 
+    text-overflow: ellipsis;
+}
+/* Title Column */
 .titleSong-column {
     display: flex;
     width: 90%;
     gap: 10px;
     align-items: center;
 }
-.songs-table p {
-    margin: 0;
-    min-width: 0; max-width: 32ch;
-    font-size: var(--small-font-size);
-
-    display: -webkit-box;
-    -webkit-line-clamp: 2; line-clamp: 2;
-    -webkit-box-orient: vertical;
-
-    overflow: hidden;
-}
 .titleSong-column img {
     width: calc(40px + 42.5px * (var(--device-multiplier) - 1)); /* 40px PC, 82.5px Mobile */
     aspect-ratio: 1/1;
     border-radius: calc(7.5px * var(--device-multiplier)); /* 7.5px PC, 15px Mobile */
 }
+/* Primary Esthetics */
+.songs-table th {border-bottom: 1px solid var(--menu-bg-color);}
+
+.songs-table .songTcontainer {cursor: pointer;}
+.songs-table .songTcontainer:hover {background-color: var(--menu-bg-color)}
+
+.songs-table tr:last-child td:first-child {border-bottom-left-radius: 10px;}
+.songs-table tr:last-child td:last-child {border-bottom-right-radius: 10px;}
+/* Delete Buttton */
 .songTable-delete {
     background-color: #ffffff00;
     border: 0;

@@ -318,7 +318,7 @@ function CreateSongHTML(index, values) {
     <td data-visible="0">
         <p>${values[5]}</p>
     </td>
-    <td style="text-align: center;">
+    <td style="text-align: right;">
         <button onclick="event.stopPropagation(); DeleteSong(this)" class="songTable-delete">
             <img src="${endpoints.deleteIco}">
         </button>
