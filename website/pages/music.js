@@ -7,7 +7,9 @@ let oldSong = [];
 let oldVolume = 1;
 let currentPl = [null, null]; //plId (str), plIdLenght (str)
 let preloadData = ["", "", "", "", 0] // struct ["url", "name", "artist", "img", 0]
+let currentSongs = [] // List off songs
 let shuffleState = false;
+let animationSongs = 20 // Start animation limit
 
 // Modal Related
 let modalState = [false,false];
@@ -266,7 +268,13 @@ domElSongs.audioControll.addEventListener('ended', () => {
 
 async function PreloadSong(songId) { // id == idSong
     // Song Id -> Elements Index
-    let id = domElSongs.songTableSongs.querySelector(`.songTcontainer[data-song-id="${songId}"]`).children[0].children[0].innerHTML - 1;
+    let id 
+    try {id = domElSongs.songTableSongs.querySelector(`.songTcontainer[data-song-id="${songId}"]`).children[0].children[0].innerHTML - 1;}
+    catch {
+        console.log(`(Error) While preloading => (${id})`)
+        id = 0
+    }
+
     // Next Song (Elements Index)
     let i = id+1;
     let length = currentPl[1];
@@ -449,30 +457,39 @@ if (localStorage.getItem("pl-grid")) {
     domElPlaylist.playlistsContainer.className = localStorage.getItem("pl-grid")
 }
 // ---
+function addRemainingSongs() {
+    for (let i = animationSongs; i < currentSongs.length; i++) {
+        CreateSongHTML(i, currentSongs[i]);
+    }
+    currentSongs = null
+}
 
 async function OpenPlaylist(item) {
     deleteChangeState(false)
     let ItemPlId = item.querySelector(".pl-id");
     let data = await GetPlData(ItemPlId.value);
     if (data == null) throw new Error("Playlist data returned null (Code was not 200)")
-    domElSongs.plDSId.value = ItemPlId.value;
+    
+    currentSongs = data.songs;
+    currentPl[1] = currentSongs.length - 1;
 
+    domElSongs.plDSId.value = ItemPlId.value;
     domElSongs.plDsImg.src = data.playlist[2];
     domElSongs.plDsTitle.innerHTML = data.playlist[0];
-    // To Do: Check if data.playlist[1]==None then ""
-    domElSongs.plDsDesc.innerHTML = `${data.playlist[1].replaceAll("\n", "<br>")}<br><br><i>Songs - ${data.songs.length}</i>`;
+    domElSongs.plDsDesc.innerHTML = `${data.playlist[1].replaceAll("\n", "<br>")}<br><br><i>Songs - ${currentSongs.length}</i>`;
+
+    domElSongs.songTableSongs.innerHTML = null; // reset list
+    for (let i = 0; i < animationSongs; i++) { // Add n.(animationSongs) of songs
+        CreateSongHTML(i, currentSongs[i]);
+    }
+    domElSongs.songContainer.scrollTo({ top: 0 }); // Scrolls to the top (instantly)
+    // Animation Fix
+    if (domElSongs.mainContainer.dataset.status == "0") {
+        domElSongs.mainContainer.addEventListener("transitionend", addRemainingSongs, { once: true });
+    } else addRemainingSongs()
 
     domElSongs.mainContainer.dataset.status = "1";
-    domElSongs.songTableSongs.innerHTML = null; // reset list
-    
-    currentPl[1] = data.songs.length - 1;
-
-    data.songs.forEach((song, index) => {
-        CreateSongHTML(index, song);
-    });
-    domElSongs.songContainer.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
 
 async function GetPlData(plNum) {
     let req = await fetch(endpoints.playlist, {

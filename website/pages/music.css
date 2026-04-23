@@ -61,10 +61,22 @@
     }
 }
 
-
-* {
-    transition: all 0.25s ease;
+/* Theme and Animation Fixes */
+body, .main-container, .player-container, .song-container, .library-container, .playlist-songs,.card,.button, .song-btn, input, textarea {
+    --default-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);;
+    transition: 
+        color var(--default-transition),
+        background-color var(--default-transition),
+        border-color var(--default-transition),
+        filter var(--default-transition);
 }
+
+.up .music-buttons button img, .player-container .volume-slider img, .song-btn img, .ico-small, .img-insert[data-state="0"] {
+    transition: filter 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: invert(var(--img-invert-value));
+}
+/* --- */
+
 input:focus, textarea:focus, button:focus {
     outline: none;
     box-shadow: none;
@@ -84,7 +96,10 @@ body, html {
     display: none;
 }
 .main-container {
-    transition: all 0.35s ease;
+    transition: 
+        grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+        grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: grid-template-columns, grid-template-rows;
     
     overflow: auto;
@@ -153,7 +168,6 @@ html.not-iframe .main-container[data-play="1"] .player-container {margin: 0px 20
 .up .music-buttons button img, .player-container .volume-slider img {
     width: calc(32px + 36px * (var(--device-multiplier) - 1)); /* 32px PC, 68px Mobile */
     aspect-ratio: 1/1;
-    filter: invert(var(--img-invert-value));
     cursor: pointer;
 }
 .volume-slider {align-items: center;}
@@ -210,7 +224,6 @@ html.not-iframe .song-container {margin: 20px}
 .song-btn img {
     width: calc(30px * var(--device-multiplier)); /* 30px PC, 60px Mobile */
     aspect-ratio: 1/1;
-    filter: invert(var(--img-invert-value));
 }
 .song-btn.clicked-del { background-color: var(--del-bg-color); }
 .song-btn.clicked-del:hover { background-color: var(--del-hover-bg-color); }
@@ -317,7 +330,6 @@ html.not-iframe .song-container {margin: 20px}
 .songTable-delete img {
     width: calc(29px + 6px * (var(--device-multiplier) - 1)); /* 29px PC, 35px Mobile */
     height: calc(32px + 8px * (var(--device-multiplier) - 1)); /* 32px PC, 40px Mobile */
-    filter: invert(var(--img-invert-value));
 }
 /* Library Container (Playlist) */
 .library-container {
@@ -499,7 +511,7 @@ html:not(.not-iframe) .modal-playlist {
     aspect-ratio: 1/1;
     cursor: pointer;
     
-} .img-insert[data-state="0"] {filter: invert(var(--img-invert-value));}
+}
 .inputs {
     display: flex;
     flex-direction: column;
@@ -598,5 +610,4 @@ html:not(.not-iframe) .modal-playlist {
 .ico-small {
     width: calc(18.5px * var(--device-multiplier));
     aspect-ratio: 1/1;
-    filter: invert(var(--img-invert-value));
 }
