@@ -484,7 +484,7 @@ async function OpenPlaylist(item) {
     }
     domElSongs.songContainer.scrollTo({ top: 0 }); // Scrolls to the top (instantly)
     // Animation Fix
-    if (domElSongs.mainContainer.dataset.status == "0") {
+    if (domElSongs.mainContainer.dataset.status == "0" && window.getComputedStyle(domElSongs.mainContainer).transitionDuration !== '0s') {
         domElSongs.mainContainer.addEventListener("transitionend", addRemainingSongs, { once: true });
     } else addRemainingSongs()
 

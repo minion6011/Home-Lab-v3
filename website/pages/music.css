@@ -1,8 +1,8 @@
 /* Mobile */
 @media ((hover: none) and (pointer: coarse)) {
-    .main-container[data-status="1"] .library-container, *[data-visible="0"], .up .song-details, .volume-slider {display: none;}
+    .main-container[data-status="1"] .library-container, *[data-visible="0"], .up .song-details, .volume-slider {display: none}
     .main-container[data-play="1"] {grid-template-rows: 1fr 0.125fr;} /* Row1 + Row2 (player) */
-    .main-container {grid-template-columns: 1fr}
+    .main-container {grid-template-columns: 1fr; transition: none !important;}
     .main-container[data-play="1"] .player-container {align-items: center;}
     html:not(.not-iframe) .main-container {row-gap: 1.5%;}
 
