@@ -99,7 +99,7 @@ body, html {
     transition: 
         grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
         grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-        background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
     will-change: grid-template-columns, grid-template-rows;
     
     overflow: auto;
