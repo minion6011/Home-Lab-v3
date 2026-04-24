@@ -89,8 +89,7 @@ async function clearVideos() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({action: "clear"}),
     });
-    if (req.status == 200) {
-        domEl.divCompressed.style.display = domEl.divUncompressed.style.display = "none";
-        domEl.videoCompressed.src = domEl.videoUncompressed.src =  "";
-    }
+    domEl.divCompressed.style.display = domEl.divUncompressed.style.display = "none";
+    domEl.videoCompressed.src = domEl.videoUncompressed.src =  "";
+    domEl.videoFile.value = null;
 }
