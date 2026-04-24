@@ -242,7 +242,7 @@ html.not-iframe .song-container {margin: 20px}
 }
 .playlist-info .image {
     width: 175px; /* Size Mobile = Size PC */
-    aspect-ratio: 1 / 1;
+    height: 175px;
     border-radius: 15px;
 }
 .playlist-info .text {
@@ -306,7 +306,7 @@ html.not-iframe .song-container {margin: 20px}
     align-items: center;
 }
 .titleSong-column img {
-    width: calc(40px + 42.5px * (var(--device-multiplier) - 1)); /* 40px PC, 82.5px Mobile */
+    width: calc(40px + 50px * (var(--device-multiplier) - 1)); /* 40px PC, 90px Mobile */
     aspect-ratio: 1/1;
     border-radius: calc(7.5px * var(--device-multiplier)); /* 7.5px PC, 15px Mobile */
 }
