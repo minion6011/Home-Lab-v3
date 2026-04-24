@@ -1,5 +1,7 @@
 /* --- Config --- */
 const RPCEnabled = false;
+let maxIcoSize = 10 // Max Playlist Ico Size in MB
+let animationSongs = 20 // Start animation limit
 /* --- Variables --- */
 // Songs Related
 let nDownload = 0;
@@ -9,7 +11,6 @@ let currentPl = [null, null]; //plId (str), plIdLenght (str)
 let preloadData = ["", "", "", "", 0] // struct ["url", "name", "artist", "img", 0]
 let currentSongs = [] // List off songs
 let shuffleState = false;
-let animationSongs = 20 // Start animation limit
 
 // Modal Related
 let modalState = [false,false];
@@ -550,10 +551,14 @@ function PlaylistModal(arg) {
 }
 
 domElPlaylist.fileInput.addEventListener('change', () => {
-    modalState[0] = true; checkStatus();
     const file = domElPlaylist.fileInput.files[0];
     if (file == undefined) return
     if (imgDefault === "") imgDefault = domElPlaylist.imgView.src;
+
+    if (domElPlaylist.fileInput.files[0].size > maxIcoSize*(10**6)) return // To-Do: Add an error message
+
+    modalState[0] = true; checkStatus();
+
     const reader = new FileReader();
     reader.onload = (e) => {
         domElPlaylist.imgView.dataset.state = "1"
@@ -571,6 +576,8 @@ function checkStatus() {
 
 // Create-Edit Playlist
 function CreateEditPlaylist(type, num=null) {
+    if (domElPlaylist.fileInput.files[0].size > maxIcoSize*(10**6)) return
+    
     const formData = new FormData();
     let ptype
     formData.append("type", type);
