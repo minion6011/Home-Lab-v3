@@ -31,7 +31,7 @@
     .up .song-details, .up .volume-slider {display: flex;}
 }
 @media ((hover: hover) and (pointer: fine)) { /* Schermo PC */
-    .main-container[data-status="0"] {grid-template-columns: 100% 0%; transition: grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1);} /* Library */
+    .main-container[data-status="0"] {grid-template-columns: 100% 0%;} /* Library */
     .main-container[data-play="1"] {grid-template-rows: 1fr 0.2fr;} /* Row1 + Row2 (player) */
     .main-container[data-play="1"] .player-container {align-items: end;}
     html:not(.not-iframe) .main-container[data-play="1"] {row-gap: 3.5%;}
@@ -96,7 +96,7 @@ body, html {
     display: none;
 }
 .main-container {
-    transition: 
+    transition:
         grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1),
         background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: grid-template-columns, grid-template-rows;
@@ -107,6 +107,9 @@ body, html {
     height: 100%; width: 100%;
     background-color: var(--containers-bg-color);
     margin: auto;
+}
+.main-container.animation {
+    transition: grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 .main-container[data-play="0"] {
     grid-template-rows: 1fr 0fr;
