@@ -140,7 +140,7 @@
                 <div class="card">
                     <div class="title">
                         <p id="modal-pl-title">Create Playlist</p>
-                        <p class="close-button" onclick="PlaylistModal('close')">✕</p>
+                        <p class="close-button" onclick="PlaylistModal('close')">&#x2715;</p>
                     </div>
                     <div class="items">
                         <div style="display: flex; justify-content: center;">
@@ -152,7 +152,10 @@
                             <textarea id="pl-desc" placeholder="Playlist Description" maxlength="100"></textarea>
                         </div>
                     </div>
-                    <button class="button" disabled onclick="CreateEditPlaylist()" id="pl-btn">Save</button>
+                    <div class="last-row-container">
+                        <p id="pl-error"></p>
+                        <button class="button" disabled onclick="CreateEditPlaylist()" id="pl-btn">Save</button>
+                    </div>
                 </div>
             </div>
         </div>

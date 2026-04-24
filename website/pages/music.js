@@ -51,6 +51,7 @@ const domElPlaylist = { // Playlist Elements
 
     plNameIn: document.getElementById("pl-name"),
     plDescIn: document.getElementById("pl-desc"),
+    plError: document.getElementById("pl-error"),
 
     fileInput: document.getElementById("img-file"),
     imgView: document.getElementById("modal-pl-img"),
@@ -555,7 +556,11 @@ domElPlaylist.fileInput.addEventListener('change', () => {
     if (file == undefined) return
     if (imgDefault === "") imgDefault = domElPlaylist.imgView.src;
 
-    if (domElPlaylist.fileInput.files[0].size > maxIcoSize*(10**6)) return // To-Do: Add an error message
+    if (domElPlaylist.fileInput.files[0].size > maxIcoSize*(10**6)) {
+        domElPlaylist.plError.textContent = `Error, icon file size should be lesser or equal to ${maxIcoSize} MB`;
+        return;
+    }
+    domElPlaylist.plError.textContent = null;
 
     modalState[0] = true; checkStatus();
 

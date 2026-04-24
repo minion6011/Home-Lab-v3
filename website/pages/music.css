@@ -62,7 +62,7 @@
 }
 
 /* Theme and Animation Fixes */
-body, .main-container, .player-container, .song-container, .library-container, .playlist-songs,.card,.button, .song-btn, input, textarea {
+body, .main-container, .player-container, .song-container, .library-container, .playlist-songs,.card, .button, .song-btn, input, textarea {
     --default-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);;
     transition: 
         color var(--default-transition),
@@ -538,8 +538,17 @@ html:not(.not-iframe) .modal-playlist {
     align-items: center;
     gap: 5px;
 }
+.card .last-row-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.card #pl-error {
+    margin: 0;
+    color: var(--loss-color);
+    font-size: var(--mini-font-size);
+}
 .card .button {
-    align-self: flex-end;
     background-color: var(--font-color);
     border: none;
     color: var(--inv-color);
