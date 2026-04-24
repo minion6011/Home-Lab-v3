@@ -153,6 +153,9 @@ domEl.newpageBtn.addEventListener("click", () => {
 
 function drawAllLines() {
     ctx.clearRect(0, 0, domEl.canvasObj.width, domEl.canvasObj.height); // Clear canva
+    // Fill BG with white
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, domEl.canvasObj.width, domEl.canvasObj.height);
     for (const lineList of lines) { 
         for (const line of lineList) {
             ctx.beginPath();

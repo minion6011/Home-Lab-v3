@@ -302,7 +302,7 @@ html.not-iframe .song-container {margin: 20px}
 .titleSong-column {
     display: flex;
     width: 90%;
-    gap: 10px;
+    gap: 15px;
     align-items: center;
 }
 .titleSong-column img {
