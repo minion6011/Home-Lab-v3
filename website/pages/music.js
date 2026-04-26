@@ -7,7 +7,8 @@ let animationSongs = 20 // Start animation limit
 let nDownload = 0;
 let oldSong = [];
 let oldVolume = 1;
-let currentPl = [null, null]; //plId (str), plIdLenght (str)
+let OpenPl = [null, []] //plId (str), <list>(index, idsong) - for the current open playlist
+let playingPl = [null, []]; //plId (str), <list>(index, idsong) - for the current playing playlist
 let preloadData = ["", "", "", "", 0] // struct ["url", "name", "artist", "img", 0]
 let currentSongs = [] // List off songs
 let shuffleState = false;
@@ -96,8 +97,10 @@ async function DeleteSong(value) {
         body: JSON.stringify({type: "delete", index: idSong}),
     });
     if (req.status == 200) {
-        if (domElSongs.plDSId.value == currentPl[0]) // Decrease the playlist songs number (if the song deleted is into the current open playlist)
-            currentPl[1] -= 1;
+        // Removes the deleted song from the playlist
+        if (domElSongs.plDSId.value == playingPl[0]) playingPl[1].pop(idSong)
+        if (domElSongs.plDSId.value == OpenPl[0]) OpenPl[1].pop(idSong)
+
         if (preloadData[4] == idSong) // Resets Preload data (if the song deleted was the next song that needed to be played)
             preloadData = ["", "", "", "", 0];
 
@@ -185,7 +188,9 @@ function Seek(add, details) {
 }
 
 async function FetchSong(sgId) {
-    currentPl[0] = domElSongs.plDSId.value;
+    playingPl[0] = domElSongs.plDSId.value;
+    playingPl[1] = OpenPl[1] // check if memory reference
+
     let req = await fetch(endpoints.songs, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -268,28 +273,26 @@ domElSongs.audioControll.addEventListener('ended', () => {
     PreloadSong(preloadData[4]);
 });
 
-async function PreloadSong(songId) { // id == idSong
-    // Song Id -> Elements Index
-    let id 
-    try {id = domElSongs.songTableSongs.querySelector(`.songTcontainer[data-song-id="${songId}"]`).children[0].children[0].innerHTML - 1;}
-    catch {
-        console.log(`(Error) While preloading => (${id})`)
-        id = 0
-    }
+function chooseSong(songId) {
+    id = playingPl[1].indexOf( parseInt(songId) ) // 0
 
-    // Next Song (Elements Index)
     let i = id+1;
-    let length = currentPl[1];
+    let length = playingPl[1].length;
+
     if (shuffleState && length >= 1) {i = Math.floor(Math.random() * length)}
     if (i == id) { if (i+1>length) {i--} else {i++};} // Evita che appaia lo stesso numero
     if (i > length) {i = 0}; // Ricomincia
-    // Elements Index -> Song Id
-    let newSongId = domElSongs.songTableSongs.querySelectorAll(".songTcontainer")[i].dataset.songId;
+
+    return playingPl[1][i];
+}
+
+async function PreloadSong(songId) { // id == idSong
+    let newSongId = chooseSong(songId)
+
     let req = await fetch(endpoints.songs, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            num: currentPl[0],
             type: "get",
             index: newSongId,
         }),
@@ -359,11 +362,12 @@ async function AddSong() {
     if (req.status == 200) {
         indexStart = domElSongs.songTableSongs.querySelectorAll(".songTcontainer").length
 
-        if (domElSongs.plDSId.value == currentPl[0]) currentPl[1] += 1
         let json = JSON.parse(await req.text());
         if (startPl == domElSongs.plDSId.value) {
             json.nwSongs.forEach((song, index) => {
                 CreateSongHTML(indexStart+index, song)
+                if (domElSongs.plDSId.value == playingPl[0]) 
+                    playingPl[1].push(song[0])
             });
             if (preloadData[4] == '1') PreloadSong(oldSong[oldSong.length-1]);
             domElSongs.plDsDesc.innerHTML = domElSongs.plDsDesc.innerHTML.replace(/( - )(.*?)(<\/i>)/, "$1" + (Number(indexStart)+Number(json.nwSongs.length)) + "$3");
@@ -426,14 +430,14 @@ function deleteChangeState(fstate=null) {
     deleteTimeout = setTimeout(() => {deleteChangeState(false)}, 5000); // after 5 seconds
 }
 async function deletePl() {
-    if (currentPl[0] == domElSongs.plDSId.value) {
+    if (playingPl[0] == domElSongs.plDSId.value) {
         // Reset Music Player
         domElSongs.mainContainer.dataset.play = "0";
         if (domElSongs.audioControll.playing)
             await domElSongs.audioControll.pause();
         domElSongs.audioControll.src = "";
         // Resets Values
-        preloadData = ["", "", "", "", 0]; currentPl = [null, null]; oldSong = [];
+        preloadData = ["", "", "", "", 0]; playingPl = [null, null]; oldSong = [];
     }
     let req = await fetch(endpoints.playlist, {
         method: "POST",
@@ -464,6 +468,7 @@ if (localStorage.getItem("pl-grid")) {
 function addRemainingSongs() {
     for (let i = animationSongs; i < currentSongs.length; i++) {
         CreateSongHTML(i, currentSongs[i]);
+        OpenPl[1].push(currentSongs[i][0])
     }
     currentSongs = null
 }
@@ -474,8 +479,10 @@ async function OpenPlaylist(item) {
     let data = await GetPlData(ItemPlId.value);
     if (data == null) throw new Error("Playlist data returned null (Code was not 200)")
     
+    OpenPl[0] = ItemPlId.value
+    OpenPl[1] = []
+    
     currentSongs = data.songs;
-    currentPl[1] = currentSongs.length - 1;
 
     domElSongs.plDSId.value = ItemPlId.value;
     domElSongs.plDsImg.src = data.playlist[2];
@@ -485,6 +492,7 @@ async function OpenPlaylist(item) {
     domElSongs.songTableSongs.innerHTML = null; // reset list
     for (let i = 0; i < animationSongs; i++) { // Add n.(animationSongs) of songs
         CreateSongHTML(i, currentSongs[i]);
+        OpenPl[1].push(currentSongs[i][0])
     }
     domElSongs.songContainer.scrollTo({ top: 0 }); // Scrolls to the top (instantly)
     // Animation Fix
