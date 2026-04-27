@@ -106,7 +106,7 @@ def songs():
 			db.commit()
 			return {"nwSongs": nwSongs}, 200
 		elif request.json["type"] == "get" and request.json["index"]:
-			song = dbCursor.execute("SELECT name, artist, img, added, duration, urlPath FROM songs WHERE idSong==?", (request.json["index"],)).fetchone()
+			song = dbCursor.execute("SELECT name, artist, img, added, duration, urlPath, idPlaylist FROM songs WHERE idSong==?", (request.json["index"],)).fetchone()
 			return {"song": song}, 200
 		elif request.json["type"] == "delete" and request.json["index"]:
 			# Removes the song audio file

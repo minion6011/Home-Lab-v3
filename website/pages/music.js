@@ -1,5 +1,5 @@
 /* --- Config --- */
-const RPCEnabled = false;
+const RPCEnabled = true; 
 let maxIcoSize = 10 // Max Playlist Ico Size in MB
 let animationSongs = 20 // Start animation limit
 /* --- Variables --- */
@@ -7,10 +7,11 @@ let animationSongs = 20 // Start animation limit
 let nDownload = 0;
 let oldSong = [];
 let oldVolume = 1;
-let OpenPl = [null, []] //plId (str), <list>(index, idsong) - for the current open playlist
 let playingPl = [null, []]; //plId (str), <list>(index, idsong) - for the current playing playlist
-let preloadData = ["", "", "", "", 0] // struct ["url", "name", "artist", "img", 0]
-let currentSongs = [] // List off songs
+
+nextSongId = null
+
+let currentSongs = [] // List off songs - used for the animation when opening a playlist
 let shuffleState = false;
 
 // Modal Related
@@ -18,29 +19,33 @@ let modalState = [false,false];
 let imgDefault = "";
 
 const domElSgPy = { // Song Player Elements
-    playerStateImg: document.getElementById("play-stop-img"),
-    playerLoopBtn: document.getElementById("loop-btn"),
-    playerShuffleBtn: document.getElementById("shuffle-btn"),
-    muteImg: document.getElementById("mute-img"),
-    volumeRange: document.getElementById("volumeRange"),
+    playerSongTitle: document.getElementById("playerTitle"),
+    playerSongImg: document.getElementById("playerImg"),
+
+    shuffleBtn: document.getElementById("shuffle-btn"),
+    prevBtn: document.getElementById("prev-btn"),
+    playStopBtn: document.getElementById("play-stop-btn"), playerStateImg: document.getElementById("play-stop-img"),
+    nextBtn: document.getElementById("next-btn"),
+    loopBtn: document.getElementById("loop-btn"),
+
+    volumeRange: document.getElementById("volumeRange"), volumeImg: document.getElementById("mute-img"),
 
     currentDuration: document.getElementById("cur-duration"),
     maxDuration: document.getElementById("max-duration"),
 
-    playerRange: document.getElementById("playerRange"),
-    playerSongImg: document.getElementById("playerImg"),
-    playerSongTitle: document.getElementById("playerTitle")
+    playerRange: document.getElementById("playerRange")
+    
 }
 const domElSongs = { // Songs Elements
     mainContainer: document.getElementById("mainContainer"),
     songContainer: document.getElementById("songCtn"),
 
     audioControll: document.getElementById("AudioControll"),
-    audioPreload: document.getElementById("AudioPreload"),
+    audioPreloader: new Audio(),
 
     songTableSongs: document.getElementById("songs-table"),
 
-    addsongInput: document.getElementById("songs-input"),
+    addSongInput: document.getElementById("songs-input"),
 
     plDsImg: document.getElementById("plDs-img"),
     plDsTitle: document.getElementById("plDs-title"),
@@ -76,9 +81,16 @@ const endpoints = {
     deleteIco: "/website/img/delete-ico.svg"
 }
 
-/* --- Functions --- */
-// Songs Player
-async function DeleteSong(value) {
+
+// ------------------------
+// Songs Managment
+// ------------------------
+
+/**
+ * Removes a song, from the server and from the HTML page
+ * @param {string} value HTML DOM Element of the song
+ */
+async function deleteSong(value) {
     const songContainer = value.parentElement.parentElement
     
     let idSong = songContainer.dataset.songId;
@@ -98,11 +110,11 @@ async function DeleteSong(value) {
     });
     if (req.status == 200) {
         // Removes the deleted song from the playlist
-        if (domElSongs.plDSId.value == playingPl[0]) playingPl[1].pop(idSong)
-        if (domElSongs.plDSId.value == OpenPl[0]) OpenPl[1].pop(idSong)
+        if (domElSongs.plDSId.value == playingPl[0]) 
+            playingPl[1].pop(idSong)
 
-        if (preloadData[4] == idSong) // Resets Preload data (if the song deleted was the next song that needed to be played)
-            preloadData = ["", "", "", "", 0];
+        if (nextSongId == idSong) // Resets Preload data (if the song deleted was the next song that needed to be played)
+            nextSongId = chooseSong(idSong);
 
         songContainer.parentElement.removeChild(songContainer);
 
@@ -116,238 +128,15 @@ async function DeleteSong(value) {
     }
     else throw new Error("Getting a song returns a non-200 status code");
 }
-function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
-}
-function StartStopAudio() { // Pause Button
-    if (domElSongs.audioControll.paused)
-        domElSongs.audioControll.play()
-    else 
-        domElSongs.audioControll.pause()
-}
-function UpdateMSBtn() { // Update Media Session Button
-    if (!domElSongs.audioControll.paused) {
-        navigator.mediaSession.playbackState = "playing";
-        domElSgPy.playerStateImg.src = endpoints.stopIco;
-    }
-    else {
-        navigator.mediaSession.playbackState = "paused";
-        domElSgPy.playerStateImg.src = endpoints.playIco;
-    };
-}
-function ChangeVolume(mute, value) {
-    if (domElSgPy.volumeRange.value == 0) {
-        if (mute) {
-            if (oldVolume == 0) {value = oldVolume = 0.5}
-            else {value = oldVolume};
-        }
-        if (!mute) oldVolume = 0;
-    }
-    else if (value != 0 && !mute) oldVolume = value;
-    domElSgPy.volumeRange.value = domElSongs.audioControll.volume = value;
-    if (value == 0) domElSgPy.muteImg.src = endpoints.muteIco
-    else domElSgPy.muteImg.src = endpoints.volumeIco;
-}
-function LoopToogle() {
-    domElSongs.audioControll.loop = !domElSongs.audioControll.loop;
-    domElSgPy.playerLoopBtn.classList.toggle("on", domElSongs.audioControll.loop);
-}
 
-async function NextSong() {
-    if (preloadData[0] == domElSongs.audioControll.src) {
-        await PreloadSong(preloadData[4])
-    }
-    PlaySong(preloadData[0], preloadData[1], preloadData[2], preloadData[3], preloadData[4])
-}
-
-async function setPWA(title, artist, img) {
-    if ('mediaSession' in navigator) {
-        navigator.mediaSession.metadata = new MediaMetadata({ 
-            title: title,
-            artist: artist,
-            album: domElSongs.plDsTitle.innerText,
-            artwork: [
-                { src: img, sizes: "512x512", type: "image/png" }
-            ],
-        });
-        navigator.mediaSession.setActionHandler('play', () => {domElSongs.audioControll.play()});  
-        navigator.mediaSession.setActionHandler('pause', () => {domElSongs.audioControll.pause()});
-        navigator.mediaSession.setActionHandler('nexttrack', async () => {await NextSong()});
-        navigator.mediaSession.setActionHandler('previoustrack', async () => {FetchSong(oldSong[0]); oldSong.splice(1, 1)})
-        navigator.mediaSession.setActionHandler("seekbackward", (details) => {Seek(false, details)});
-        navigator.mediaSession.setActionHandler("seekforward", (details) => {Seek(true, details)});
-    }
-}
-
-function Seek(add, details) {
-    const skipTime = details.seekOffset || 10;
-    if (add) domElSongs.audioControll.currentTime = Math.min(domElSongs.audioControll.currentTime + skipTime, domElSongs.audioControll.duration);
-    else domElSongs.audioControll.currentTime = Math.min(domElSongs.audioControll.currentTime - skipTime, 0);
-}
-
-async function FetchSong(sgId) {
-    playingPl[0] = domElSongs.plDSId.value;
-    playingPl[1] = OpenPl[1] // check if memory reference
-
-    let req = await fetch(endpoints.songs, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({type: "get", index: sgId}),
-    });
-    if (req.status == 200) {
-        let json = JSON.parse(await req.text());
-        PlaySong(json.song[5], json.song[0], json.song[1], json.song[2], sgId)
-    }
-    else throw new Error("Getting a song returns a non-200 status code");
-}
-
-function RPCDiscord(name, artist, img, duration) {
-    fetch(endpoints.discordRPC, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            title: name,
-            artist: artist,
-            img: img,
-            duration: duration
-        })
-    });
-}
-
-async function PlaySong(url, name, artist, img, songId) {
-    if (domElSongs.mainContainer.dataset.play == "0") {
-        domElSongs.mainContainer.dataset.play = "1"
-    }
-    oldSong.push(songId); // idSong
-    if (oldSong.length >= 3) {
-        oldSong.splice(0, 1)
-    }
-    domElSongs.audioControll.src = url; 
-    await domElSongs.audioControll.play();
-    setPWA(name, artist, img);
-    
-    domElSgPy.playerStateImg.src = endpoints.stopIco; PreloadSong(songId); // Play and preload next song
-
-    domElSongs.audioControll.currentTime = 0;
-    domElSgPy.playerRange.value = 0; domElSgPy.playerRange.max = domElSongs.audioControll.duration; domElSgPy.maxDuration.innerHTML = formatTime(domElSongs.audioControll.duration);
-    if (domElSgPy.playerRange.disabled) domElSgPy.playerRange.disabled = false;
-    // Player Setup
-    domElSgPy.playerSongImg.src = img; domElSgPy.playerSongTitle.innerText = name;
-    // Loads DiscordRPC
-    if (RPCEnabled)
-        RPCDiscord(name, artist, img, domElSongs.audioControll.duration)
-}
-
-// Media Session
-domElSongs.audioControll.addEventListener("play", () => {UpdateMSBtn(); updatePositionState()});
-domElSongs.audioControll.addEventListener("pause", () => {UpdateMSBtn(); updatePositionState()});
-domElSongs.audioControll.addEventListener("seeking", updatePositionState);
-
-domElSongs.audioControll.addEventListener("ratechange", updatePositionState);
-domElSongs.audioControll.addEventListener("loadedmetadata", updatePositionState);
-domElSongs.audioControll.addEventListener("timeupdate", updatePositionState);
-
-function updatePositionState() {
-    if (!domElSongs.audioControll.duration || isNaN(domElSongs.audioControll.duration)) return;
-    if ('setPositionState' in navigator.mediaSession) {
-        navigator.mediaSession.setPositionState({
-            duration: Math.floor(domElSongs.audioControll.duration),
-            playbackRate: domElSongs.audioControll.playbackRate,
-            position: Math.floor(domElSongs.audioControll.currentTime),
-        });
-    }
-}
-
-domElSongs.audioControll.addEventListener('timeupdate', () => {
-  if (domElSongs.audioControll.duration) {
-    domElSgPy.playerRange.value = domElSongs.audioControll.currentTime;
-    domElSgPy.playerRange.style.setProperty('--range-progress-width', `${(domElSgPy.playerRange.value - domElSgPy.playerRange.min) / (domElSgPy.playerRange.max - domElSgPy.playerRange.min) * 100}%`);
-    domElSgPy.currentDuration.innerHTML = formatTime(domElSongs.audioControll.currentTime);
-  }
-});
-
-domElSongs.audioControll.addEventListener('ended', () => {
-    PlaySong(preloadData[0], preloadData[1], preloadData[2], preloadData[3], preloadData[4])
-    PreloadSong(preloadData[4]);
-});
-
-function chooseSong(songId) {
-    id = playingPl[1].indexOf( parseInt(songId) ) // 0
-
-    let i = id+1;
-    let length = playingPl[1].length;
-
-    if (shuffleState && length >= 1) {i = Math.floor(Math.random() * length)}
-    if (i == id) { if (i+1>length) {i--} else {i++};} // Evita che appaia lo stesso numero
-    if (i > length) {i = 0}; // Ricomincia
-
-    return playingPl[1][i];
-}
-
-async function PreloadSong(songId) { // id == idSong
-    let newSongId = chooseSong(songId)
-
-    let req = await fetch(endpoints.songs, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            type: "get",
-            index: newSongId,
-        }),
-    })
-    if (req.status == 200) {
-        let json = JSON.parse(await req.text());
-        domElSongs.audioPreload.src = json.song[5]; // Preload
-        preloadData = [json.song[5], json.song[0], json.song[1], json.song[2], newSongId]
-    }
-    else throw new Error("Getting a song (preload funct) returns a non-200 status code");
-}
-// Song Html
-function CreateSongHTML(index, values) {
-    if (values == undefined) return // Fix animation preload limit
-
-    let trElement = document.createElement("tr"); trElement.className = "songTcontainer";
-    trElement.setAttribute("onclick", `FetchSong(this.dataset.songId);`);
-    trElement.dataset.songId = values[0];
-
-    songName = values[1]
-
-    trElement.innerHTML = `
-    <td data-visible="0">
-        <p>${index + 1}</p>
-    </td>
-    <td>
-        <div class="titleSong-column">
-            <img loading="lazy" src="${values[3]}">
-            <p>${songName}</p>
-        </div>
-    </td>
-    <td data-visible="0">
-        <p>${values[2]}</p>
-    </td>
-    <td data-visible="0">
-        <p>${values[4]}</p>
-    </td>
-    <td data-visible="0">
-        <p>${values[5]}</p>
-    </td>
-    <td style="text-align: right;">
-        <button onclick="event.stopPropagation(); DeleteSong(this)" class="songTable-delete">
-            <img src="${endpoints.deleteIco}">
-        </button>
-    </td>
-    `;
-    domElSongs.songTableSongs.appendChild(trElement);
-}
-
-// Add-Song Button
-async function AddSong() {
+/**
+ * Adds a song or playlist to the server and to the HTML page using the `domElSongs.addSongInput` value
+ */
+async function addSong() {
     nDownload += 1;
-    let songName = domElSongs.addsongInput.value; domElSongs.addsongInput.value = ""; domElSongs.addsongInput.placeholder = `Downloading - ${nDownload}...`
+    let songName = domElSongs.addSongInput.value; domElSongs.addSongInput.value = ""; domElSongs.addSongInput.placeholder = `Downloading - ${nDownload}...`
     let startPl = domElSongs.plDSId.value;
-    // domElSongs.addsongInput.disabled = true;
+    // domElSongs.addSongInput.disabled = true;
     let req = await fetch(endpoints.songs, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -356,8 +145,8 @@ async function AddSong() {
 
     // Update Download Placeholder
     nDownload -= 1
-    if (nDownload == 0) domElSongs.addsongInput.placeholder = "YT name/link...";
-    else domElSongs.addsongInput.placeholder = `Downloading - ${nDownload}...`;
+    if (nDownload == 0) domElSongs.addSongInput.placeholder = "YT name/link...";
+    else domElSongs.addSongInput.placeholder = `Downloading - ${nDownload}...`;
 
     if (req.status == 200) {
         indexStart = domElSongs.songTableSongs.querySelectorAll(".songTcontainer").length
@@ -365,71 +154,175 @@ async function AddSong() {
         let json = JSON.parse(await req.text());
         if (startPl == domElSongs.plDSId.value) {
             json.nwSongs.forEach((song, index) => {
-                CreateSongHTML(indexStart+index, song)
-                if (domElSongs.plDSId.value == playingPl[0]) 
-                    playingPl[1].push(song[0])
+                createSongHTML(indexStart+index, song)
             });
-            if (preloadData[4] == '1') PreloadSong(oldSong[oldSong.length-1]);
             domElSongs.plDsDesc.innerHTML = domElSongs.plDsDesc.innerHTML.replace(/( - )(.*?)(<\/i>)/, "$1" + (Number(indexStart)+Number(json.nwSongs.length)) + "$3");
+        }
+        
+        if (startPl == playingPl[0]) {
+            json.nwSongs.forEach(song => {
+                playingPl[1].push(song[0])
+            });
+            if (nextSongId == playingPl[0]) { // If the current playlist is the one that is being added, it updates the next song to play (if the next song was the last one, it becomes the first of the new songs)
+                nextSongId = chooseSong(nextSongId);
+                preloadSong();
+            }
         }
     }
     else throw new Error("Adding a song returns a non-200 status code");
 }
 
-menuStateCode = 0 // 0 Closed - 1 Open Add Song - 2 Open Search
-function MenuAction() {
-    if (menuStateCode == 1)
-        AddSong()
-    else if (menuStateCode == 2) {
-        window.find(
-            domElSongs.addsongInput.value,
-            false, false, true, false, true, true
-        )
-        const selection = window.getSelection();
-        if (selection.rangeCount > 0) {
-            selection.getRangeAt(0).startContainer.parentElement.scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-            });
-        }
+/**
+ * Gets a song data from the server, given its ID
+ * @param {string | number} songId 
+ * @returns The song data list [songName, authorName, imageUrl, date, duration, songUrl, idPlaylist]
+ */
+async function getSongData(songId) {
+    let req = await fetch(endpoints.songs, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            type: "get",
+            index: songId,
+        }),
+    })
+    if (req.status == 200) {
+        let json = JSON.parse(await req.text());
+        return json.song
     }
-}
-function OpenMenu(code) {
-    domElSongs.addsongInput.value = '';
-    if (menuStateCode == code && domElSongs.addsongInput.style.display != "none") { // Fade Out
-        code = 0;
-        domElSongs.addsongInput.classList.add("animate", "out");
-        domElSongs.addsongInput.addEventListener("animationend", () => {
-            domElSongs.addsongInput.classList.remove("animate", "out");
-            domElSongs.addsongInput.style.display = "none";
-        }, { once: true });
-    } else if (domElSongs.addsongInput.style.display == "none" && !domElSongs.addsongInput.classList.contains("animate")) { // Fade In
-        domElSongs.addsongInput.style.display = "block";
-        domElSongs.addsongInput.classList.add("animate");
-    }
-    menuStateCode = code
-
-    if (code == 1) { // Open Song
-        if (nDownload == 0) domElSongs.addsongInput.placeholder = "YT name/link...";
-        else domElSongs.addsongInput.placeholder = `Downloading - ${nDownload}...`;
-    } else if (code == 2) {
-        domElSongs.addsongInput.placeholder = "Press Enter to search"
-    }
+    else throw new Error("Getting a song returns a non-200 status code");
 }
 
-// Delete Button
-let deleteTimeout = null;
-function deleteChangeState(fstate=null) {
-    let stateDel = (!domElPlaylist.delPlButton.classList.contains("clicked-del") && fstate==null) || fstate == true
-    domElPlaylist.delPlButton.classList.toggle("clicked-del", stateDel);
-    if (stateDel)
-        domElPlaylist.delPlButton.setAttribute("onClick", "deleteChangeState(); deletePl()")
-    else
-        domElPlaylist.delPlButton.setAttribute("onClick", "deleteChangeState()")
-    clearTimeout(deleteTimeout);
-    deleteTimeout = setTimeout(() => {deleteChangeState(false)}, 5000); // after 5 seconds
+/**
+ * Plays a song
+ * @param {string} sgId The ID of the song to play
+ */
+async function playSong(songId) {
+    // Reset Preload Data
+    nextSongId = null;
+
+    // Gets Song Data
+    domElSgPy.playerRange.disabled = true; // Disables the audio range until the song data is loaded and the duration is set (to avoid bugs with the range max value)
+    let songData = await getSongData(songId);
+    let url = songData[5], name = songData[0], artist = songData[1], img = songData[2], playlistId = songData[6];
+
+
+    // Play Song
+    domElSongs.audioControll.src = url; 
+    await domElSongs.audioControll.play();
+
+
+    // Update Old Songs
+    oldSong.push(songId);
+    if (oldSong.length >= 3) {
+        oldSong.splice(0, 1)
+    }
+
+
+    // Media Session
+    setMS(name, artist, img);
+
+
+    // Player Setup
+    domElSgPy.playerStateImg.src = endpoints.stopIco;
+
+    domElSgPy.playerSongImg.src = img; domElSgPy.playerSongTitle.innerText = name;
+
+    domElSgPy.playerRange.value = 0; domElSgPy.playerRange.max = domElSongs.audioControll.duration; domElSgPy.maxDuration.innerHTML = formatTime(domElSongs.audioControll.duration);
+    domElSongs.audioControll.currentTime = 0;
+    if (domElSgPy.playerRange.disabled) 
+        domElSgPy.playerRange.disabled = false;
+
+
+    if (domElSongs.mainContainer.dataset.play == "0") {
+        domElSongs.mainContainer.dataset.play = "1"
+    }
+
+
+    // Update Playing Playlist Data
+    if (playingPl[0] != playlistId) {
+        playingPl[0] = playlistId;
+        playingPl[1] = [];
+        let songList = await getPlData(playingPl[0]);
+        songList.songs.forEach(song => {
+            playingPl[1].push(song[0])
+        });
+    }
+
+
+    // Preload next song
+    nextSongId = chooseSong(songId)
+    preloadSong(); 
+
+
+    // Loads DiscordRPC
+    if (RPCEnabled)
+        RPCDiscord(name, artist, img, domElSongs.audioControll.duration)
 }
-async function deletePl() {
+
+/**
+ * Chooses the next song to play
+ * @param {string} songId The ID of the current song
+ * @returns {string} The ID of the chosen song
+ */
+function chooseSong(songId) {
+    id = playingPl[1].indexOf( parseInt(songId) ) // 0
+    let i = id+1;
+    let length = playingPl[1].length - 1;
+
+    if (shuffleState && length >= 1) {i = Math.floor(Math.random() * length)}
+    if (i == id) { // If the random song is the same as the current one, it chooses the next one (or the previous one if it's the last song)
+        if (i+1>length) 
+            i--
+        else 
+            i++;
+    }
+    if (i > length) {i = 0}; // Ricomincia
+
+    return playingPl[1][i];
+}
+
+/**
+ * Preloads a song
+ * @param {string | number | void} songId 
+ */
+async function preloadSong(songId=nextSongId) { // id == idSong
+    if (songId != null) {
+        songId = chooseSong(songId)
+    }
+    let songData = await getSongData(songId);
+
+    domElSongs.audioPreloader.src = songData[5]; // Preload (songData[5] == url)
+    domElSongs.audioPreloader.preload = "auto";
+    domElSongs.audioPreloader.load();
+
+    preloadedSongId = songId;   
+}
+
+/**
+ * Plays the next song
+ */
+async function nextSong() {
+    if (nextSongId != null) {
+        await playSong(nextSongId);
+    }
+}
+
+async function prevSong() {
+    await playSong(oldSong[0]);
+    oldSong.splice(1, 1);
+}
+
+
+
+// ------------------------
+// Playlists Managment
+// ------------------------
+
+/**
+ * Deletes a playlist, removing it from the server and from the HTML page. If the deleted playlist is the currently playing one, it also resets the music player
+ */
+async function deletePlaylist() {
     if (playingPl[0] == domElSongs.plDSId.value) {
         // Reset Music Player
         domElSongs.mainContainer.dataset.play = "0";
@@ -437,7 +330,7 @@ async function deletePl() {
             await domElSongs.audioControll.pause();
         domElSongs.audioControll.src = "";
         // Resets Values
-        preloadData = ["", "", "", "", 0]; playingPl = [null, null]; oldSong = [];
+        nextSongId = null; playingPl = [null, []]; oldSong = [];
     }
     let req = await fetch(endpoints.playlist, {
         method: "POST",
@@ -445,42 +338,28 @@ async function deletePl() {
         body: JSON.stringify({num: domElSongs.plDSId.value, type: "delete"}),
     });
     if (req.status == 200) {
-        EditPlsHTML(domElSongs.plDSId.value, null, null, "delete");
+        editPlHTML(domElSongs.plDSId.value, null, null, "delete");
         domElSongs.mainContainer.dataset.status = "0";
     }
     else throw new Error("Deleting a playlist returns a non-200 status code");
 }
 
-// Shuffle Button
-function TurnShuffle() {
-    shuffleState = !shuffleState;
-    PreloadSong(oldSong[oldSong.length-1]); 
-    domElSgPy.playerShuffleBtn.classList.toggle("on", shuffleState);
-}
-
-
-// Playlist
-// Playlist Grid Check
-if (localStorage.getItem("pl-grid")) {
-    domElPlaylist.playlistsContainer.className = localStorage.getItem("pl-grid")
-}
-// ---
-function addRemainingSongs() {
-    for (let i = animationSongs; i < currentSongs.length; i++) {
-        CreateSongHTML(i, currentSongs[i]);
-        OpenPl[1].push(currentSongs[i][0])
+/**
+ * Opens a playlist, displaying its songs in the HTML page
+ * @param {Object} item The HTML element representing the playlist to open
+ */
+async function openPlaylist(item) {
+    function addRemainingSongs() {
+        for (let i = animationSongs; i < currentSongs.length; i++) {
+            createSongHTML(i, currentSongs[i]);
+        }
+        currentSongs = null
     }
-    currentSongs = null
-}
 
-async function OpenPlaylist(item) {
     deleteChangeState(false)
     let ItemPlId = item.querySelector(".pl-id");
-    let data = await GetPlData(ItemPlId.value);
+    let data = await getPlData(ItemPlId.value);
     if (data == null) throw new Error("Playlist data returned null (Code was not 200)")
-    
-    OpenPl[0] = ItemPlId.value
-    OpenPl[1] = []
     
     currentSongs = data.songs;
 
@@ -491,8 +370,7 @@ async function OpenPlaylist(item) {
 
     domElSongs.songTableSongs.innerHTML = null; // reset list
     for (let i = 0; i < animationSongs; i++) { // Add n.(animationSongs) of songs
-        CreateSongHTML(i, currentSongs[i]);
-        OpenPl[1].push(currentSongs[i][0])
+        createSongHTML(i, currentSongs[i]);
     }
     domElSongs.songContainer.scrollTo({ top: 0 }); // Scrolls to the top (instantly)
     // Animation Fix
@@ -507,6 +385,9 @@ async function OpenPlaylist(item) {
     domElSongs.mainContainer.dataset.status = "1";
 }
 
+/**
+ * Closes the playlist, hiding the songs and resetting the playlist details in the HTML page
+ */
 function closePlaylist() {
     domElSongs.mainContainer.classList.add('animation');
     domElSongs.mainContainer.dataset.status = '0'
@@ -515,7 +396,206 @@ function closePlaylist() {
     }, { once: true });
 }
 
-async function GetPlData(plNum) {
+// Must be changed
+function CreateEditPlaylist(type, num=null) {
+    if (domElPlaylist.fileInput.files[0].size > maxIcoSize*(10**6)) return
+    
+    const formData = new FormData();
+    let ptype
+    formData.append("type", type);
+    if (type === "edit") {
+        formData.append("num", num);
+    }
+    formData.append("img", domElPlaylist.fileInput.files[0]);
+    formData.append('name', domElPlaylist.plNameIn.value);
+    formData.append('description', domElPlaylist.plDescIn.value);
+    if (domElPlaylist.fileInput.files[0] == null) {ptype = "application/json"} else {ptype = domElPlaylist.fileInput.files[0].contentType}
+    const requestOptions = {
+        headers: {
+            "Content-Type": ptype,
+        },
+        mode: "no-cors",
+        method: "POST",
+        files: domElPlaylist.fileInput.files[0],
+        body: formData,
+    };
+    fetch(endpoints.playlist, requestOptions).then((response) => {
+        response.json().then((data) => {
+            if (type != "edit") {createPlHTML(data.plSrc, data.plName, data.plNum);}
+            else {
+                // Img
+                if (domElPlaylist.fileInput.files[0] != null) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        domElSongs.plDsImg.src = e.target.result
+                        editPlHTML(num, e.target.result, null)
+                    };
+                    reader.readAsDataURL(domElPlaylist.fileInput.files[0]);
+                }
+                // Title + Desc
+                domElSongs.plDsTitle.innerText = domElPlaylist.plNameIn.value; domElSongs.plDsDesc.innerHTML = domElPlaylist.plDescIn.value.replaceAll("\n","<br>") + domElSongs.plDsDesc.innerHTML.slice(domElSongs.plDsDesc.innerHTML.lastIndexOf("<br><br>")-domElSongs.plDsDesc.innerHTML.length);
+                editPlHTML(num, null, domElPlaylist.plNameIn.value)
+            }
+        });
+    });
+    PlaylistModal('close')
+}
+
+let deleteTimeout = null;
+/**
+ * Sets the delete playlist button in a "confirm delete" state, where if the user clicks it again within 5 seconds, the playlist will be deleted. After 5 seconds, it resets to the normal state
+ * @param {boolean | void} fstate 
+ */
+function deleteChangeState(fstate=null) {
+    let stateDel = (!domElPlaylist.delPlButton.classList.contains("clicked-del") && fstate==null) || fstate == true
+    domElPlaylist.delPlButton.classList.toggle("clicked-del", stateDel);
+    if (stateDel)
+        domElPlaylist.delPlButton.setAttribute("onClick", "deleteChangeState(); deletePlaylist()")
+    else
+        domElPlaylist.delPlButton.setAttribute("onClick", "deleteChangeState()")
+    clearTimeout(deleteTimeout);
+    deleteTimeout = setTimeout(() => {deleteChangeState(false)}, 5000); // after 5 seconds
+}
+
+// Playlist Menu functions
+menuStateCode = 0 // 0 Closed - 1 Open Add Song - 2 Open Search
+function MenuAction() {
+    if (menuStateCode == 1)
+        addSong()
+    else if (menuStateCode == 2) {
+        window.find(
+            domElSongs.addSongInput.value,
+            false, false, true, false, true, true
+        )
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+            selection.getRangeAt(0).startContainer.parentElement.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+        }
+    }
+}
+function OpenMenu(code) {
+    domElSongs.addSongInput.value = '';
+    if (menuStateCode == code && domElSongs.addSongInput.style.display != "none") { // Fade Out
+        code = 0;
+        domElSongs.addSongInput.classList.add("animate", "out");
+        domElSongs.addSongInput.addEventListener("animationend", () => {
+            domElSongs.addSongInput.classList.remove("animate", "out");
+            domElSongs.addSongInput.style.display = "none";
+        }, { once: true });
+    } else if (domElSongs.addSongInput.style.display == "none" && !domElSongs.addSongInput.classList.contains("animate")) { // Fade In
+        domElSongs.addSongInput.style.display = "block";
+        domElSongs.addSongInput.classList.add("animate");
+    }
+    menuStateCode = code
+
+    if (code == 1) { // Open Song
+        if (nDownload == 0) domElSongs.addSongInput.placeholder = "YT name/link...";
+        else domElSongs.addSongInput.placeholder = `Downloading - ${nDownload}...`;
+    } else if (code == 2) {
+        domElSongs.addSongInput.placeholder = "Press Enter to search"
+    }
+}
+
+
+
+
+// ------------------------
+// HTML Creators Functions
+// ------------------------
+
+// Song Related
+/**
+ * Creates the song row in the HTML playlist table
+ * @param {number} index Index of the song (for the index column in the table)
+ * @param {[number, string, string, string, string]} values Values of the song (songId, songName, authorName, imageUrl, date, duration)
+ */
+function createSongHTML(index, values) {
+    if (values == undefined) return // Fix animation preload limit
+
+    let trElement = document.createElement("tr"); trElement.className = "songTcontainer";
+    trElement.setAttribute("onclick", `playSong(this.dataset.songId);`);
+    trElement.dataset.songId = values[0];
+
+    trElement.innerHTML = `
+    <td data-visible="0">
+        <p>${index + 1}</p>
+    </td>
+    <td>
+        <div class="titleSong-column">
+            <img loading="lazy" src="${values[3]}">
+            <p>${values[1]}</p>
+        </div>
+    </td>
+    <td data-visible="0">
+        <p>${values[2]}</p>
+    </td>
+    <td data-visible="0">
+        <p>${values[4]}</p>
+    </td>
+    <td data-visible="0">
+        <p>${values[5]}</p>
+    </td>
+    <td style="text-align: right;">
+        <button onclick="event.stopPropagation(); deleteSong(this)" class="songTable-delete">
+            <img src="${endpoints.deleteIco}">
+        </button>
+    </td>
+    `;
+    domElSongs.songTableSongs.appendChild(trElement);
+}
+
+// Playlist Related
+/**
+ * Edits/Removes a playlist HTML element
+ * @param {number} id Playlist Id
+ * @param {string} srcNew Playlist Image url
+ * @param {string} titleNew Playlist new Title
+ * @param {string} [type=null] Used to know the action of this function, can be null (edit playlist) or 'delete' (delete playlist)
+ */
+function editPlHTML(id, srcNew, titleNew, type=null) {
+    playlistsLs = domElPlaylist.playlistsContainer.getElementsByClassName("pl-item");
+    for (let i = 0; i < playlistsLs.length; i++) {
+        element = playlistsLs[i];
+        if (element.querySelector(".pl-id").value == id) {
+            if (type == null) {
+                if (srcNew != null) element.querySelector(".pl-img").src = srcNew;
+                if (titleNew != null) element.querySelector(".pl-text").innerText = titleNew;
+            } else if (type == "delete") domElPlaylist.playlistsContainer.removeChild(element);
+        }
+    };
+}
+
+/** 
+ * Creates the playlist HTML element (for the playlist selection section)
+ * @param {string} imgSrc Playlist Thumb Image url
+ * @param {string} plName Playlist Name
+ * @param {number | string} plNum Playlist ID
+ */
+async function createPlHTML(imgSrc, plName, plNum) {
+    let divMain = document.createElement("div");
+    divMain.className = "pl-item";
+    divMain.setAttribute("onClick", "openPlaylist(this)");
+    // Elementi del divMain
+    let img = document.createElement("img");
+    img.className = "pl-img";
+    img.src = imgSrc;
+
+    let p = document.createElement("div");
+    p.className = "pl-text";
+    p.innerText = plName
+
+    let hiddenInput = document.createElement("input");
+    hiddenInput.type = "hidden";
+    hiddenInput.value = plNum;
+    hiddenInput.className = "pl-id";
+
+    divMain.append(img, p, hiddenInput);
+    domElPlaylist.playlistsContainer.appendChild(divMain);
+}
+async function getPlData(plNum) {
     let req = await fetch(endpoints.playlist, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -528,6 +608,198 @@ async function GetPlData(plNum) {
 }
 
 
+
+
+
+// ------------------------
+// Media Session
+// ------------------------
+
+// Media Session Event Listeners
+domElSongs.audioControll.addEventListener("play", () => {updateMSBtn(); updatePositionState()});
+domElSongs.audioControll.addEventListener("pause", () => {updateMSBtn(); updatePositionState()});
+domElSongs.audioControll.addEventListener("seeking", updatePositionState);
+
+domElSongs.audioControll.addEventListener("ratechange", updatePositionState);
+domElSongs.audioControll.addEventListener("loadedmetadata", updatePositionState);
+domElSongs.audioControll.addEventListener("timeupdate", updatePositionState);
+
+/**
+ * Updates the Media Session Button (Play/Pause) and the normal Play/Pause button in the HTML page, based on the current state of the audio (playing or paused)
+ */
+function updateMSBtn() { // Update Media Session Button
+    if (!domElSongs.audioControll.paused) {
+        navigator.mediaSession.playbackState = "playing";
+        domElSgPy.playerStateImg.src = endpoints.stopIco;
+    }
+    else {
+        navigator.mediaSession.playbackState = "paused";
+        domElSgPy.playerStateImg.src = endpoints.playIco;
+    };
+}
+
+/**
+ * Updates the position state (audio time bar) of the media session
+ */
+function updatePositionState() {
+    if (!domElSongs.audioControll.duration || isNaN(domElSongs.audioControll.duration)) return;
+    if ('setPositionState' in navigator.mediaSession) {
+        navigator.mediaSession.setPositionState({
+            duration: Math.floor(domElSongs.audioControll.duration),
+            playbackRate: domElSongs.audioControll.playbackRate,
+            position: Math.floor(domElSongs.audioControll.currentTime),
+        });
+    }
+}
+
+/**
+ * Sets the Media Session metadata and action handlers
+ * @param {string} title Song Name
+ * @param {string} artist Artist Name
+ * @param {string} img Image URL
+ */
+async function setMS(title, artist, img) {
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({ 
+            title: title,
+            artist: artist,
+            album: domElSongs.plDsTitle.innerText,
+            artwork: [
+                { src: img, sizes: "512x512", type: "image/png" }
+            ],
+        });
+        navigator.mediaSession.setActionHandler('play', () => {domElSongs.audioControll.play()});  
+        navigator.mediaSession.setActionHandler('pause', () => {domElSongs.audioControll.pause()});
+        navigator.mediaSession.setActionHandler('nexttrack', async () => {await nextSong()});
+        navigator.mediaSession.setActionHandler('previoustrack', async () => {await prevSong()});
+        navigator.mediaSession.setActionHandler("seekbackward", (details) => {Seek(false, details)});
+        navigator.mediaSession.setActionHandler("seekforward", (details) => {Seek(true, details)});
+    }
+}
+
+
+
+
+
+// ------------------------
+// Music Player
+// ------------------------
+
+// Event Listeners
+domElSgPy.shuffleBtn.addEventListener("click", () => {
+    TurnShuffle();
+});
+domElSgPy.prevBtn.addEventListener("click", async () => {
+    await prevSong();
+});
+domElSgPy.playStopBtn.addEventListener("click", () => {
+    startStopAudio();
+});
+domElSgPy.nextBtn.addEventListener("click", async () => {
+    await nextSong();
+});
+domElSgPy.loopBtn.addEventListener("click", () => {
+    LoopToogle()
+});
+
+domElSgPy.volumeImg.addEventListener("click", () => {
+    ChangeVolume(true, 0)
+});
+domElSgPy.volumeRange.addEventListener("input", () => {
+    ChangeVolume(false, domElSgPy.volumeRange.value)
+});
+
+domElSongs.audioControll.addEventListener('timeupdate', () => {
+  if (domElSongs.audioControll.duration) {
+    domElSgPy.playerRange.value = domElSongs.audioControll.currentTime;
+    domElSgPy.playerRange.style.setProperty('--range-progress-width', `${(domElSgPy.playerRange.value - domElSgPy.playerRange.min) / (domElSgPy.playerRange.max - domElSgPy.playerRange.min) * 100}%`);
+    domElSgPy.currentDuration.innerHTML = formatTime(domElSongs.audioControll.currentTime);
+  }
+});
+domElSongs.audioControll.addEventListener('ended', () => {
+    playSong(nextSongId);
+});
+
+/**
+ * Formats the time in seconds to a MM:SS string
+ * @param {number} seconds 
+ * @returns {string} The formatted time string
+ */
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
+}
+
+/**
+ * Toggles the play/pause state of the audio player
+ */
+function startStopAudio() { // Pause Button
+    if (domElSongs.audioControll.paused)
+        domElSongs.audioControll.play()
+    else 
+        domElSongs.audioControll.pause()
+}
+
+/**
+ * Changes the volume of the audio player
+ * @param {boolean} mute Whether to mute the audio
+ * @param {number} value The volume level (0 to 1)
+ */
+function ChangeVolume(mute, value) {
+    if (domElSgPy.volumeRange.value == 0) {
+        if (mute) {
+            if (oldVolume == 0) {value = oldVolume = 0.5}
+            else {value = oldVolume};
+        }
+        if (!mute) oldVolume = 0;
+    }
+    else if (value != 0 && !mute) oldVolume = value;
+    domElSgPy.volumeRange.value = domElSongs.audioControll.volume = value;
+    if (value == 0) domElSgPy.volumeImg.src = endpoints.muteIco
+    else domElSgPy.volumeImg.src = endpoints.volumeIco;
+}
+
+/**
+ * Toggles the loop state of the audio player
+ */
+function LoopToogle() {
+    domElSongs.audioControll.loop = !domElSongs.audioControll.loop;
+    domElSgPy.loopBtn.classList.toggle("on", domElSongs.audioControll.loop);
+}
+
+/**
+ * (Used primarily by Media Session) Seeks to a specific time in the audio player
+ * @param {boolean} add Whether to seek forward (true) or backward (false)
+ * @param {Object} details The details for the seek action
+ */
+function Seek(add, details) {
+    const skipTime = details.seekOffset || 10;
+    if (add) domElSongs.audioControll.currentTime = Math.min(domElSongs.audioControll.currentTime + skipTime, domElSongs.audioControll.duration);
+    else domElSongs.audioControll.currentTime = Math.min(domElSongs.audioControll.currentTime - skipTime, 0);
+}
+
+/**
+ * Toggles the shuffle state of the playlist, and preloads the next song based on the new shuffle state
+ */
+function TurnShuffle() {
+    shuffleState = !shuffleState;
+    nextSongId = chooseSong(oldSong[oldSong.length-1])
+    preloadSong(); 
+    domElSgPy.shuffleBtn.classList.toggle("on", shuffleState);
+}
+
+
+
+
+
+// ------------------------
+// Playlist Grid/Details View
+// ------------------------
+if (localStorage.getItem("pl-grid")) {
+    domElPlaylist.playlistsContainer.className = localStorage.getItem("pl-grid")
+}
+
 function GridChangePlaylist(arg) { // 'playlists-details' or 'playlists-grid'
     if (arg == 'playlists-details' || arg == 'playlists-grid') {
         domElPlaylist.playlistsContainer.className = arg;
@@ -535,29 +807,13 @@ function GridChangePlaylist(arg) { // 'playlists-details' or 'playlists-grid'
     }
 }
 
-// Modal Related 
-function PlaylistModal(arg) {
-    if (imgDefault === "") imgDefault = domElPlaylist.imgView.src;
-    if (imgDefault != "") domElPlaylist.imgView.src = imgDefault;
-    if (arg === "edit") { // Needs changes
-        domElPlaylist.imgView.dataset.state = "1"; domElPlaylist.fileInput.value = null; // Reset
-        modalState = [true,true]; domElPlaylist.buttonModal.disabled = false;
-        domElPlaylist.fileInput.files[0] = null;
-        domElPlaylist.imgView.src = domElSongs.plDsImg.src; domElPlaylist.plNameIn.value = domElSongs.plDsTitle.innerText; domElPlaylist.plDescIn.value = domElSongs.plDsDesc.innerText.substring(0, domElSongs.plDsDesc.innerText.lastIndexOf("\n\n"));
-        domElPlaylist.buttonModal.setAttribute("onClick", `CreateEditPlaylist('edit', ${domElSongs.plDSId.value})`); domElPlaylist.playlistModalTitle.innerText = "Edit Playlist";
-        domElPlaylist.playlistModal.style.display = "flex";
-    }
-    else if (arg === "new") {
-        domElPlaylist.imgView.dataset.state = "0"; domElPlaylist.fileInput.value = null; // Reset
-        modalState = [false,false];
-        domElPlaylist.plNameIn.value = ""; domElPlaylist.plDescIn.value = ""; domElPlaylist.buttonModal.disabled = true;
-        domElPlaylist.buttonModal.setAttribute("onClick", "CreateEditPlaylist()"); domElPlaylist.playlistModalTitle.innerText = "Create Playlist";
-        domElPlaylist.playlistModal.style.display = "flex";
-    }
-    else if (arg === "close") {
-        domElPlaylist.playlistModal.style.display = "none";
-    }
-}
+
+
+
+
+// ------------------------
+// Playlist Modal
+// ------------------------
 
 domElPlaylist.fileInput.addEventListener('change', () => {
     const file = domElPlaylist.fileInput.files[0];
@@ -583,85 +839,57 @@ domElPlaylist.plNameIn.addEventListener("keyup", () => {
     modalState[1] = (domElPlaylist.plNameIn.value != ""); checkStatus(); 
 });
 
+function PlaylistModal(arg) {
+    if (imgDefault === "") imgDefault = domElPlaylist.imgView.src;
+    if (imgDefault != "") domElPlaylist.imgView.src = imgDefault;
+    if (arg === "edit") { // Needs changes
+        domElPlaylist.imgView.dataset.state = "1"; domElPlaylist.fileInput.value = null; // Reset
+        modalState = [true,true]; domElPlaylist.buttonModal.disabled = false;
+        domElPlaylist.fileInput.files[0] = null;
+        domElPlaylist.imgView.src = domElSongs.plDsImg.src; domElPlaylist.plNameIn.value = domElSongs.plDsTitle.innerText; domElPlaylist.plDescIn.value = domElSongs.plDsDesc.innerText.substring(0, domElSongs.plDsDesc.innerText.lastIndexOf("\n\n"));
+        domElPlaylist.buttonModal.setAttribute("onClick", `CreateEditPlaylist('edit', ${domElSongs.plDSId.value})`); domElPlaylist.playlistModalTitle.innerText = "Edit Playlist";
+        domElPlaylist.playlistModal.style.display = "flex";
+    }
+    else if (arg === "new") {
+        domElPlaylist.imgView.dataset.state = "0"; domElPlaylist.fileInput.value = null; // Reset
+        modalState = [false,false];
+        domElPlaylist.plNameIn.value = ""; domElPlaylist.plDescIn.value = ""; domElPlaylist.buttonModal.disabled = true;
+        domElPlaylist.buttonModal.setAttribute("onClick", "CreateEditPlaylist()"); domElPlaylist.playlistModalTitle.innerText = "Create Playlist";
+        domElPlaylist.playlistModal.style.display = "flex";
+    }
+    else if (arg === "close") {
+        domElPlaylist.playlistModal.style.display = "none";
+    }
+}
+
 function checkStatus() {
     domElPlaylist.buttonModal.disabled = !(modalState[0] && modalState[1]);
 };
 
-// Create-Edit Playlist
-function CreateEditPlaylist(type, num=null) {
-    if (domElPlaylist.fileInput.files[0].size > maxIcoSize*(10**6)) return
-    
-    const formData = new FormData();
-    let ptype
-    formData.append("type", type);
-    if (type === "edit") {
-        formData.append("num", num);
-    }
-    formData.append("img", domElPlaylist.fileInput.files[0]);
-    formData.append('name', domElPlaylist.plNameIn.value);
-    formData.append('description', domElPlaylist.plDescIn.value);
-    if (domElPlaylist.fileInput.files[0] == null) {ptype = "application/json"} else {ptype = domElPlaylist.fileInput.files[0].contentType}
-    const requestOptions = {
-        headers: {
-            "Content-Type": ptype,
-        },
-        mode: "no-cors",
+
+
+
+
+// ------------------------
+// Discord RPC
+// ------------------------
+
+/**
+ * Sends a POST request to the Discord RPC endpoint with the current song information to update the Discord Rich Presence status
+ * @param {string} name The name of the song
+ * @param {string} artist The artist of the song
+ * @param {string} img The image URL of the song
+ * @param {number} duration The duration of the song in seconds
+ */
+function RPCDiscord(name, artist, img, duration) {
+    fetch(endpoints.discordRPC, {
         method: "POST",
-        files: domElPlaylist.fileInput.files[0],
-        body: formData,
-    };
-    fetch(endpoints.playlist, requestOptions).then((response) => {
-        response.json().then((data) => {
-            if (type != "edit") {CreatePlHTML(data.plSrc, data.plName, data.plNum);}
-            else {
-                // Img
-                if (domElPlaylist.fileInput.files[0] != null) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        domElSongs.plDsImg.src = e.target.result
-                        EditPlsHTML(num, e.target.result, null)
-                    };
-                    reader.readAsDataURL(domElPlaylist.fileInput.files[0]);
-                }
-                // Title + Desc
-                domElSongs.plDsTitle.innerText = domElPlaylist.plNameIn.value; domElSongs.plDsDesc.innerHTML = domElPlaylist.plDescIn.value.replaceAll("\n","<br>") + domElSongs.plDsDesc.innerHTML.slice(domElSongs.plDsDesc.innerHTML.lastIndexOf("<br><br>")-domElSongs.plDsDesc.innerHTML.length);
-                EditPlsHTML(num, null, domElPlaylist.plNameIn.value)
-            }
-        });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            title: name,
+            artist: artist,
+            img: img,
+            duration: duration
+        })
     });
-    PlaylistModal('close')
-}
-function EditPlsHTML(id, srcNew, titleNew, type=null) {
-    playlistsLs = domElPlaylist.playlistsContainer.getElementsByClassName("pl-item");
-    for (let i = 0; i < playlistsLs.length; i++) {
-        element = playlistsLs[i];
-        if (element.querySelector(".pl-id").value == id) {
-            if (type == null) {
-                if (srcNew != null) element.querySelector(".pl-img").src = srcNew;
-                if (titleNew != null) element.querySelector(".pl-text").innerText = titleNew;
-            } else if (type == "delete") domElPlaylist.playlistsContainer.removeChild(element);
-        }
-    };
-}
-
-async function CreatePlHTML(imgSrc, plName, plNum) {
-    let divMain = document.createElement("div");
-    divMain.className = "pl-item";
-    divMain.setAttribute("onClick", "OpenPlaylist(this)");
-    // Elementi del divMain
-    let img = document.createElement("img");
-    img.className = "pl-img";
-    img.src = imgSrc;
-
-    let p = document.createElement("div");
-    p.className = "pl-text";
-    p.innerText = plName
-
-    let hiddenInput = document.createElement("input");
-    hiddenInput.type = "hidden";
-    hiddenInput.value = plNum;
-    hiddenInput.className = "pl-id";
-
-    divMain.append(img, p, hiddenInput);
-    domElPlaylist.playlistsContainer.appendChild(divMain);
 }
