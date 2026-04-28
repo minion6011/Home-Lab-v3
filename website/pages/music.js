@@ -1,5 +1,5 @@
 /* --- Config --- */
-const RPCEnabled = true; 
+let RPCEnabled = true; 
 let maxIcoSize = 10 // Max Playlist Ico Size in MB
 let animationSongs = 20 // Start animation limit
 /* --- Variables --- */
@@ -204,7 +204,7 @@ async function playSong(songId) {
     // Gets Song Data
     domElSgPy.playerRange.disabled = true; // Disables the audio range until the song data is loaded and the duration is set (to avoid bugs with the range max value)
     let songData = await getSongData(songId);
-    let url = songData[5], name = songData[0], artist = songData[1], img = songData[2], playlistId = songData[6];
+    let url = songData[5], name = songData[0], artist = songData[1], img = songData[2], playlistId = songData[6].toString();
 
 
     // Play Song
@@ -891,5 +891,11 @@ function RPCDiscord(name, artist, img, duration) {
             img: img,
             duration: duration
         })
-    });
+    }).then(data => {
+    }).catch((error) => {
+        if (error instanceof TypeError) {
+            console.debug("[DEBUG] Discord RPC disabled, no RPC server detected");
+            RPCEnabled = false;
+        }
+    })
 }
