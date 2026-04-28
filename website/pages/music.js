@@ -660,19 +660,19 @@ function updatePositionState() {
  */
 async function setMS(title, artist, img) {
     if ('mediaSession' in navigator) {
-        if (navigator.mediaSession.metadata == null)
+        if (navigator.mediaSession.metadata == null) {
             navigator.mediaSession.metadata = new MediaMetadata();
+            navigator.mediaSession.setActionHandler('play', () => {domElSongs.audioControll.play()});  
+            navigator.mediaSession.setActionHandler('pause', () => {domElSongs.audioControll.pause()});
+            navigator.mediaSession.setActionHandler('nexttrack', async () => {await nextSong()});
+            navigator.mediaSession.setActionHandler('previoustrack', async () => {await prevSong()});
+            navigator.mediaSession.setActionHandler("seekbackward", (details) => {Seek(false, details)});
+            navigator.mediaSession.setActionHandler("seekforward", (details) => {Seek(true, details)});
+        }
         navigator.mediaSession.metadata.title = title;
         navigator.mediaSession.metadata.artist = artist;
         navigator.mediaSession.metadata.album = domElSongs.plDsTitle.innerText;
         navigator.mediaSession.metadata.artwork = [{ src: img, sizes: "512x512", type: "image/png" }];
-
-        navigator.mediaSession.setActionHandler('play', () => {domElSongs.audioControll.play()});  
-        navigator.mediaSession.setActionHandler('pause', () => {domElSongs.audioControll.pause()});
-        navigator.mediaSession.setActionHandler('nexttrack', async () => {await nextSong()});
-        navigator.mediaSession.setActionHandler('previoustrack', async () => {await prevSong()});
-        navigator.mediaSession.setActionHandler("seekbackward", (details) => {Seek(false, details)});
-        navigator.mediaSession.setActionHandler("seekforward", (details) => {Seek(true, details)});
     }
 }
 
