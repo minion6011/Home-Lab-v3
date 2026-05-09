@@ -60,6 +60,8 @@ function compressFile() {
     domEl.clearButton.disabled = domEl.compressButton.disabled = domEl.videoImg.dataset.disabled = true;
     // Request
     const formData = new FormData();
+    formData.append("action", "compress");
+
     formData.append("codec", domEl.dropdownCodec.value);
     formData.append("crf", domEl.crtInput.value);
     formData.append("bitrate", domEl.bitrateInput.value);

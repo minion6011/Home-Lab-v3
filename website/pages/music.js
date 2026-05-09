@@ -305,7 +305,7 @@ async function preloadSong(songId=nextSongId) { // id == idSong
 async function nextSong() {
     if (nextSongId != null) {
         await playSong(nextSongId);
-    }
+    } // To-Do: Bug fix for phones that sometimes fail to load the next song
 }
 
 async function prevSong() {
@@ -396,19 +396,29 @@ function closePlaylist() {
     }, { once: true });
 }
 
-// Must be changed
+/**
+ * Create or edit a playlist
+ * @param {string} type 
+ * @param {string | number | void} num 
+ */
 function CreateEditPlaylist(type, num=null) {
-    if (domElPlaylist.fileInput.files[0].size > maxIcoSize*(10**6)) return
-    
+    if (domElPlaylist.fileInput.files[0].size > maxIcoSize*(10**6)) // Max size check
+        return
+    // Request
     const formData = new FormData();
     let ptype
+    // Add data
     formData.append("type", type);
     if (type === "edit") {
-        formData.append("num", num);
+        if (num != null)
+            formData.append("num", num);
+        else
+            throw new Error("Error while editing the playlist, the num is 'null'")
     }
     formData.append("img", domElPlaylist.fileInput.files[0]);
     formData.append('name', domElPlaylist.plNameIn.value);
     formData.append('description', domElPlaylist.plDescIn.value);
+    // Define type
     if (domElPlaylist.fileInput.files[0] == null) {ptype = "application/json"} else {ptype = domElPlaylist.fileInput.files[0].contentType}
     const requestOptions = {
         headers: {
@@ -421,7 +431,9 @@ function CreateEditPlaylist(type, num=null) {
     };
     fetch(endpoints.playlist, requestOptions).then((response) => {
         response.json().then((data) => {
-            if (type != "edit") {createPlHTML(data.plSrc, data.plName, data.plNum);}
+            if (type != "edit") {
+                createPlHTML(data.plSrc, data.plName, data.plNum);
+            }
             else {
                 // Img
                 if (domElPlaylist.fileInput.files[0] != null) {
@@ -457,8 +469,10 @@ function deleteChangeState(fstate=null) {
     deleteTimeout = setTimeout(() => {deleteChangeState(false)}, 5000); // after 5 seconds
 }
 
-// Playlist Menu functions
 menuStateCode = 0 // 0 Closed - 1 Open Add Song - 2 Open Search
+/**
+ * Song List Menu Functions
+ */
 function MenuAction() {
     if (menuStateCode == 1)
         addSong()
@@ -476,6 +490,10 @@ function MenuAction() {
         }
     }
 }
+/**
+ * Adjust the functions of the song list menu
+ * @param {*} code Used to identify the type of action to be performed
+ */
 function OpenMenu(code) {
     domElSongs.addSongInput.value = '';
     if (menuStateCode == code && domElSongs.addSongInput.style.display != "none") { // Fade Out
@@ -595,6 +613,11 @@ async function createPlHTML(imgSrc, plName, plNum) {
     divMain.append(img, p, hiddenInput);
     domElPlaylist.playlistsContainer.appendChild(divMain);
 }
+/**
+ * Get the playlist data
+ * @param {number} plNum Playist ID
+ * @returns Playlist data (JSON/dict) or null
+ */
 async function getPlData(plNum) {
     let req = await fetch(endpoints.playlist, {
         method: "POST",
@@ -798,7 +821,10 @@ function TurnShuffle() {
 if (localStorage.getItem("pl-grid")) {
     domElPlaylist.playlistsContainer.className = localStorage.getItem("pl-grid")
 }
-
+/**
+ * Change how playlists are displayed in their grid
+ * @param {string} arg Playlist display type
+ */
 function GridChangePlaylist(arg) { // 'playlists-details' or 'playlists-grid'
     if (arg == 'playlists-details' || arg == 'playlists-grid') {
         domElPlaylist.playlistsContainer.className = arg;
@@ -838,6 +864,10 @@ domElPlaylist.plNameIn.addEventListener("keyup", () => {
     modalState[1] = (domElPlaylist.plNameIn.value != ""); checkStatus(); 
 });
 
+/**
+ * Decides the type of action on the modal used to create playlists
+ * @param {string} arg Action type
+ */
 function PlaylistModal(arg) {
     if (imgDefault === "") imgDefault = domElPlaylist.imgView.src;
     if (imgDefault != "") domElPlaylist.imgView.src = imgDefault;
@@ -853,14 +883,16 @@ function PlaylistModal(arg) {
         domElPlaylist.imgView.dataset.state = "0"; domElPlaylist.fileInput.value = null; // Reset
         modalState = [false,false];
         domElPlaylist.plNameIn.value = ""; domElPlaylist.plDescIn.value = ""; domElPlaylist.buttonModal.disabled = true;
-        domElPlaylist.buttonModal.setAttribute("onClick", "CreateEditPlaylist()"); domElPlaylist.playlistModalTitle.innerText = "Create Playlist";
+        domElPlaylist.buttonModal.setAttribute("onClick", "CreateEditPlaylist('create')"); domElPlaylist.playlistModalTitle.innerText = "Create Playlist";
         domElPlaylist.playlistModal.style.display = "flex";
     }
     else if (arg === "close") {
         domElPlaylist.playlistModal.style.display = "none";
     }
 }
-
+/**
+ * Used to see if there are the minimum parameters required to create a playlist
+ */
 function checkStatus() {
     domElPlaylist.buttonModal.disabled = !(modalState[0] && modalState[1]);
 };
