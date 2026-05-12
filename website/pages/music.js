@@ -544,7 +544,7 @@ function createSongHTML(index, values) {
     if (values == undefined) return // Fix animation preload limit
 
     let trElement = document.createElement("tr"); trElement.className = "songTcontainer";
-    trElement.setAttribute("onclick", `playSong(this.dataset.songId);`);
+    trElement.setAttribute("onclick", `await playSong(this.dataset.songId);`);
     trElement.dataset.songId = values[0];
 
     trElement.innerHTML = `
@@ -691,21 +691,22 @@ function updatePositionState() {
  * @param {string} artist Artist Name
  * @param {string} img Image URL
  */
-async function setMS(title, artist, img) {
+function setMS(title, artist, img) {
     if ('mediaSession' in navigator) {
-        if (navigator.mediaSession.metadata == null) {
-            navigator.mediaSession.metadata = new MediaMetadata();
-            navigator.mediaSession.setActionHandler('play', () => {domElSongs.audioControll.play()});  
-            navigator.mediaSession.setActionHandler('pause', () => {domElSongs.audioControll.pause()});
-            navigator.mediaSession.setActionHandler('nexttrack', async () => {await nextSong()});
-            navigator.mediaSession.setActionHandler('previoustrack', async () => {await prevSong()});
-            navigator.mediaSession.setActionHandler("seekbackward", (details) => {Seek(false, details)});
-            navigator.mediaSession.setActionHandler("seekforward", (details) => {Seek(true, details)});
-        }
-        navigator.mediaSession.metadata.title = title;
-        navigator.mediaSession.metadata.artist = artist;
-        navigator.mediaSession.metadata.album = domElSongs.plDsTitle.innerText;
-        navigator.mediaSession.metadata.artwork = [{ src: img, sizes: "512x512", type: "image/png" }];
+        navigator.mediaSession.metadata = new MediaMetadata({ 
+            title: title,
+            artist: artist,
+            album: domElSongs.plDsTitle.innerText,
+            artwork: [
+                { src: img, sizes: "512x512", type: "image/png" }
+            ],
+        });
+        navigator.mediaSession.setActionHandler('play', () => {domElSongs.audioControll.play()});  
+        navigator.mediaSession.setActionHandler('pause', () => {domElSongs.audioControll.pause()});
+        navigator.mediaSession.setActionHandler('nexttrack', async () => {await nextSong()});
+        navigator.mediaSession.setActionHandler('previoustrack', async () => {await prevSong()});
+        navigator.mediaSession.setActionHandler("seekbackward", (details) => {Seek(false, details)});
+        navigator.mediaSession.setActionHandler("seekforward", (details) => {Seek(true, details)});
     }
 }
 
@@ -744,19 +745,26 @@ domElSgPy.volumeRange.addEventListener("input", () => {
 domElSongs.audioControll.addEventListener('timeupdate', () => {
     if (domElSongs.audioControll.duration) {
         domElSgPy.playerRange.value = domElSongs.audioControll.currentTime;
+        playerUpdateUI();
         domElSgPy.currentDuration.innerHTML = formatTime(domElSongs.audioControll.currentTime);
     }
 });
 domElSgPy.playerRange.addEventListener("input", () => {
-    domElSgPy.playerRange.style.setProperty('--range-progress-width', `${(domElSgPy.playerRange.value - domElSgPy.playerRange.min) / (domElSgPy.playerRange.max - domElSgPy.playerRange.min) * 100}%`);
+    playerUpdateUI();
 }) 
+/**
+ * Updates the Player (input range) bar (css)
+ */
+function playerUpdateUI() {
+    domElSgPy.playerRange.style.setProperty('--range-progress-width', `${(domElSgPy.playerRange.value - domElSgPy.playerRange.min) / (domElSgPy.playerRange.max - domElSgPy.playerRange.min) * 100}%`);
+}
 
-domElSongs.audioControll.addEventListener('ended', () => {
+domElSongs.audioControll.addEventListener('ended', async () => {
     if (isLopping) { // Used instead of 'audio.loop = true' for letting Discord RPC work
-        playSong(oldSong[oldSong.length-1])
+        await playSong(oldSong[oldSong.length-1])
         oldSong.splice(oldSong.length-1, 1);
     } else {
-        playSong(nextSongId);
+        await playSong(nextSongId);
     }
     
 });
