@@ -1,7 +1,8 @@
 /* --- Config --- */
 let RPCEnabled = true; 
-let maxIcoSize = 10 // Max Playlist Ico Size in MB
-let animationSongs = 20 // Start animation limit
+let maxIcoSize = 10; // Max Playlist Ico Size in MB
+let animationSongs = 20; // Start animation limit
+const maxOldSongs = 4;
 /* --- Variables --- */
 // Songs Related
 let nDownload = 0;
@@ -9,10 +10,11 @@ let oldSong = [];
 let oldVolume = 1;
 let playingPl = [null, []]; //plId (str), <list>(index, idsong) - for the current playing playlist
 
-nextSongId = null
+let nextSongId = null;
 
-let currentSongs = [] // List off songs - used for the animation when opening a playlist
+let currentSongs = []; // List off songs - used for the animation when opening a playlist
 let shuffleState = false;
+let isLopping = false;
 
 // Modal Related
 let modalState = [false,false];
@@ -214,7 +216,7 @@ async function playSong(songId) {
 
     // Update Old Songs
     oldSong.push(songId);
-    if (oldSong.length >= 3) {
+    if (oldSong.length >= maxOldSongs+1) {
         oldSong.splice(0, 1)
     }
 
@@ -253,7 +255,6 @@ async function playSong(songId) {
     // Preload next song
     nextSongId = chooseSong(songId)
     preloadSong(); 
-
 
     // Loads DiscordRPC
     if (RPCEnabled)
@@ -303,14 +304,23 @@ async function preloadSong(songId=nextSongId) { // id == idSong
  * Plays the next song
  */
 async function nextSong() {
-    if (nextSongId != null) {
-        await playSong(nextSongId);
-    } // To-Do: Bug fix for phones that sometimes fail to load the next song
+    if (nextSongId == null) {
+        if (oldSong[oldSong.length-1] != null)
+            return
+        await preloadSong(oldSong[oldSong.length-1])
+    }
+    await playSong(nextSongId);
 }
 
 async function prevSong() {
-    await playSong(oldSong[0]);
-    oldSong.splice(1, 1);
+    if (oldSong.length > 1) {
+        await playSong(oldSong[(oldSong.length-1)-1]);
+        oldSong.splice(oldSong.length-1, 1);
+    }
+    else {
+        await playSong(oldSong[oldSong.length-1]);
+    }
+    oldSong.splice(oldSong.length-1, 1);
 }
 
 
@@ -732,14 +742,23 @@ domElSgPy.volumeRange.addEventListener("input", () => {
 });
 
 domElSongs.audioControll.addEventListener('timeupdate', () => {
-  if (domElSongs.audioControll.duration) {
-    domElSgPy.playerRange.value = domElSongs.audioControll.currentTime;
-    domElSgPy.playerRange.style.setProperty('--range-progress-width', `${(domElSgPy.playerRange.value - domElSgPy.playerRange.min) / (domElSgPy.playerRange.max - domElSgPy.playerRange.min) * 100}%`);
-    domElSgPy.currentDuration.innerHTML = formatTime(domElSongs.audioControll.currentTime);
-  }
+    if (domElSongs.audioControll.duration) {
+        domElSgPy.playerRange.value = domElSongs.audioControll.currentTime;
+        domElSgPy.currentDuration.innerHTML = formatTime(domElSongs.audioControll.currentTime);
+    }
 });
+domElSgPy.playerRange.addEventListener("input", () => {
+    domElSgPy.playerRange.style.setProperty('--range-progress-width', `${(domElSgPy.playerRange.value - domElSgPy.playerRange.min) / (domElSgPy.playerRange.max - domElSgPy.playerRange.min) * 100}%`);
+}) 
+
 domElSongs.audioControll.addEventListener('ended', () => {
-    playSong(nextSongId);
+    if (isLopping) { // Used instead of 'audio.loop = true' for letting Discord RPC work
+        playSong(oldSong[oldSong.length-1])
+        oldSong.splice(oldSong.length-1, 1);
+    } else {
+        playSong(nextSongId);
+    }
+    
 });
 
 /**
@@ -786,8 +805,8 @@ function ChangeVolume(mute, value) {
  * Toggles the loop state of the audio player
  */
 function LoopToogle() {
-    domElSongs.audioControll.loop = !domElSongs.audioControll.loop;
-    domElSgPy.loopBtn.classList.toggle("on", domElSongs.audioControll.loop);
+    isLopping = !isLopping
+    domElSgPy.loopBtn.classList.toggle("on", isLopping);
 }
 
 /**
