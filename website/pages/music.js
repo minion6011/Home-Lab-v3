@@ -544,7 +544,7 @@ function createSongHTML(index, values) {
     if (values == undefined) return // Fix animation preload limit
 
     let trElement = document.createElement("tr"); trElement.className = "songTcontainer";
-    trElement.setAttribute("onclick", `await playSong(this.dataset.songId);`);
+    trElement.setAttribute("onclick", `playSong(this.dataset.songId);`);
     trElement.dataset.songId = values[0];
 
     trElement.innerHTML = `
