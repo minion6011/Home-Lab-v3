@@ -69,13 +69,13 @@
                         <button class="song-btn" onclick="deleteChangeState()" id="del-pl-btn">
                             <img src="{{ url_for('static',filename='img/delete-ico.svg') }}">
                         </button>
-                        <button class="song-btn" onclick="OpenMenu(2)">
+                        <button class="song-btn" onclick="SearchMenu()">
                             <img src="{{ url_for('static',filename='img/search-ico.svg') }}">
                         </button>
-                        <button class="song-btn" onclick="OpenMenu(1)">
+                        <button class="song-btn" onclick="OpenMenuSong()">
                             <img src="{{ url_for('static',filename='img/mAdd-ico.svg') }}">
                         </button>
-                        <input id="songs-input" class="songs-input" onkeydown="if (event.key === 'Enter' && this.value != '') MenuAction()" style="display: none;">
+                        <input id="songs-input" class="menuPl-input" style="display: none;">
                     </div>
                 </div>
 
@@ -94,6 +94,17 @@
 
                     </tbody>
                 </table>
+
+                <!-- Search Bar -->
+                <div class="search-container" id="search-modal" style="display: none;">
+                    <p>Search a song</p>
+                    <p class="close" onclick="SearchMenu()">&#x2715;</p>
+                    <input type="text" id="search-input" placeholder="Search...">
+                    <button id="search-btn" disabled>
+                        Search
+                    </button>
+                </div>
+
             </div>
 
             <div class="player-container">

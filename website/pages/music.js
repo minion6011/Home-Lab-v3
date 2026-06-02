@@ -64,6 +64,10 @@ const domElPlaylist = { // Playlist Elements
     fileInput: document.getElementById("img-file"),
     imgView: document.getElementById("modal-pl-img"),
 
+    searchModal: document.getElementById("search-modal"),
+    searchModalInput: document.getElementById("search-input"),
+    searchModalBtn: document.getElementById("search-btn"),
+
     playlistModal: document.getElementById("playlist-modal"),
     playlistModalTitle: document.getElementById("modal-pl-title"),
     buttonModal: document.getElementById("pl-btn"),
@@ -87,6 +91,12 @@ const endpoints = {
 // ------------------------
 // Songs Managment
 // ------------------------
+
+// Add Song Events Listener
+domElSongs.addSongInput.addEventListener("keydown", async (event) => {
+    if (event.key === 'Enter' && domElSongs.addSongInput.value != '')
+        await AddSong();
+});
 
 /**
  * Removes a song, from the server and from the HTML page
@@ -134,7 +144,7 @@ async function deleteSong(value) {
 /**
  * Adds a song or playlist to the server and to the HTML page using the `domElSongs.addSongInput` value
  */
-async function addSong() {
+async function AddSong() {
     nDownload += 1;
     let songName = domElSongs.addSongInput.value; domElSongs.addSongInput.value = ""; domElSongs.addSongInput.placeholder = `Downloading - ${nDownload}...`
     let startPl = domElSongs.plDSId.value;
@@ -339,6 +349,19 @@ async function prevSong() {
 // Playlists Managment
 // ------------------------
 
+// Events Listener
+domElPlaylist.searchModalBtn.addEventListener("click", () => {
+    SearchSong();
+});
+domElPlaylist.searchModalInput.addEventListener("keyup", () => {
+    domElPlaylist.searchModalBtn.disabled = domElPlaylist.searchModalInput.value.length < 4;
+})
+domElPlaylist.searchModalInput.addEventListener("keydown", (event) => {
+    if (!(event.key === 'Enter' && domElPlaylist.searchModalInput.value.length > 4))
+        return;
+    SearchSong();
+});
+
 /**
  * Deletes a playlist, removing it from the server and from the HTML page. If the deleted playlist is the currently playing one, it also resets the music player
  */
@@ -410,10 +433,11 @@ async function openPlaylist(item) {
  */
 function closePlaylist() {
     domElSongs.mainContainer.classList.add('animation');
-    domElSongs.mainContainer.dataset.status = '0'
+    domElSongs.mainContainer.dataset.status = '0';
     domElSongs.mainContainer.addEventListener("transitionend", () => {
         domElSongs.mainContainer.classList.remove('animation');
     }, { once: true });
+    SearchMenu(true);
 }
 
 /**
@@ -489,52 +513,65 @@ function deleteChangeState(fstate=null) {
     deleteTimeout = setTimeout(() => {deleteChangeState(false)}, 5000); // after 5 seconds
 }
 
-menuStateCode = 0 // 0 Closed - 1 Open Add Song - 2 Open Search
 /**
- * Song List Menu Functions
+ * Opens or closes the playlist creation/editing menu
+ * @param {boolean} [fclose=false] Force Close
  */
-function MenuAction() {
-    if (menuStateCode == 1)
-        addSong()
-    else if (menuStateCode == 2) {
-        window.find(
-            domElSongs.addSongInput.value,
-            false, false, true, false, true, true
-        )
-        const selection = window.getSelection();
-        if (selection.rangeCount > 0) {
-            selection.getRangeAt(0).startContainer.parentElement.scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-            });
-        }
+function SearchMenu(fclose=false) {
+    const element = domElPlaylist.searchModal;
+    if (element.style.display != "none" || fclose) { // Fade Out
+        element.classList.add("visible", "out");
+        element.addEventListener("animationend", () => {
+            element.classList.remove("visible", "out");
+            element.style.display = "none";
+            domElPlaylist.searchModalInput.value = "";
+        }, { once: true });
+    } else if (!element.classList.contains("visible")) { // Fade In
+        element.style.display = "flex";
+        element.classList.add("visible");
     }
 }
 /**
- * Adjust the functions of the song list menu
- * @param {*} code Used to identify the type of action to be performed
+ * Searches a song in the HTML page using the `domElPlaylist.searchModalInput` value, and scrolls to it if found
+ * @param {string} value
  */
-function OpenMenu(code) {
-    domElSongs.addSongInput.value = '';
-    if (menuStateCode == code && domElSongs.addSongInput.style.display != "none") { // Fade Out
-        code = 0;
-        domElSongs.addSongInput.classList.add("animate", "out");
-        domElSongs.addSongInput.addEventListener("animationend", () => {
-            domElSongs.addSongInput.classList.remove("animate", "out");
-            domElSongs.addSongInput.style.display = "none";
-        }, { once: true });
-    } else if (domElSongs.addSongInput.style.display == "none" && !domElSongs.addSongInput.classList.contains("animate")) { // Fade In
-        domElSongs.addSongInput.style.display = "block";
-        domElSongs.addSongInput.classList.add("animate");
+function SearchSong(value=domElPlaylist.searchModalInput.value) {
+    window.find(
+        value,
+        false, false, true, false, true, true
+    )
+    const selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+        selection.getRangeAt(0).startContainer.parentElement.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
     }
-    menuStateCode = code
+    
+}
 
-    if (code == 1) { // Open Song
-        if (nDownload == 0) domElSongs.addSongInput.placeholder = "YT name/link...";
-        else domElSongs.addSongInput.placeholder = `Downloading - ${nDownload}...`;
-    } else if (code == 2) {
-        domElSongs.addSongInput.placeholder = "Press Enter to search"
+/**
+ * Opens the add song menu
+ */
+function OpenMenuSong() {
+    const element = domElSongs.addSongInput;
+    if (element.style.display != "none") { // Fade Out
+        element.classList.add("visible", "out");
+        element.addEventListener("animationend", () => {
+            element.classList.remove("visible", "out");
+            element.style.display = "none";
+            element.value = '';
+        }, { once: true });
+    } else if (!element.classList.contains("visible")) { // Fade In
+        element.style.display = "block";
+        element.classList.add("visible");
     }
+
+    if (nDownload == 0) 
+        element.placeholder = "YT name/link...";
+    else 
+        element.placeholder = `Downloading - ${nDownload}...`;
+
 }
 
 
