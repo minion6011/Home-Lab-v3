@@ -25,7 +25,7 @@
     html:not(.not-iframe) .main-container .table-container {margin-left: 20px;}
 }
 @media ((hover: hover) and (pointer: fine)) {
-    .summary-container {grid-template-rows: 1fr 1.2fr 0.8fr; row-gap: 20px;}
+    .summary-container {grid-template-rows: repeat(3, 1fr); row-gap: 20px;}
     .select-options {border-radius: 5px;}
     .main-button {padding: 7.5px;}
 }

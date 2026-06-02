@@ -262,6 +262,16 @@ async function playSong(songId) {
 }
 
 /**
+ * Generates a pseudo-random number based on a seed
+ * @param {number} seed Suggested seeds: window.performance.now() / Date.now() / parseInt(sha256(previous_salt_string).substring(0, 12), 16)
+ * @returns number between 0 and 1
+ */
+function seededRandom(seed) {
+    let x = Math.sin(seed++) * 10000;
+    return x - Math.floor(x);
+}
+
+/**
  * Chooses the next song to play
  * @param {string} songId The ID of the current song
  * @returns {string} The ID of the chosen song
@@ -271,7 +281,7 @@ function chooseSong(songId) {
     let i = id+1;
     let length = playingPl[1].length - 1;
 
-    if (shuffleState && length >= 1) {i = Math.floor(Math.random() * length)}
+    if (shuffleState && length >= 1) {i = Math.floor(seededRandom(window.performance.now()) * length)}
     if (i == id) { // If the random song is the same as the current one, it chooses the next one (or the previous one if it's the last song)
         if (i+1>length) 
             i--
