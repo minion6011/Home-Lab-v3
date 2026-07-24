@@ -14,7 +14,7 @@
     <body>
         <script defer>
             document.addEventListener('DOMContentLoaded', function() {
-                document.getElementById("logged-until").innerHTML = new Date(parseInt('{{ log_until }}')*1000).toLocaleString()
+                document.getElementById("logged-since").innerHTML = new Date(parseInt('{{ logged_since }}')*1000).toLocaleString()
             });
             document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById("started-since").innerHTML = new Date(parseInt('{{ online_since }}')*1000).toLocaleString()
@@ -29,8 +29,8 @@
                     <img onclick="window.parent.location.href='/logout'" class="logout-btn-ico" src="{{ url_for('static',filename='/img/logout-ico.svg') }}">
                 </div>
                 <p class="info-value">{{ name }}</p>
-                <p class="title"><img src="{{ url_for('static',filename='/img/time-ico.svg') }}" class="ico"> Logged In Until</p>
-                <p class="info-value" id="logged-until">00/00/0000</p>
+                <p class="title"><img src="{{ url_for('static',filename='/img/time-ico.svg') }}" class="ico"> Logged Since</p>
+                <p class="info-value" id="logged-since">00/00/0000</p>
                 <p class="title"><img src="{{ url_for('static',filename='/img/power-ico.svg') }}" class="ico"> Website Online Since</p>
                 <p class="info-value" id="started-since">00/00/0000</p>
             </div>

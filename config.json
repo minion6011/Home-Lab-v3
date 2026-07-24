@@ -1,7 +1,6 @@
 {
     "username": "User",
     "password": "1234",
-    "login_duration_minutes": 60,
     "website-secret_key": "key",
 
     "spotify_CL-ID": "",

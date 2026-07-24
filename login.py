@@ -5,7 +5,6 @@ import time
 
 excludedLogin = ("login", "favicon", "logout") # Paths that will not be checked
 ratelimitData = {}
-# session["expires_at"] > 60m == Relogin
 
 def get_client_ip():
     if "CF-Connecting-IP" in request.headers:
@@ -37,12 +36,10 @@ def checkRatelimit(path):
 def usercheck_before_request():
     if checkRatelimit(request.path): return {"error": "too many request"}, 429
     if all(el not in request.path for el in excludedLogin):
-        if not session.get("expires_at") or session["expires_at"] < time.time():
+        if not session.get("logged_in") or session.get("logged_in") == False:
             if not request.method == "POST":
                 return render_template("login.html"), 401
             return {}, 401
-    if session.get("expires_at") and session["expires_at"] > time.time():
-        session["expires_at"] = time.time() + config["login_duration_minutes"] * 60
     
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -50,7 +47,8 @@ def login():
     if request.method == "GET": return render_template("login.html"), 401
     if request.is_json and "username" in request.json and "password" in request.json:
         if request.json["username"] == config["username"] and request.json["password"] == config["password"]:
-            session["expires_at"] = time.time() + config["login_duration_minutes"] * 60
+            session["logged_since"] = time.time()
+            session["logged_in"] = True
             return {"status": "success"}, 200
         else:
             return {"status": "fail"}, 401

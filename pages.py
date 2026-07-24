@@ -42,7 +42,7 @@ def get_stats():
 
 @app.route('/pages/home')
 def home():
-	return render_template("/pages/home.html", name=config["username"], log_until=session["expires_at"], online_since=startedTime, stats=get_stats())
+	return render_template("/pages/home.html", name=config["username"], logged_since=session["logged_since"], online_since=startedTime, stats=get_stats())
 
 @app.route('/send_command', methods=['POST'])
 def home_terminal():
