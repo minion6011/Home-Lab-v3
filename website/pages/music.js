@@ -111,7 +111,7 @@ async function deleteSong(value) {
     if (idSong == oldSong[oldSong.length-1]) {
         oldSong.pop();
         domElSongs.mainContainer.dataset.play = "0";
-        if (domElSongs.audioControll.playing)
+        if (!domElSongs.audioControll.paused)
             await domElSongs.audioControll.pause();
         domElSongs.audioControll.src = "";
     }
@@ -369,7 +369,7 @@ async function deletePlaylist() {
     if (playingPl[0] == domElSongs.plDSId.value) {
         // Reset Music Player
         domElSongs.mainContainer.dataset.play = "0";
-        if (domElSongs.audioControll.playing)
+        if (!domElSongs.audioControll.paused)
             await domElSongs.audioControll.pause();
         domElSongs.audioControll.src = "";
         // Resets Values

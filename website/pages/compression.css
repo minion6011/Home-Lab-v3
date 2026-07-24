@@ -25,6 +25,9 @@ body, html {
 *::-webkit-scrollbar {
     display: none;
 }
+input:disabled {
+    cursor: not-allowed;
+}
 
 .main-container {
     row-gap: 2.5%;
