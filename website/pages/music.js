@@ -334,13 +334,13 @@ async function nextSong() {
 
 async function prevSong() {
     if (oldSong.length > 1) {
-        await playSong(oldSong[(oldSong.length-1)-1]);
-        oldSong.splice(oldSong.length-1, 1);
+        let removed = oldSong.splice(oldSong.length-2, 2);
+        await playSong(removed[0]);
     }
     else {
         await playSong(oldSong[oldSong.length-1]);
+        oldSong.splice(oldSong.length-1, 1);
     }
-    oldSong.splice(oldSong.length-1, 1);
 }
 
 
