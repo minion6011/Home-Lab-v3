@@ -10,15 +10,16 @@
 
     .playlists-grid {grid-template-columns: repeat(auto-fill, minmax(205px, 1fr));}
 
-    .player-container .down #playerRange::-webkit-slider-runnable-track, .player-container .down #playerRange {height: 11.25px;}
-    .player-container .down #playerRange::-webkit-slider-runnable-track {
+    .player-container .down #playerRange::-moz-range-track, .player-container .down #playerRange::-webkit-slider-runnable-track, .player-container .down #playerRange {height: 11.25px;}
+    .player-container .down #playerRange::-moz-range-track, .player-container .down #playerRange::-webkit-slider-runnable-track {
         background-color: var(--selected-theme-bg-color);
         background: linear-gradient(to right, var(--selected-theme-bg-color) var(--range-progress-width, 0%), #ffffff00 var(--range-progress-width, 0%));
     }
-    .player-container .down #playerRange::-webkit-slider-thumb {
+    .player-container .down #playerRange::-moz-range-thumb, .player-container .down #playerRange::-webkit-slider-thumb {
         width: 20.5px; height: 20.5px;
         background-color: var(--font-color);
-    }
+        border: none; /* For Firefox è*/
+    } 
     .search-container {
         width: 40%;
         right: 30px; top: 35px;
@@ -44,23 +45,24 @@
 
     .playlists-grid {grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));}
 
-    .player-container .down #playerRange::-webkit-slider-runnable-track, .player-container .down #playerRange {height: 5.25px;}
+    .player-container .down #playerRange::-moz-range-track, .player-container .down #playerRange::-webkit-slider-runnable-track, .player-container .down #playerRange {height: 5.25px;}
 
-    .player-container .down #playerRange:not(:hover)::-webkit-slider-runnable-track {
+    .player-container .down #playerRange:not(:hover)::-moz-range-track, .player-container .down #playerRange:not(:hover)::-webkit-slider-runnable-track {
         background-color: var(--font-color);
         background: linear-gradient(to right, var(--font-color) calc(var(--range-progress-width) - 6px), rgba(0,0,0,0) var(--range-progress-width));
     }
-    .player-container .down #playerRange:hover::-webkit-slider-runnable-track {
+    .player-container .down #playerRange:hover::-moz-range-track, .player-container .down #playerRange:hover::-webkit-slider-runnable-track {
         background-color: var(--selected-theme-bg-color);
         background: linear-gradient(to right, var(--selected-theme-bg-color) var(--range-progress-width, 0%), #ffffff00 var(--range-progress-width, 0%));
     }
-    .player-container .down #playerRange::-webkit-slider-thumb {
+    .player-container .down #playerRange::-moz-range-thumb, .player-container .down #playerRange::-webkit-slider-thumb {
         width: 14.5px; height: 14.5px;
         opacity: 0; transform: scale(0.6);
         transition: opacity 0.3s ease, transform 0.35s ease;
         background-color: var(--font-color);
+        border: none; /* For firefox */
     }
-    .player-container .down #playerRange:hover::-webkit-slider-thumb {
+    .player-container .down #playerRange:hover::-moz-range-thumb, .player-container .down #playerRange:hover::-webkit-slider-thumb {
         opacity: 1; transform: scale(1);
     }
     .search-container {
@@ -196,22 +198,34 @@ html.not-iframe .main-container[data-play="1"] .player-container {margin: 0px 20
 
 .down {justify-content: space-evenly;}
 .down #playerRange {
-    -webkit-appearance: none; appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
     width: 80%;
     border-radius: 4.5px;
     background-color: var(--elm-font-color);
 }
-.down #playerRange::-webkit-slider-thumb {
-    -webkit-appearance: none; appearance: none;
-    border-radius: 100%;
-    margin-top: -4.75px;
-}
+
 .down #playerRange::-webkit-slider-runnable-track {
     appearance: none;
     border-radius: 4.5px;
 }
+.down #playerRange::-moz-range-track {
+    border-radius: 4.5px;
+    background: transparent;
+    border: none;
+}
 
-
+.down #playerRange::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 100%;
+    margin-top: -4.75px;
+}
+.down #playerRange::-moz-range-thumb {
+    border-radius: 100%;
+    border: none;
+}
 
 /* Songs Container */
 .main-container[data-status="0"] .song-container {display: none;}
