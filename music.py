@@ -1,80 +1,64 @@
-from __main__ import config
-
 from pytubefix.cli import on_progress
 from pytubefix import YouTube, Playlist, Search
 
 import uuid, time
 
-spotify_check = config["spotify_CL-ID"]+config["spotify-CL-SECRET"] != ""
-if spotify_check:
-	import spotipy
-	from spotipy.oauth2 import SpotifyClientCredentials
-	sp = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id=config["spotify_CL-ID"], client_secret=config["spotify-CL-SECRET"]))
+CLIENTS = [
+	"WEB",
+	"WEB_EMBED",
+	"WEB_MUSIC",
+	"WEB_CREATOR",
+	"WEB_SAFARI",
+	"ANDROID",
+	"ANDROID_MUSIC",
+	"ANDROID_CREATOR",
+	"ANDROID_VR",
+	"ANDROID_PRODUCER",
+	"ANDROID_TESTSUITE",
+	"IOS",
+	"IOS_MUSIC",
+	"IOS_CREATOR",
+	"MWEB",
+	"TV_EMBED",
+	"MEDIA_CONNECT",
+]
 
-	def Spotify_Getsongs(plId): # Playlist Migration
-		song_names = []
-		results = sp.playlist_items(plId)
-		while results: # Si usa il while perchè la richiesta è una paginazione # - fare check se il sito crasha
-			for item in results['items']:
-				track = item['track']
-				if track:
-					if "artists" in track: song_names.append( (track['name'], track["artists"][0]["name"]) )
-					else: song_names.append( (track['name'], "") )
-			if results['next']:
-				results = sp.next(results)
+
+def downloadSong(query: str, plId):
+	for client in CLIENTS:
+		try:
+			videos = []
+			videosData = []
+			if query.startswith("https://"):
+				# Video Url
+				if query.startswith("https://youtu.be/"): 
+					query = query.replace("https://youtu.be/", "https://youtube.com/watch?v=")
+				yt = YouTube(
+					url=query,
+					client=client,
+					on_progress_callback=on_progress
+				)
+				videos.append(yt)
 			else:
-				results = None
-		return song_names
+				# Video Search
+				yt = Search(
+					query=query
+				).videos[0]
+				videos.append(yt)
 
-def downloadSong(name:str, plId):
-	videos = []
-	if name.startswith("https://"):
-		if name.startswith("https://open.spotify.com/playlist/") and spotify_check:
-			try:
-				for song, name in Spotify_Getsongs(name.split("/")[-1].split("?")[0]):
-					try:
-						fileName = uuid.uuid4().hex
-						video = Search(f"{song} {name}").videos[0]
-						min, sec = divmod(video.length, 60)
-						videos.append((
-							plId,
-							video.title,
-							video.author,
-							video.thumbnail_url,
-							time.strftime("%d/%m/%Y", time.localtime()),
-							str(min) + ":" + str(sec).rjust(2, "0"),
-							f"/website/music/{fileName}.mp3"
-						))
-						video.streams.get_audio_only().download(output_path="./website/music", filename=fileName+".mp3")
-					except Exception as e:
-						print(f"[DEBUG] Error, Spotify Playlist Single\n{e}")
-			except Exception as e:
-				print(f"[DEBUG] Error, Spotify Playlist Loop\n{e}")
-		else:
-			pl = Playlist(name)
-			try:
-				for video in pl.videos:
-					try:
-						fileName = uuid.uuid4().hex
-						min, sec = divmod(video.length, 60)
-						videos.append((
-							plId,
-							video.title,
-							video.author,
-							video.thumbnail_url,
-							time.strftime("%d/%m/%Y", time.localtime()),
-							str(min) + ":" + str(sec).rjust(2, "0"),
-							f"/website/music/{fileName}.mp3"
-						))
-						video.streams.get_audio_only().download(output_path="./website/music", filename=fileName+".mp3")
-					except Exception as e:
-						print(f"[DEBUG] Error, YT Playlist Single\n{e}")
-			except:
+			for video in videos:
 				fileName = uuid.uuid4().hex
-				if name.startswith("https://youtu.be/"): name = name.replace("https://youtu.be/", "https://youtube.com/watch?v=")
-				video = YouTube(name, on_progress_callback = on_progress)
+				
+				video.streams.get_audio_only().download(
+					output_path="./website/music",
+					filename=fileName+".mp3",
+					skip_existing=False, 
+					timeout=10, 
+					max_retries=5
+				)
+
 				min, sec = divmod(video.length, 60)
-				videos.append((
+				videosData.append((
 					plId,
 					video.title,
 					video.author,
@@ -83,19 +67,7 @@ def downloadSong(name:str, plId):
 					str(min) + ":" + str(sec).rjust(2, "0"),
 					f"/website/music/{fileName}.mp3"
 				))
-				video.streams.get_audio_only().download(output_path="./website/music", filename=fileName+".mp3")
-	else:
-		fileName = uuid.uuid4().hex
-		video = Search(name).videos[0]
-		min, sec = divmod(video.length, 60)
-		videos.append((
-			plId,
-			video.title,
-			video.author, 
-			video.thumbnail_url, 
-			time.strftime("%d/%m/%Y", time.localtime()),
-			str(min) + ":" + str(sec).rjust(2, "0"),
-			f"/website/music/{fileName}.mp3"
-		))
-		video.streams.get_audio_only().download(output_path="./website/music", filename=fileName+".mp3")
-	return videos
+			return videosData
+		except Exception as e:
+			print(e)
+	raise Exception("Failed to download asset with all available clients")
