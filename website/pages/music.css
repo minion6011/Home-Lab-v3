@@ -55,7 +55,10 @@
     .main-container[data-play="1"] .player-container {align-items: end;}
     html:not(.not-iframe) .main-container[data-play="1"] {row-gap: 3.5%;}
 
-    .modal-playlist .card {width: 37.5%;}
+    .modal-playlist .card {
+        width: 70%;
+        max-width: 475px;
+    }
 
     .playlists-grid {grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));}
 

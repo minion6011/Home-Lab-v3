@@ -446,7 +446,7 @@ function closePlaylist() {
  * @param {string | number | void} num 
  */
 function CreateEditPlaylist(type, num=null) {
-    if (domElPlaylist.fileInput.files[0].size > maxIcoSize*(10**6)) // Max size check
+    if (domElPlaylist.fileInput.files[0] != null && domElPlaylist.fileInput.files[0].size > maxIcoSize*(10**6)) // Max size check
         return
     // Request
     const formData = new FormData();
