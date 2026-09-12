@@ -1,4 +1,4 @@
-pytubefix
+yt_dlp
 flask
 psutil
 spotipy

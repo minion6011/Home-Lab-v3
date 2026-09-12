@@ -75,7 +75,7 @@ This is the third version of the [Homelab](https://github.com/minion6011/Home-La
 
 ### Libraries & Tools
 - **[Monaco Editor](https://microsoft.github.io/monaco-editor/)** - License: MIT
-- **[pytubefix](https://github.com/JuanBindez/pytubefix)** - License: MIT
+- **[yt-dlp](https://github.com/yt-dlp/yt-dlp)** - License: Unlicense
 - **[flask](https://flask.palletsprojects.com/en/stable/)** – License: BSD-3-Clause
 - **[psutil](https://github.com/giampaolo/psutil)** - License: BSD-3-Clause
 - **[ffmpeg](https://www.ffmpeg.org/)** - License: GNU
