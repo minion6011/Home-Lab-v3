@@ -33,7 +33,7 @@ function formatTime(seconds) {
 function playSong(wasPlaying, title, startTime) {
     playerTitle.innerText = title;
 
-    playerAudio.src = endpoints.stream;
+    playerAudio.src = endpoints.stream + (endpoints.stream.includes('?') ? '&' : '?') + 't=' + Date.now();
     playerAudio.load();
 
     playerRange.value = 0;
