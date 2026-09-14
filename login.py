@@ -1,6 +1,6 @@
 from __main__ import app, config
 
-from flask import request, render_template, session, redirect
+from flask import request, render_template, session, redirect, jsonify
 import time
 
 excludedLogin = ("login", "favicon", "logout") # Paths that will not be checked
@@ -39,19 +39,24 @@ def usercheck_before_request():
         if not session.get("logged_in") or session.get("logged_in") == False:
             if not request.method == "POST":
                 return render_template("login.html"), 401
-            return {}, 401
+            return jsonify({}), 401
     
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    if request.method == "GET": return render_template("login.html"), 401
+    if request.method == "GET": 
+        return render_template("login.html"), 401
     if request.is_json and "username" in request.json and "password" in request.json:
         if request.json["username"] == config["username"] and request.json["password"] == config["password"]:
             session["logged_since"] = time.time()
             session["logged_in"] = True
-            return {"status": "success"}, 200
+            return jsonify({
+                "status": "success"
+            }), 200
         else:
-            return {"status": "fail"}, 401
+            return jsonify({
+                "status": "fail"
+            }), 401
 
 @app.route('/logout')
 def logout():

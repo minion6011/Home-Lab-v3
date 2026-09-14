@@ -1,7 +1,7 @@
 from __main__ import app, config
 
 from music import downloadSong
-from flask import render_template, request, session, g
+from flask import render_template, request, session, g, jsonify
 
 import psutil, os, json, time, sqlite3
 
@@ -49,9 +49,9 @@ def home_terminal():
 	if "command" in request.json:
 		command = request.json["command"]
 		os.system(str(command))
-		return {}, 200
+		return jsonify({}), 200
 	else:
-		return "Bad Request", 400
+		return jsonify({}), 400
 
 # - Music
 @app.route('/pages/music')
@@ -82,7 +82,11 @@ def playlist():
 					file = request.files.getlist('img')
 					if file:
 						file[0].save(os.path.join(os.path.dirname(__file__), "website","music", f"{num}.webp"))
-					return {"plName": request.form["name"], "plNum": num, "plSrc": f"/website/music/{num}.webp"}, 200
+					return jsonify({
+						"plName": request.form["name"],
+						"plNum": num,
+						"plSrc": f"/website/music/{num}.webp"
+					}), 200
 			# Json
 			case "get":
 					playlist = dbCursor.execute(
@@ -93,7 +97,10 @@ def playlist():
 						"SELECT idSong, name, artist, img, added, duration, urlPath FROM songs WHERE idPlaylist==?",
 						(request.json["num"],)
 					).fetchall()
-					return {"playlist": playlist, "songs": songs}, 200
+					return jsonify({
+						"playlist": playlist,
+						"songs": songs
+					}), 200
 			case "delete":
 					songs = dbCursor.execute(
 						"SELECT urlPath FROM songs WHERE idPlaylist==?",
@@ -108,10 +115,10 @@ def playlist():
 						(request.json["num"],)
 					)
 					db.commit()
-					return {}, 200
-		return {}, 400
+					return jsonify({}), 200
+		return jsonify({}), 400
 	except KeyError:
-		return {}, 400
+		return jsonify({}), 400
 
 
 @app.route('/songs', methods=['POST'])
@@ -130,13 +137,17 @@ def songs():
 						)
 						nwSongs.append(songs_return.fetchone())
 					db.commit()
-					return {"nwSongs": nwSongs}, 200
+					return jsonify({
+						"nwSongs": nwSongs
+					}), 200
 			case "get":
 					song = dbCursor.execute(
 						"SELECT name, artist, img, added, duration, urlPath, idPlaylist FROM songs WHERE idSong==?",
 						(request.json["index"],)
 					).fetchone()
-					return {"song": song}, 200
+					return jsonify({
+						"song": song
+					}), 200
 			case "delete":
 					# Removes the song audio file
 					song = dbCursor.execute(
@@ -150,10 +161,10 @@ def songs():
 						(request.json["index"],)
 					)
 					db.commit()
-					return {}, 200
-		return {}, 400
+					return jsonify({}), 200
+		return jsonify({}), 400
 	except KeyError:
-		return {}, 400
+		return jsonify({}), 400
 
 # - Accounting
 @app.route('/pages/accounting')
@@ -177,23 +188,25 @@ def payments():
 						(request.json["profit"], request.json["loss"], request.json["description"], timeList)
 					).fetchone()
 					db.commit()
-					return {"date": timeList, "id": id[0]}, 200
+					return jsonify({
+						"date": timeList, "id": id[0]
+					}), 200
 			case "remove":
 					dbCursor.execute(
 						"DELETE FROM accounting WHERE id==?",
 						(request.json["index"],)
 					)
 					db.commit()
-					return {}, 200
+					return jsonify({}), 200
 			case "reset":
 					dbCursor.execute(
 						"DELETE FROM accounting"
 					)
 					db.commit()
-					return {}, 200
-		return {}, 400
+					return jsonify({}), 200
+		return jsonify({}), 400
 	except KeyError:
-		return {}, 400
+		return jsonify({}), 400
 
 # - Agenda
 @app.route('/pages/agenda')
@@ -218,24 +231,26 @@ def todo():
 						(request.json["index"],)
 					)
 					db.commit()
-					return {}, 200
+					return jsonify({}), 200
 			case "switch":
 					dbCursor.execute(
 						"UPDATE todo SET state=? WHERE id==?",
 						(request.json["state"], request.json["index"])
 					)
 					db.commit()
-					return {}, 200
+					return jsonify({}), 200
 			case "add":
 					id = dbCursor.execute(
 						"INSERT INTO todo(todo) VALUES(?) RETURNING id",
 						(request.json["text"],)
 					).fetchone()[0]
 					db.commit()
-					return {"id": id}, 200
-		return {}, 400
+					return jsonify({
+						"id": id
+					}), 200
+		return jsonify({}), 400
 	except KeyError:
-		return {}, 400
+		return jsonify({}), 400
 
 @app.route('/note', methods=['POST'])
 def note():
@@ -247,14 +262,16 @@ def note():
 			case "add":
 					id = dbCursor.execute("INSERT INTO notes(note) VALUES(?) RETURNING id", (request.json["text"],)).fetchone()[0]
 					db.commit()
-					return {"id": id}, 200
+					return jsonify({
+						"id": id
+					}), 200
 			case "remove":
 					dbCursor.execute("DELETE FROM notes WHERE id=?", (request.json["index"],))
 					db.commit()
-					return {}, 200
-		return {}, 400
+					return jsonify({}), 200
+		return jsonify({}), 400
 	except KeyError:
-		return {}, 400
+		return jsonify({}), 400
 
 # - Settings
 @app.route('/pages/configs')
@@ -276,10 +293,10 @@ def loadConfigs():
 				json.dump(config_data, f, indent=4)
 			config.clear()
 			config.update(config_data)
-			return {}, 200
-		return {}, 400
+			return jsonify({}), 200
+		return jsonify({}), 400
 	except KeyError:
-		return {}, 400
+		return jsonify({}), 400
 
 # - Compression
 @app.route('/pages/compression')
@@ -299,8 +316,10 @@ def compress_file():
 				res = os.system(f"ffmpeg -y -i website/compression/input.{ext} -c:v {requestType['codec']} -crf {requestType['crf']} -b:a {requestType['bitrate']} -preset medium website/compression/outuput.{ext} -loglevel quiet")
 				if res == 0:
 					os.remove(os.path.join(os.path.dirname(__file__), "website", "compression", f"input.{ext}"))
-					return {"outfile": f"/website/compression/outuput.{ext}"}, 200
-				return {}, 500
+					return jsonify({
+						"outfile": f"/website/compression/outuput.{ext}"
+					}), 200
+				return jsonify({}), 500
 			case "clear":
 				listDir = os.listdir(os.path.join(os.path.dirname(__file__), "website", "compression"))
 				finded = False # could be better
@@ -308,11 +327,12 @@ def compress_file():
 					if file.startswith("outuput."):
 						os.remove(os.path.join(os.path.dirname(__file__), "website", "compression", file))
 						finded = True
-				if finded: return {}, 200
-				return {}, 404
+				if finded: 
+					return jsonify({}), 200
+				return jsonify({}), 404
 	except:
-		return {}, 400
-	return {}, 400
+		return jsonify({}), 400
+	return jsonify({}), 400
 
 # - Canva
 @app.route('/pages/canvas')

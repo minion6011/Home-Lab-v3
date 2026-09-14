@@ -1,4 +1,4 @@
-@media (hover: none) and (pointer: coarse) { /* Schermo Telefono */
+@media ((hover: none) and (pointer: coarse)) or (max-width: 1035px) { /* Schermo Telefono */
     .main-container {
         will-change: grid-template-rows;
         transition: grid-template-rows 0.4s ease-in-out;
@@ -11,7 +11,7 @@
     .sidebar-container {display: flex;}
     .iframe-container iframe {height: 97.5%;}
 }
-@media (hover: hover) and (pointer: fine) { /* Schermo PC */
+@media ((hover: hover) and (pointer: fine)) and (min-width: 1035px){ /* Schermo PC */
     .main-container {
         grid-template-areas: "switcher switcher header" "sidebar main main";
         grid-template-columns: minmax(min-content,var(--nav-width)) auto 1fr;
@@ -220,7 +220,7 @@ a {
     background-color: var(--menu-bg-color);
     padding: 1.85rem;
     border-radius: 5px;
-    bottom: 185px;
+    bottom: 10%;
     margin-top: 10px;
     right: 5rem;
     /* z-index: 1; */
