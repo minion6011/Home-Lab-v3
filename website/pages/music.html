@@ -15,6 +15,7 @@
 
         <div class="main-container" id="mainContainer" data-status="0" data-play="0">
             
+            <input type="hidden" id="shareId" value="{{ shareid }}">
             <audio style="display: none;" id="AudioControll" preload="metadata"></audio>
             
             <div class="library-container">
@@ -53,7 +54,7 @@
                     <div class="playlist-info">
                         <input type="hidden" id="plDs-id" value="">
                         <img class="image" id="plDs-img" src="{{ url_for('static',filename='img/plDefault-ico.svg') }}">
-                        <div class="text">
+                        <div class="text"  id="playlist-text">
                             <div class="title-sep"> 
                                 <p id="plDs-title">Playlist Name</p>
                                 <p class="close" onclick="closePlaylist()">&#x2715;</p>

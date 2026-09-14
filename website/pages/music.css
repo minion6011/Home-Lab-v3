@@ -320,6 +320,24 @@ html.not-iframe .song-container {margin: 20px}
     cursor: pointer;
     font-size: var(--small-font-size);
 }
+.text .listen-together {
+    cursor: pointer;
+
+    margin-top: 10px;
+
+    border: none;
+    border-radius: 5px;
+
+    padding: 7.5px;
+
+    background-color: var(--elm-hover-bg-color);
+    color: var(--font-color);
+    
+    font-size: var(--mini-font-size);
+}
+.text .listen-together:hover {
+    background-color: var(--ver-hover-bg-color);
+}
 .text #plDs-desc {
     margin: 2px 0 0 0;
     font-size: var(--mini-font-size);

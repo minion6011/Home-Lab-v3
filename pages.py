@@ -1,7 +1,9 @@
 from __main__ import app, config
 
 from music import downloadSong
-from flask import render_template, request, session, g, jsonify
+from listening import updateData
+from login import get_client_ip
+from flask import render_template, request, session, g, jsonify, abort
 
 import psutil, os, json, time, sqlite3
 
@@ -57,7 +59,10 @@ def home_terminal():
 @app.route('/pages/music')
 def music():
 	playlists = get_db("music").cursor().execute("SELECT id, name, img FROM playlists").fetchall()
-	return render_template("/pages/music.html", playlists=playlists)
+	shareid = ""
+	if config["shareMusic"] == True:
+		shareid = updateData(get_client_ip(), None)
+	return render_template("/pages/music.html", playlists=playlists, shareid=shareid)
 
 
 @app.route('/playlist', methods=['POST'])
@@ -107,7 +112,6 @@ def playlist():
 						(request.json["num"],)
 					).fetchall()
 					for song in songs:
-						print( os.path.exists(os.path.join(os.path.dirname(__file__), song[0].lstrip("/"))) )
 						try: os.remove(os.path.join(os.path.dirname(__file__), song[0].lstrip("/")))
 						except: pass
 					dbCursor.execute(

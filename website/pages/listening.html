@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+        <title>Listening Together</title>
+        <meta charset="UTF-8">
+        <link rel="icon" href="{{ url_for('static',filename='img/favicon.svg') }}"/>
+
+        <link rel="stylesheet" href="{{ url_for('static',filename='pages/listening.css') }}">
+        <script src="{{ url_for('static',filename='pages/listening.js') }}" type="text/javascript" defer></script>
+    </head>
+
+    <body>
+    
+        <div class="share-box">
+            <input type="hidden" id="shareId" value="{{ listeningId }}">
+            <audio style="display: none;" id="playerAudio" preload="metadata"></audio>
+
+            <p class="title" id="songTitle">No song</p>
+
+            <div class="player">
+                <p id="cur-duration">0:00</p>
+                <input value=0 disabled id="playerRange" type="range">
+                <p id="max-duration">0:00</p>
+            </div>
+            
+            <button id="controll-btn" disabled>
+                ▶︎
+            </button>
+
+        </div>
+
+    </body>
+</html>
+

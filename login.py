@@ -3,7 +3,7 @@ from __main__ import app, config
 from flask import request, render_template, session, redirect, jsonify
 import time
 
-excludedLogin = ("login", "favicon", "logout") # Paths that will not be checked
+excludedLogin = ("login", "favicon", "logout", "listening") # Paths that will not be checked
 ratelimitData = {}
 
 def get_client_ip():

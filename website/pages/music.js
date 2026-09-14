@@ -56,6 +56,7 @@ const domElSongs = { // Songs Elements
 }
 const domElPlaylist = { // Playlist Elements
     playlistsContainer: document.getElementById("playlists-container"),
+    playlistTextContainer: document.getElementById("playlist-text"),
 
     plNameIn: document.getElementById("pl-name"),
     plDescIn: document.getElementById("pl-desc"),
@@ -73,12 +74,15 @@ const domElPlaylist = { // Playlist Elements
     buttonModal: document.getElementById("pl-btn"),
     
     delPlButton: document.getElementById("del-pl-btn"),
+
+    songShareId: document.getElementById("shareId"),
 }
 const endpoints = {
     discordRPC: "http://127.0.0.1:8765/rpc",
 
     songs: "/songs",
     playlist: "/playlist",
+    listeningUpdate: "/listening",
     
     playIco: "/website/img/play-ico.svg",
     stopIco: "/website/img/stop-ico.svg",
@@ -217,7 +221,17 @@ async function playSong(songId) {
     domElSgPy.playerRange.disabled = true; // Disables the audio range until the song data is loaded and the duration is set (to avoid bugs with the range max value)
     let songData = await getSongData(songId);
     let url = songData[5], name = songData[0], artist = songData[1], img = songData[2], playlistId = songData[6].toString();
-
+    if (domElPlaylist.songShareId.value != "") {
+        fetch(endpoints.listeningUpdate, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                songData: songData
+            })
+        })
+    }
 
     // Play Song
     domElSongs.audioControll.src = url; 
@@ -1003,4 +1017,21 @@ function RPCDiscord(name, artist, img, duration) {
             RPCEnabled = false;
         }
     })
+}
+
+// ------------------------
+// Share Music
+// ------------------------
+
+if (domElPlaylist.songShareId.value != "") {
+    const url = window.location.protocol + "\/\/" + window.location.host + '/listening/' + domElPlaylist.songShareId.value;
+    domElPlaylist.playlistTextContainer.innerHTML += `
+        <button
+            class="listen-together"
+            title="Copy link"
+            onclick="navigator.clipboard.writeText('${url}')"
+        >
+            Share Music
+        </button>
+    `
 }
