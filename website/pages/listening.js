@@ -9,10 +9,13 @@ const playerCurr = document.getElementById("cur-duration");
 const playerMax = document.getElementById("max-duration");
 
 const shareId = document.getElementById("shareId").value;
-// loadedmetadata
+
+const volumeImg = document.getElementById("muteImg");
+const volumeRange = document.getElementById("volumeRange");
+
 const endpoints = {
     data: `/listening/${shareId}/data`,
-    stream: `/listening/${shareId}/stream`
+    stream: `/listening/${shareId}/stream`,
 }
 
 const RefreshTimeMs = 10000;
@@ -115,6 +118,26 @@ controllBtn.addEventListener("click", () => {
 function btnCheck() {
     controllBtn.innerText = playerAudio.paused ? "▶︎" : "❚❚";
 }
+
+/**
+ * Changes the volume of the audio player
+ * @param {boolean} mute Whether to mute the audio
+ * @param {number} value The volume level (0 to 1)
+ */
+function ChangeVolume(mute, value) {
+    if (volumeRange.value == 0) {
+        if (mute) {
+            if (oldVolume == 0) {value = oldVolume = 0.5}
+            else {value = oldVolume};
+        }
+        if (!mute) oldVolume = 0;
+    }
+    else if (value != 0 && !mute) oldVolume = value;
+    volumeRange.value = playerAudio.volume = value;
+}
+volumeRange.addEventListener("input", () => {
+    ChangeVolume(false, volumeRange.value)
+});
 
 controllLoop()
 setInterval(controllLoop, RefreshTimeMs);
