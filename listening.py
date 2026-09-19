@@ -5,9 +5,11 @@ import time, uuid, os
 
 # {id: {"ip": str, "audio": {"songdata": tuple | None, "timestamp": float}}}
 listeningData = {}
+maxtime = 24 # Hours
 
 def updateData(ip: str, song: tuple | None) -> str:
-    print(listeningData)
+    cleanUpData()
+
     for entry_id, entry in listeningData.items():
         if entry["ip"] == ip:
             entry["audio"] = {"songdata": song, "timestamp": time.time()}
@@ -21,6 +23,18 @@ def updateData(ip: str, song: tuple | None) -> str:
         }
     }
     return new_id
+
+def cleanUpData():
+    remove_data = []
+    removetime = time.time() + maxtime * 60 * 60
+
+    for entry_id, entry in listeningData.items():
+        if entry["audio"]["timestamp"] < removetime:
+            remove_data.append(entry_id)
+    
+    for data_id in remove_data:
+        listeningData.pop(data_id)
+    return
 
 def getData(entry_id: str) -> dict | None:
     entry = listeningData.get(entry_id)
@@ -67,5 +81,8 @@ def listening_data(id):
 def listening():
     if not request.json:
         return jsonify({}), 400
-    updateData(get_client_ip(), request.json["songData"])
+    try:
+        updateData(get_client_ip(), request.json["songData"])
+    except:
+        return jsonify({}), 500
     return jsonify({}), 200
