@@ -1024,8 +1024,9 @@ function RPCDiscord(name, artist, img, duration) {
 // ------------------------
 
 if (domElPlaylist.songShareId.value != "") {
-    const url = window.location.protocol + "\/\/" + window.location.host + '/listening/' + domElPlaylist.songShareId.value;
-    domElPlaylist.playlistTextContainer.innerHTML += `
+    const url = `${window.location.protocol}//${window.location.host}/listening/${domElPlaylist.songShareId.value}`;
+
+    domElPlaylist.playlistTextContainer.insertAdjacentHTML('beforeend', `
         <button
             class="listen-together"
             title="Copy link"
@@ -1033,5 +1034,5 @@ if (domElPlaylist.songShareId.value != "") {
         >
             Share Music
         </button>
-    `
+    `);
 }
