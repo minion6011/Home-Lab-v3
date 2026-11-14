@@ -3,8 +3,6 @@ This is the third version of the [Homelab](https://github.com/minion6011/Home-La
 > What does it include?
 - **Login System** <br>
   **Every user** who tries to access **any page** of the site must enter a username and password.<br>
-  After entering the credentials, *if they are correct*, the user's IP address is recorded and a login session is created for a pre-established *duration* (`can be modified from the configs`).<br>
-  Once the duration has expired, the user will have to log in again.
 - **Home** <br>
   It allows you to run commands on the site host, view component usage statistics and allows you to view your login session information.
 - **Music** <br>
@@ -18,8 +16,10 @@ This is the third version of the [Homelab](https://github.com/minion6011/Home-La
   It allows you to compress **video** and **audio** using various codecs. <br>
   To use this on **Windows** you need to install **[ffmpeg.exe](https://www.gyan.dev/ffmpeg/builds/)** and add it inside the folder where the homelab is located. <br>
   Some codecs are not supported by default on **linux** so you need to install them, this operation varies depending on the distro you're using. **For Fedora** i suggest to [follow this tutorial](https://www.reddit.com/r/linuxadmin/comments/1mktzer/fedora_42_how_to_install_video_codecs_using_rpm/).
-- **Configs**
-  It allows you to change the **colors of the two themes** (`themes.css`) of the site (*light and dark*), the configuration file (`config.json`) and to disconnect and/or see the **users connected to the site**.
+- **Canvas** <br>
+  It allows you to draw on a whiteboard and to save/reload it (with a `.csd` extension)
+- **Configs** <br>
+  It allows you to change the **colors of the two themes** (`themes.css`) of the site (*light and dark*), the configuration file (`config.json`).
 
 
 # 💻 How to install
