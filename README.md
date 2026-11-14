@@ -31,7 +31,8 @@ This is the third version of the [Homelab](https://github.com/minion6011/Home-La
   1. Clone the Repository
   2. Install Python (Tested with `Python 3.11`)
   3. Install all the requirements
-  4. Setup the `config.json`
+  4. Rename the templates files by removing `.example` extension from `config.json.example` (root folder), `*.sqlite.example` (website folder)
+  1. Setup the `config.json`
    
   - Install [Node.js](https://nodejs.org/en/download) *(necessary for the Music section)*
   - Install [ffmpeg.exe](https://www.gyan.dev/ffmpeg/builds/) *(necessary for the Compression section on Windows)*
