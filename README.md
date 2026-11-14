@@ -39,6 +39,32 @@ This is the third version of the [Homelab](https://github.com/minion6011/Home-La
 </details>
 
 <details>
+<summary><b>Update the Homelab 📩</b></summary>
+
+  To update the **HomeLab** you can use the following command:
+
+  ```console
+  git fetch origin
+  git reset --hard origin/main
+  ```
+
+  > [!WARNING]
+  > `git reset --hard` will overwrite any local changes made to tracked files.
+
+  To delete the `.example` files use the following command:
+
+  **Windows**
+  ```console
+  del /s /q *.example
+  ```
+
+  **Linux**
+  ```console
+  find . -name "*.example" -type f -delete
+  ```
+</details>
+
+<details>
 <summary><b>Use Discord RPC 🔊</b></summary>
 
   To use **Discord RPC** for the **Homelab** *Music section* you need to follow these steps:
