@@ -9,7 +9,6 @@ app.secret_key = config["website-secret_key"]
 # - Flask Modules
 import login
 import pages
-import listening
 
 @app.route('/')
 @app.route('/<page>')
