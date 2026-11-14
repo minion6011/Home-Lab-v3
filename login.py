@@ -1,4 +1,4 @@
-from __main__ import app, config
+from main import app, config
 
 from flask import request, render_template, session, redirect, jsonify
 import time

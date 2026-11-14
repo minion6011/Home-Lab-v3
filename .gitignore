@@ -1,3 +1,11 @@
 website/*.sqlite
 config.json
+
 website/music/*
+website/compression/*
+
+__pycache__/*
+
+*.service
+*.sh
+production.py

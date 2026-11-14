@@ -1,4 +1,4 @@
-from __main__ import app, config
+from main import app, config
 
 from music import downloadSong
 from flask import render_template, request, session, g, jsonify
